@@ -6,7 +6,20 @@
   --background: #ffffff;
   --foreground: #171717;
 }
+::selection {
+  background-color: #F8B7C4; 
+  color: #fff; 
+}
 
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -17,5 +30,71 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-poppins), sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  cursor: pointer; 
+}
+html {
+  scroll-behavior: smooth;
+}
+
+/* Markdown styling */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.markdown-content p {
+  margin-bottom: 1rem;
+}
+
+.markdown-content pre,
+.markdown-content code {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+
+.markdown-content code {
+  padding: 0.2rem 0.4rem;
+  background-color: #f4f4f4;
+  color: #d63384;
+}
+
+.markdown-content ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+}
+
+.markdown-content ol {
+  list-style-type: decimal;
+  margin-left: 1.5rem;
+}
+
+.markdown-content h2{
+  font-size: 1.5rem;
+}
+
+.markdown-content h4{
+  color: #9e7a68;
+}
+.markdown-content a {
+  color: #1d72b8;
+  text-decoration: none;
+}
+
+.markdown-content a:hover {
+  text-decoration: underline;
 }
