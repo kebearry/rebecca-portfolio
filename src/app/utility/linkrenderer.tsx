@@ -10,7 +10,6 @@ interface LinkRendererProps {
 
 const protectedSites =
   process.env.NEXT_PUBLIC_PROTECTED_SITES?.split(",") || []; // Use environment variable for protected sites
-console.log(protectedSites);
 const password = process.env.NEXT_PUBLIC_PASSWORD || "defaultpassword"; // Use environment variable for password
 
 function LinkRenderer({ href, children }: LinkRendererProps) {
