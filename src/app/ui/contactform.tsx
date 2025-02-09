@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, ChangeEvent, FormEvent } from "react";
+import { FaLinkedin } from "react-icons/fa"; // LinkedIn Icon
 
 interface FormData {
   name: string;
@@ -139,6 +140,19 @@ const ContactForm = () => {
             {status.message}
           </p>
         )}
+
+        {/* LinkedIn Section */}
+        <div className="mt-8 text-center">
+          <a
+            href="https://www.linkedin.com/in/rebecca965"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full inline-flex items-center bg-[#0077b5] text-white py-2 px-6 rounded-full font-semibold text-md hover:bg-[#005c8e] transition duration-300"
+          >
+            <FaLinkedin className="mr-2 text-2xl" />
+            Feel free to connect on LinkedIn!
+          </a>
+        </div>
       </div>
     </section>
   );

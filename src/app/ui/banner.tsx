@@ -29,7 +29,7 @@ const Banner = () => {
         >
           I bring designs to life through code.
         </div>
-        <p className="text-sm sm:text-base md:text-lg opacity-100 max-w-2xl mx-auto animate__animated animate__fadeIn animate__delay-3s text-left">
+        <p className="text-sm sm:text-base md:text-lg opacity-100 max-w-2xl animate__animated animate__fadeIn animate__delay-3s text-left">
           Before transitioning into Application Development, I explored roles in
           Digital Marketing, Graphic Design, Search Engine Optimization, Content
           Marketing, and IT Project Management. Though I excelled in these
