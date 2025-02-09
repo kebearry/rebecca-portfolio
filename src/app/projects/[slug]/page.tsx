@@ -10,10 +10,10 @@ import LinkRenderer from "../../utility/linkrenderer"; // Import the client-side
 export default async function PostPage({
   params,
 }: {
-  params: { slug: string };
+  params: { slug: string }; // Make sure the type is explicitly defined
 }) {
-  const posts = await getPosts();
-  const post = posts.find((p) => p.slug === params.slug);
+  const posts = await getPosts(); // Fetch posts from your API or local data
+  const post = posts.find((p) => p.slug === params.slug); // Find the post by slug
 
   // Handle case where post is not found
   if (!post) {
@@ -22,7 +22,6 @@ export default async function PostPage({
 
   return (
     <div className="max-w-screen-xl mx-auto p-6">
-      {/* Your JSX content */}
       <div className="z-50 fixed top-6 right-6">
         <Link href="/" passHref>
           <div className="flex items-center bg-highlight text-white rounded-lg p-5 shadow-2xl cursor-pointer transition-all duration-300 transform hover:bg-green-600 hover:scale-105">

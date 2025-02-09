@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 
 interface LinkRendererProps {
   href?: string;
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 const protectedSites =
