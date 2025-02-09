@@ -11,7 +11,13 @@ const Banner = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-[#9e7a68] via-[#a98f7d] to-[#9e7a68] opacity-80"></div>
       <div className="relative text-center p-6 space-y-4">
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-center font-bold animate__animated animate__fadeIn animate__delay-1s text-left">
-          Hi there, I&apos;m <span className="text-secondary">Rebecca</span>.
+          Hi there, I&apos;m{" "}
+          <span className="text-secondary relative inline-block">
+            <span className="relative z-10 text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-3d">
+              Rebecca
+            </span>
+          </span>
+          .
         </h1>
         <div
           className="text-lg sm:text-xl md:text-2xl opacity-100 max-w-fit mx-auto animate__animated animate__fadeIn animate__delay-2s 
