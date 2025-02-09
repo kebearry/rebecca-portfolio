@@ -13,7 +13,7 @@ export default async function Projects() {
         <div className="flex-1 max-w-md text-center sm:text-left">
           <h1 className="text-4xl font-bold mb-4">Featured Projects</h1>
         </div>
-        <div className="flex-2 w-full grid grid-cols-1 sm:grid-cols-3 gap-8">
+        <div className="flex-2 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
           {posts.map((post) => (
             <Post key={post.id} post={post} />
           ))}

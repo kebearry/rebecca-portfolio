@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { TimelineItem, timelineData } from "../lib/career";
 import Image from "next/image";
+
 interface TimelineItemProps extends TimelineItem {
   isActive: boolean;
 }
@@ -64,13 +65,13 @@ const TimelineUnit: React.FC<TimelineItemProps> = ({
         {year}
       </span>
       <div className="space-y-2">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+        <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
           {title}
         </h3>
-        <p className="text-md font-medium text-gray-600 dark:text-gray-300">
+        <p className="text-sm sm:text-md font-medium text-gray-600 dark:text-gray-300">
           {company}
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
           {description}
         </p>
       </div>
@@ -123,10 +124,10 @@ const Timeline: React.FC = () => {
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Timeline Header */}
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
             My Work Experience
           </h2>
-          <p className="text-md text-gray-600 dark:text-gray-300 mt-2">
+          <p className="text-sm sm:text-md text-gray-600 dark:text-gray-300 mt-2">
             Discover my career journey and the roles that shaped me as a
             developer.
           </p>

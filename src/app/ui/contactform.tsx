@@ -67,20 +67,15 @@ const ContactForm = () => {
     >
       <div className="max-w-md w-full bg-white/90 backdrop-blur-sm rounded-lg shadow-xl p-8 border border-primary/20">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-2 text-primary">
-            Send me a message!
-          </h2>
-          <p className="text-gray-600">
+          <h2 className="text-3xl font-bold mb-2">Send me a message!</h2>
+          <p className="text-primary">
             Got a question or proposal, or just want to say hello? Go ahead.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-primary mb-1"
-            >
+            <label htmlFor="name" className="block text-sm font-medium mb-1">
               Your Name
             </label>
             <input
@@ -95,10 +90,7 @@ const ContactForm = () => {
           </div>
 
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-primary mb-1"
-            >
+            <label htmlFor="email" className="block text-sm font-medium mb-1">
               Email Address
             </label>
             <input
@@ -113,10 +105,7 @@ const ContactForm = () => {
           </div>
 
           <div>
-            <label
-              htmlFor="message"
-              className="block text-sm font-medium text-primary mb-1"
-            >
+            <label htmlFor="message" className="block text-sm font-medium mb-1">
               Your Message
             </label>
             <textarea
