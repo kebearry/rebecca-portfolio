@@ -51,7 +51,7 @@ const TimelineUnit: React.FC<TimelineItemProps> = ({
   isActive,
 }) => (
   <div
-    className={`flex flex-col items-center w-72 md:w-80 lg:w-96 p-4 transition-all duration-300 transform ${
+    className={`flex flex-col items-center w-72 md:w-80 lg:w-96 p-4 transition-all duration-300 transform max-w-full sm:max-w-[320px] md:max-w-[360px] ${
       isActive ? "scale-105 opacity-100" : "opacity-60 scale-95"
     }`}
   >
@@ -95,9 +95,9 @@ const TimelineUnit: React.FC<TimelineItemProps> = ({
                 key={index}
                 src={cert}
                 alt={`Certification ${index + 1}`}
-                width={50} // Adjust width
-                height={50} // Adjust height
-                className="object-cover rounded-md"
+                width={50} // Set default width for desktop (you can adjust this)
+                height={50} // Set default height for desktop (you can adjust this)
+                className="object-cover rounded-md w-8 h-8 sm:w-16 sm:h-16" // Responsive classes for different screen sizes
                 priority // Optionally, add priority for faster loading
               />
             ))}

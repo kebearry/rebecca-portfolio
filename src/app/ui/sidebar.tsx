@@ -44,11 +44,11 @@ const Sidebar = () => {
       <div className="sm:hidden flex justify-end p-4 z-30 fixed top-0 right-2">
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="text-black z-30"
+          className="relative w-12 h-12 bg-black bg-opacity-40 rounded-full shadow-lg"
         >
-          <div className="w-6 h-1 bg-white mb-1"></div>
-          <div className="w-6 h-1 bg-white mb-1"></div>
-          <div className="w-6 h-1 bg-white"></div>
+          <div className="absolute top-1/4 left-1/2 w-6 h-1 bg-white transform -translate-x-1/2"></div>
+          <div className="absolute top-1/2 left-1/2 w-6 h-1 bg-white transform -translate-x-1/2 -translate-y-0.5"></div>
+          <div className="absolute bottom-1/4 left-1/2 w-6 h-1 bg-white transform -translate-x-1/2"></div>
         </button>
       </div>
 
