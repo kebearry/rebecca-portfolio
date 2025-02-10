@@ -6,6 +6,7 @@ import Link from "next/link";
 import LinkRenderer from "../../utility/linkrenderer";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { FaArrowLeft } from "react-icons/fa";
 
 interface Post {
   slug: string;
@@ -64,11 +65,9 @@ function HomeButton() {
   return (
     <div className="z-50 fixed top-6 right-6">
       <Link href="/" className="group">
-        <div className="flex items-center gap-2 bg-highlight text-white rounded-lg p-5 shadow-2xl transition-all duration-300 hover:bg-green-600 hover:scale-105">
-          <span className="text-2xl" aria-hidden="true">
-            🏠
-          </span>
-          <span className="font-bold">Back to Home</span>
+        <div className="flex items-center gap-2 bg-hotpink text-white rounded-lg p-5 shadow-xl transition-all duration-300 animate-bounce">
+          <FaArrowLeft className="text-2xl" aria-hidden="true" />
+          <span className="font-bold text-white">Back to Home</span>
         </div>
       </Link>
     </div>

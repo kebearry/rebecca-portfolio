@@ -41,14 +41,14 @@ const Sidebar = () => {
   return (
     <div>
       {/* Hamburger Menu Icon for Mobile */}
-      <div className="sm:hidden flex justify-end p-4 z-30">
+      <div className="sm:hidden flex justify-end p-4 z-30 fixed top-0 right-2">
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="text-black z-30"
         >
-          <div className="w-6 h-1 bg-black mb-1"></div>
-          <div className="w-6 h-1 bg-black mb-1"></div>
-          <div className="w-6 h-1 bg-black"></div>
+          <div className="w-6 h-1 bg-white mb-1"></div>
+          <div className="w-6 h-1 bg-white mb-1"></div>
+          <div className="w-6 h-1 bg-white"></div>
         </button>
       </div>
 
@@ -73,7 +73,9 @@ const Sidebar = () => {
         </div>
         <div
           className={`cursor-pointer ${
-            activeIcon === "projects" ? "bg-[rgba(255,182,193,0.5)] text-white" : ""
+            activeIcon === "projects"
+              ? "bg-[rgba(255,182,193,0.5)] text-white"
+              : ""
           } w-full flex items-center justify-start space-x-2`}
           onClick={() => handleClick("projects")}
         >
@@ -123,7 +125,9 @@ const Sidebar = () => {
 
         <div
           className={`group w-full cursor-pointer ${
-            activeIcon === "projects" ? "bg-[rgba(255,182,193,0.5)] text-black" : ""
+            activeIcon === "projects"
+              ? "bg-[rgba(255,182,193,0.5)] text-black"
+              : ""
           } flex items-center justify-center space-x-2`}
           onClick={() => handleClick("projects")}
         >
