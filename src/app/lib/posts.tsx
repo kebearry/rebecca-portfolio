@@ -3,6 +3,146 @@ export const getPosts = async () => {
   // Hardcoded posts with a summary and full markdown content
   return [
     {
+      id: -4,
+      image: "https://cdn.dribbble.com/userupload/42943972/file/original-492d89eb211053e886a7354ad5d2e475.png?resize=1024x768&vertical=center",
+      slug: "math-worksheet-generator",
+      title: "Custom Math Worksheet Generator",
+      type: "Full Stack Development, UI/UX Design",
+      industry: "Educational, EdTech",
+      role: "Full Stack Engineer, UI/UX Designer",
+      tools: "React, JavaScript, Material UI, MongoDB, Vercel",
+      summary: "A versatile educational platform that empowers teachers to create engaging math worksheets with customizable problems, difficulty levels, and interactive elements like hidden messages, making math practice both purposeful and enjoyable for students.",
+      fullContent: `
+# Custom Math Worksheet Generator
+
+## Introduction
+The Custom Math Worksheet Generator is a comprehensive tool designed to streamline the creation of engaging math practice materials. Teachers can quickly generate customized worksheets with various problem types, difficulty levels, and interactive elements like hidden messages, saving valuable preparation time while ensuring students remain motivated through purposeful practice.
+
+## About My Contribution
+
+### UI/UX Design
+I led the user experience design process focusing on two distinct user journeys:
+
+- **Teacher Experience:** Developed an intuitive worksheet creation interface where teachers can:
+  - Customize problem types and difficulty levels
+  - Generate problems in bulk with specific parameters
+  - Add engaging elements like secret messages
+  - Preview and adjust worksheets before finalizing
+  - Save templates for future use
+
+- **Student Experience:** Created a clean, focused layout that:
+  - Presents problems clearly and systematically
+  - Includes interactive elements that reward progress
+  - Maintains engagement through achievement markers
+  - Works seamlessly on both desktop and tablet devices
+
+![Teacher Dashboard](https://i.imgur.com/Gk2MYA3.png)
+![Student View](https://i.imgur.com/u06vLSQ.png)
+
+### Frontend Development
+- **React Components:** Built reusable components for problem generation, customization controls, and worksheet preview using React and Material UI
+- **Interactive Features:** Implemented real-time preview functionality allowing teachers to visualize worksheet layouts and problem sets instantly
+- **Responsive Design:** Ensured the application works seamlessly across desktop and tablet devices for both creation and solving modes
+
+### Backend Development
+- **API Development:** Created RESTful APIs using Node.js for worksheet management and data persistence
+- **Database Design:** Designed MongoDB schema for storing worksheet templates and problem sets
+- **Data Management:** Implemented CRUD operations for worksheet creation and retrieval
+
+### Technical Architecture
+- **Frontend:** React with Material UI for component styling
+- **Backend:** Node.js REST API with Express
+- **Database:** MongoDB for flexible document storage
+- **Deployment:** Vercel hosting for the application
+
+## Links
+- [Live Site](your-live-site-url)
+- [GitHub Repository](your-github-url)
+`,
+    },
+    {
+      id: -3,
+      image: "https://cdn.dribbble.com/userupload/42945072/file/original-3e84521baf3006a706518eec8f82f615.png?resize=1024x768&vertical=center",
+      slug: "custom-vinyl-player",
+      title: "Custom Spotify Vinyl Player",
+      type: "Full Stack Development, UI/UX Design",
+      industry: "Music, Entertainment",
+      role: "Full Stack Developer, UI/UX Designer",
+      tools: "Next.js 14, TypeScript, Tailwind CSS, Spotify Web API, MongoDB, Vercel",
+      summary: "A modern web application that transforms the Spotify listening experience into an immersive vinyl player interface, complete with realistic record spinning animations, playlist management, and social features like shared song notes.",
+      fullContent: `
+# Custom Spotify Vinyl Player
+
+## Introduction
+The Custom Spotify Vinyl Player reimagines the digital music streaming experience by combining modern technology with nostalgic vinyl aesthetics. This web application transforms Spotify playback into an immersive vinyl experience, featuring realistic record animations and social sharing capabilities that bring music lovers together.
+
+## About My Contribution
+
+### UI/UX Design
+I led the design process focusing on creating an engaging and intuitive interface:
+
+- **Vinyl Player Interface:**
+  - Designed a realistic vinyl record player with dynamic spinning animation
+  - Created seamless album artwork integration into the vinyl display
+  - Implemented responsive playback controls that mirror physical turntable interactions
+  - Developed an intuitive layout for playlist management and social features
+
+- **Social Experience:**
+  - Designed a shared notes system for collaborative music discovery
+  - Created an emoji reaction system for quick song feedback
+  - Integrated playlist management with a focus on community sharing
+  - Built an intuitive interface for viewing and creating song comments
+
+![Vinyl Player Interface](https://i.imgur.com/fsjOntu.png)
+
+![Social Features](https://i.imgur.com/SlcdH2J.png)
+
+### Frontend Development
+- **Next.js Components:**
+  - Built reusable components for the vinyl player interface
+  - Implemented smooth animations for record spinning and playback controls
+  - Created responsive layouts for cross-device compatibility
+  - Developed real-time social interaction features
+
+- **Spotify Integration:**
+  - Implemented OAuth authentication for Spotify accounts
+  - Created seamless playback controls using Spotify Web API
+  - Built playlist management and track selection features
+  - Integrated real-time track progress and metadata display
+
+### Backend Development
+- **API Development:**
+  - Designed RESTful APIs for social features and user interactions
+  - Implemented WebSocket connections for real-time updates
+  - Created endpoints for playlist management and song notes
+  - Built efficient data caching for improved performance
+
+- **Database Design:**
+  - Structured MongoDB schemas for user data and social interactions
+  - Implemented efficient queries for real-time data retrieval
+  - Created indexes for optimized search and filtering
+  - Designed data models for scalable social features
+
+### Technical Architecture
+- **Frontend:** Next.js 14 with TypeScript and Tailwind CSS
+- **Backend:** Next.js API routes with TypeScript
+- **Database:** MongoDB for social features and user data
+- **APIs:** Spotify Web API for music playback and control
+- **Deployment:** Vercel for hosting and continuous deployment
+
+## Key Features
+- Realistic vinyl player interface with dynamic animations
+- Seamless Spotify integration for music playback
+- Social features including shared notes and reactions
+- Real-time playlist management and track controls
+- Responsive design for all device sizes
+
+## Links
+- [Live Site](https://custom-spotify-vinyl.vercel.app)
+- [GitHub Repository](https://github.com/kebearry/custom-spotify-vinyl)
+`,
+    },
+    {
       id: -2,
       image:
         "https://cdn.dribbble.com/userupload/23485394/file/original-8b7ddc2ea0d8eedf473d5e4ae5eeb1ef.png",
@@ -26,7 +166,7 @@ The mental health website serves as a vital digital resource for individuals see
 I was responsible for implementing the frontend of the website, ensuring that the design provided by the project team members was faithfully translated into an interactive and responsive user interface. In this project, the frontend was built using headless NextJS to meet the client's specific requirements. The client specifically preferred TailwindCSS for styling due to its utility-first approach, which allowed for rapid development while maintaining a consistent design system. 
 
 **Key Frontend Features:** 
-- **Responsive Navigation Bar:** The navigation bar was designed to dynamically pull links from Sitecore XM Cloud’s content tree. As a partial design, it allows content editors to manage navigation links directly in Sitecore without requiring developer intervention. This ensures that any updates made within the CMS are automatically reflected on the website, maintaining content accuracy.
+- **Responsive Navigation Bar:** The navigation bar was designed to dynamically pull links from Sitecore XM Cloud's content tree. As a partial design, it allows content editors to manage navigation links directly in Sitecore without requiring developer intervention. This ensures that any updates made within the CMS are automatically reflected on the website, maintaining content accuracy.
 ![Example Image](https://i.imgur.com/QMSeg89.png)
 
 - **Dynamic Column Content Blocks with CTA:** A flexible dynamic content block system was implemented, allowing content authors to configure the grid layout (1, 2, or 3 columns) and choose whether an image appears on the left or right. This feature ensures better visual storytelling while giving content teams full control over how information is presented.   
@@ -107,7 +247,7 @@ I was responsible for implementing the frontend of the website, ensuring that th
   
   ## Introduction
   
-This fishing website serves as a comprehensive platform for anglers, offering a wide range of high-quality fishing gear and equipment. With a focus on precision engineering and innovation, the website showcases the client’s extensive collection of fishing rods, reels, lures, accessories, and apparel, designed to enhance every fishing experience.
+This fishing website serves as a comprehensive platform for anglers, offering a wide range of high-quality fishing gear and equipment. With a focus on precision engineering and innovation, the website showcases the client's extensive collection of fishing rods, reels, lures, accessories, and apparel, designed to enhance every fishing experience.
 
 ## About My Contribution
 #### Frontend Development:
@@ -124,10 +264,10 @@ I was responsible for implementing the frontend of the website, ensuring that th
 ![Example Image](https://i.imgur.com/fqFUNzm.png)
 
 #### CMS Development:
-As the CMS developer, my responsibility was to configure and integrate the content management functionalities that allowed the client’s team to easily manage content without any technical expertise.
+As the CMS developer, my responsibility was to configure and integrate the content management functionalities that allowed the client's team to easily manage content without any technical expertise.
 - **Content Templates:** I created flexible content templates that allowed the website administrators to easily populate pages with dynamic and consistent content. These templates were designed for various types of pages like product listings, landing pages, news articles, and informational sections.
 - **Sling Models:** I create Sling Models to provide an abstraction layer that maps JCR (Java Content Repository) nodes to Java objects. This allows me to easily access and manipulate AEM content in a structured and efficient way, improving the maintainability and readability of the code. By using Sling Models, I can seamlessly integrate dynamic content into the frontend, making the development process faster and more scalable.
-- **Modular Components:** I built reusable content components within AEM that allowed for consistent content presentation across different pages. These components, like image galleries, product carousels, and featured product sections, were designed to be flexible and customizable for the client’s needs, ensuring that they could easily maintain a cohesive design while updating content.
+- **Modular Components:** I built reusable content components within AEM that allowed for consistent content presentation across different pages. These components, like image galleries, product carousels, and featured product sections, were designed to be flexible and customizable for the client's needs, ensuring that they could easily maintain a cohesive design while updating content.
 - **User Permissions:** I set up user roles and permissions, ensuring that only authorized team members could make changes to sensitive or high-priority content, further enhancing security and content quality.
 
 ## Links:
@@ -158,9 +298,9 @@ Customer service agents require an efficient system to access product availabili
  ## The Development Requirements
 **Users (customer service agents) of the application should be able to perform the following actions:**
 - Search for iPhone 13 models and their variants' availability in a given location
-- The search results should answer customer inquiries, including, but not limited to: *Example 1: “Is the iPhone 13 256GB model available in California, United States?”
-Example 2: “What stores have the iPhone 13 Pro Max 512GB Green available?”
-Example 3: “What iPhone 13 models are available in Ohio, United States?”*
+- The search results should answer customer inquiries, including, but not limited to: *Example 1: "Is the iPhone 13 256GB model available in California, United States?"
+Example 2: "What stores have the iPhone 13 Pro Max 512GB Green available?"
+Example 3: "What iPhone 13 models are available in Ohio, United States?"*
 - The product inventory must include iPhone 13 and iPhone 13 Pro models.
 - The web application must allow customer service agents to easily and quickly assist customers calling Apple by checking product availability in the specified locations
 - Flexible technology stack and framework but web application should be responsive, intuitive, and highly functional for the end users
@@ -201,7 +341,7 @@ Example 3: “What iPhone 13 models are available in Ohio, United States?”*
   
 NFTs experienced explosive growth in 2021, with billions of dollars in cryptocurrency invested into this emerging asset class. Baonation was created as a passion project to tap into this trend, providing a platform for users to engage with the ever-expanding NFT market. NFTs are unique digital art pieces or images tokenized on the blockchain, often as one-of-a-kind works or part of limited collections. This tokenization makes them valuable to collectors, as they offer verifiable ownership and provenance, guaranteeing authenticity and rarity.
 
-The relationship between NFTs and images has opened new avenues for digital artists, allowing for the creation, sale, and exchange of art in a way that mirrors the rarity and ownership seen in traditional art markets. Seeing NFTs grow in significance within the art world, I recognized it as a prime opportunity to push my creative boundaries. Through my digital illustrations, I’ve been able to experiment with new styles, connect with a broader audience, and fully explore my artistic potential in a way I hadn’t before. 
+The relationship between NFTs and images has opened new avenues for digital artists, allowing for the creation, sale, and exchange of art in a way that mirrors the rarity and ownership seen in traditional art markets. Seeing NFTs grow in significance within the art world, I recognized it as a prime opportunity to push my creative boundaries. Through my digital illustrations, I've been able to experiment with new styles, connect with a broader audience, and fully explore my artistic potential in a way I hadn't before. 
 
 ## Goals to Features
 ![Example Image](https://i.imgur.com/Fzmgtcm.png)
@@ -250,7 +390,7 @@ In Singapore, securing a parking spot remains a time-consuming and frustrating e
 
 ## How are Existing Competitors Supporting or Hindering Drivers' Journey
 Existing apps like Parking.sg offer car park information, but they do not provide real-time data. Drivers must manually check each parking lot on a map, which is an inefficient process.
-While there are applications like ParkWhiz that offer real-time parking information, they are primarily US-based and not suitable for Singapore’s unique urban context.
+While there are applications like ParkWhiz that offer real-time parking information, they are primarily US-based and not suitable for Singapore's unique urban context.
 
 ## Getting to Know Our Users
 A survey conducted with 31 drivers revealed that over 70% find it very time-consuming and inconvenient to find available parking spots, further emphasizing the need for a more efficient solution.
@@ -287,7 +427,7 @@ A survey conducted with 31 drivers revealed that over 70% find it very time-cons
       fullContent: `
 # Ecommerce Website Design
 ## The Problem
-In Singapore’s highly saturated blogshop industry, many businesses operate without physical stores, making their online presence the sole channel for engaging with customers. With an increasing number of online-only brands, it’s critical for a blogshop to stand out by providing a seamless and memorable user experience. The challenge is to design an eCommerce website that not only drives traffic but also enhances conversion rates, ensuring that first-time visitors and repeat customers alike can easily navigate through the site and complete purchases. 
+In Singapore's highly saturated blogshop industry, many businesses operate without physical stores, making their online presence the sole channel for engaging with customers. With an increasing number of online-only brands, it's critical for a blogshop to stand out by providing a seamless and memorable user experience. The challenge is to design an eCommerce website that not only drives traffic but also enhances conversion rates, ensuring that first-time visitors and repeat customers alike can easily navigate through the site and complete purchases. 
 
 ## How Are Our Competitors Supporting or Hindering Buyers' Journey?
 
@@ -357,7 +497,7 @@ In Singapore’s highly saturated blogshop industry, many businesses operate wit
 
 ## The Problem
 
-The aviation industry generates 6.7 million tonnes of cabin waste annually, costing about US$1.09 billion to manage. For Singapore Airlines (SIA), this translates to an additional US$1.92 million in costs each year due to the handling of increasing cabin waste. With 25% of fliers being environmentally conscious millennials, there’s a growing risk of losing customers who demand more sustainable travel options. As eco-conscious travel continues to gain popularity, airlines must adapt or face losing a significant segment of their customer base.
+The aviation industry generates 6.7 million tonnes of cabin waste annually, costing about US$1.09 billion to manage. For Singapore Airlines (SIA), this translates to an additional US$1.92 million in costs each year due to the handling of increasing cabin waste. With 25% of fliers being environmentally conscious millennials, there's a growing risk of losing customers who demand more sustainable travel options. As eco-conscious travel continues to gain popularity, airlines must adapt or face losing a significant segment of their customer base.
 
 ## How  are Existing Competitors Supporting or Hindering Flyers' Journey
 ![Example Image](https://i.imgur.com/cYvDbo7.png)
@@ -481,12 +621,12 @@ Planning a well-rounded trip is often overwhelming, as travelers need to conside
 - **Weaknesses:** Lacks personalized trip planning features and struggles to integrate local, customized experiences in an intuitive manner. It can also be overwhelming due to the sheer volume of information.
 
 ### Google Travel:
-- **Strengths:** Google’s strength lies in its ability to aggregate all travel-related information, from flights and hotels to activities. The platform offers automatic trip suggestions based on user searches and interests.
+- **Strengths:** Google's strength lies in its ability to aggregate all travel-related information, from flights and hotels to activities. The platform offers automatic trip suggestions based on user searches and interests.
 - **Weaknesses:** While highly efficient, it is not truly personalized. It lacks a human touch or specific guidance for unique trip needs or interests.
 
 ### Road Tripper:
 - **Strengths:** Great for planning road trips, offering a route planner with suggested stops, attractions, and accommodation.
-- **Weaknesses:**  It’s mainly focused on road trips and doesn’t provide comprehensive travel planning for international destinations or varied types of travel.
+- **Weaknesses:**  It's mainly focused on road trips and doesn't provide comprehensive travel planning for international destinations or varied types of travel.
 
 ## How does the Floy Smart Travel App address users'needs?
 ### Preference Driven:
