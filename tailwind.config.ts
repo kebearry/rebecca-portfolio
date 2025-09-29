@@ -24,10 +24,11 @@ export default {
         },
       },
       colors: {
-        primary: "#9e7a68", // Earthy Brown
-        secondary: "#F8B7C4", // Soft Pink
-        highlight: "#6FCF97", // Soft Green
-        hotpink: "#FF69B4", //Hot Pink,
+        primary: "#F5F0EB", // Light Beige/Off-White
+        secondary: "#E8D5D1", // Soft Pink/Beige
+        highlight: "#D4B5A0", // Warm Beige
+        accent: "#8B6F47", // Dark Brown for text
+        lightpink: "#F2E8E5", // Very Light Pink
         mutedpink: "#F9E4E7", //Muted Pink
         background: "var(--background)",
         foreground: "var(--foreground)",
