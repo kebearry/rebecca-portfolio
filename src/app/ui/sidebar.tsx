@@ -63,7 +63,7 @@ const Sidebar = () => {
         <div
           className={`cursor-pointer ${
             activeIcon === "banner"
-              ? "bg-[rgba(255,182,193,0.5)] text-white"
+              ? "bg-secondary text-white"
               : ""
           } w-full flex items-center justify-start space-x-2`}
           onClick={() => handleClick("banner")}
@@ -74,7 +74,7 @@ const Sidebar = () => {
         <div
           className={`cursor-pointer ${
             activeIcon === "projects"
-              ? "bg-[rgba(255,182,193,0.5)] text-white"
+              ? "bg-secondary text-white"
               : ""
           } w-full flex items-center justify-start space-x-2`}
           onClick={() => handleClick("projects")}
@@ -85,7 +85,7 @@ const Sidebar = () => {
         <div
           className={`cursor-pointer ${
             activeIcon === "timeline"
-              ? "bg-[rgba(255,182,193,0.5)] text-white"
+              ? "bg-secondary text-white"
               : ""
           } w-full flex items-center justify-start space-x-2`}
           onClick={() => handleClick("timeline")}
@@ -97,7 +97,7 @@ const Sidebar = () => {
         <div
           className={`cursor-pointer ${
             activeIcon === "contact"
-              ? "bg-[rgba(255,182,193,0.5)] text-white"
+              ? "bg-secondary text-white"
               : ""
           } w-full flex items-center justify-start space-x-2`}
           onClick={() => handleClick("contact")}
@@ -108,11 +108,11 @@ const Sidebar = () => {
       </div>
 
       {/* Desktop Sidebar */}
-      <div className="hidden sm:flex fixed top-1/2 right-4 transform -translate-y-1/2 w-16 bg-gray-100 bg-opacity-80 text-black flex-col items-center justify-center rounded-full z-10 h-[90vh] space-y-8 hover:w-32 transition-all duration-300">
+      <div className="hidden sm:flex fixed top-1/2 right-4 transform -translate-y-1/2 w-16 bg-white bg-opacity-90 text-accent flex-col items-center justify-center rounded-full z-10 h-[90vh] space-y-8 hover:w-32 transition-all duration-300 shadow-lg">
         <div
           className={`group w-full cursor-pointer ${
             activeIcon === "banner"
-              ? "bg-[rgba(255,182,193,0.5)] font-semibold text-black"
+              ? "bg-secondary font-semibold text-accent"
               : ""
           } flex items-center justify-center space-x-2`}
           onClick={() => handleClick("banner")}
@@ -126,7 +126,7 @@ const Sidebar = () => {
         <div
           className={`group w-full cursor-pointer ${
             activeIcon === "projects"
-              ? "bg-[rgba(255,182,193,0.5)] text-black"
+              ? "bg-secondary text-accent"
               : ""
           } flex items-center justify-center space-x-2`}
           onClick={() => handleClick("projects")}
@@ -140,7 +140,7 @@ const Sidebar = () => {
         <div
           className={`group w-full cursor-pointer ${
             activeIcon === "timeline"
-              ? "bg-[rgba(255,182,193,0.5)] text-black"
+              ? "bg-secondary text-accent"
               : ""
           } flex items-center justify-center space-x-2`}
           onClick={() => handleClick("timeline")}
@@ -155,7 +155,7 @@ const Sidebar = () => {
         <div
           className={`group w-full cursor-pointer ${
             activeIcon === "contact"
-              ? "bg-[rgba(255,182,193,0.5)] text-black"
+              ? "bg-secondary text-accent"
               : ""
           } flex items-center justify-center space-x-2`}
           onClick={() => handleClick("contact")}

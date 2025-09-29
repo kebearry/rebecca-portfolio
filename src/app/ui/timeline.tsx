@@ -56,22 +56,22 @@ const TimelineUnit: React.FC<TimelineItemProps> = ({
     }`}
   >
     <div className="relative">
-      <div className="w-4 h-4 rounded-full bg-hotpink shadow-lg" />
+      <div className="w-4 h-4 rounded-full bg-accent shadow-lg" />
       <div className="absolute left-1/2 -translate-x-1/2 w-0.5 h-20 bg-gradient-to-b from-blue-500/50 to-gray-200" />
     </div>
 
     <div className="mt-24 w-full text-center space-y-3">
-      <span className="inline-block px-4 py-1.5 rounded-full bg-mutedpink text-hotpink font-semibold">
+      <span className="inline-block px-4 py-1.5 rounded-full bg-secondary text-accent font-semibold">
         {year}
       </span>
       <div className="space-y-2">
-        <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
+        <h3 className="text-lg sm:text-xl font-bold text-accent">
           {title}
         </h3>
-        <p className="text-sm sm:text-md font-medium text-gray-600 dark:text-gray-300">
+        <p className="text-sm sm:text-md font-medium text-accent/80">
           {company}
         </p>
-        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+        <p className="text-xs sm:text-sm text-accent/70 leading-relaxed">
           {description}
         </p>
       </div>
@@ -80,7 +80,7 @@ const TimelineUnit: React.FC<TimelineItemProps> = ({
           technology.map((tag, index) => (
             <span
               key={index}
-              className="inline-block px-3 py-1 text-xs rounded-full bg-hotpink text-white"
+              className="inline-block px-3 py-1 text-xs rounded-full bg-secondary text-accent"
             >
               {tag}
             </span>
@@ -120,14 +120,14 @@ const Timeline: React.FC = () => {
   };
 
   return (
-    <section id="timeline" className="min-h-screen flex items-center">
+    <section id="timeline" className="min-h-screen flex items-center bg-primary">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Timeline Header */}
         <div className="text-center mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h2 className="text-2xl sm:text-3xl font-bold text-accent">
             My Work Experience
           </h2>
-          <p className="text-sm sm:text-md text-gray-600 dark:text-gray-300 mt-2">
+          <p className="text-sm sm:text-md text-accent/70 mt-2">
             Discover my career journey and the roles that shaped me as a
             developer.
           </p>
@@ -137,13 +137,13 @@ const Timeline: React.FC = () => {
             <button
               onClick={() => scroll("left")}
               disabled={activeIndex === 0}
-              className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors
+              className={`p-2 rounded-full hover:bg-secondary/50 transition-colors
               ${
                 activeIndex === 0
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:shadow-md"
               }
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900`}
+              focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-primary`}
               aria-label="Previous item"
             >
               <ChevronLeft />
@@ -169,13 +169,13 @@ const Timeline: React.FC = () => {
             <button
               onClick={() => scroll("right")}
               disabled={activeIndex === timelineData.length - 1}
-              className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors
+              className={`p-2 rounded-full hover:bg-secondary/50 transition-colors
               ${
                 activeIndex === timelineData.length - 1
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:shadow-md"
               }
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900`}
+              focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-primary`}
               aria-label="Next item"
             >
               <ChevronRight />
@@ -193,8 +193,8 @@ const Timeline: React.FC = () => {
               key={index}
               className={`w-2 h-2 rounded-full transition-colors ${
                 index === activeIndex
-                  ? "bg-blue-500"
-                  : "bg-gray-300 dark:bg-gray-700"
+                  ? "bg-accent"
+                  : "bg-secondary"
               }`}
               onClick={() => setActiveIndex(index)}
               aria-label={`Go to item ${index + 1}`}

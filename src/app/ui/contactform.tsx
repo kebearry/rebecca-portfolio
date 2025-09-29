@@ -64,19 +64,19 @@ const ContactForm = () => {
   return (
     <section
       id="contact"
-      className="w-full min-h-screen bg-gradient-to-br from-hotpink via-primary/30 to-primary flex items-center justify-center p-4"
+      className="w-full min-h-screen bg-gradient-to-br from-secondary via-primary to-lightpink flex items-center justify-center p-4"
     >
-      <div className="max-w-md w-full bg-white/90 backdrop-blur-sm rounded-lg shadow-xl p-8 border border-primary/20">
+      <div className="max-w-md w-full bg-white/95 backdrop-blur-sm rounded-lg shadow-xl p-8 border border-secondary">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-2">Send me a message!</h2>
-          <p className="text-primary">
+          <h2 className="text-3xl font-bold mb-2 text-accent">Send me a message!</h2>
+          <p className="text-accent/70">
             Got a question or proposal, or just want to say hello? Go ahead.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-1">
+            <label htmlFor="name" className="block text-sm font-medium mb-1 text-accent">
               Your Name
             </label>
             <input
@@ -85,13 +85,13 @@ const ContactForm = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-primary/20 rounded-md focus:ring-2 focus:ring-primary/30 focus:border-transparent transition duration-200"
+              className="w-full px-4 py-2 border border-secondary rounded-md focus:ring-2 focus:ring-secondary focus:border-accent transition duration-200 text-accent"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-1">
+            <label htmlFor="email" className="block text-sm font-medium mb-1 text-accent">
               Email Address
             </label>
             <input
@@ -100,13 +100,13 @@ const ContactForm = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-primary/20 rounded-md focus:ring-2 focus:ring-primary/30 focus:border-transparent transition duration-200"
+              className="w-full px-4 py-2 border border-secondary rounded-md focus:ring-2 focus:ring-secondary focus:border-accent transition duration-200 text-accent"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="message" className="block text-sm font-medium mb-1">
+            <label htmlFor="message" className="block text-sm font-medium mb-1 text-accent">
               Your Message
             </label>
             <textarea
@@ -115,14 +115,14 @@ const ContactForm = () => {
               value={formData.message}
               onChange={handleChange}
               rows={4}
-              className="w-full px-4 py-2 border border-primary/20 rounded-md focus:ring-2 focus:ring-primary/30 focus:border-transparent transition duration-200 resize-none"
+              className="w-full px-4 py-2 border border-secondary rounded-md focus:ring-2 focus:ring-secondary focus:border-accent transition duration-200 resize-none text-accent"
               required
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-hotpink text-white font-medium py-2 px-4 rounded-md hover:bg-hotpink transform transition duration-200 hover:-translate-y-1"
+            className="w-full bg-accent text-white font-semibold py-3 px-4 rounded-lg hover:bg-accent/90 transform transition duration-200 hover:-translate-y-1 shadow-md"
           >
             Shoot
           </button>
@@ -147,7 +147,7 @@ const ContactForm = () => {
             href="https://www.linkedin.com/in/rebecca965"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full inline-flex items-center bg-[#0077b5] text-white py-2 px-6 rounded-full font-semibold text-md hover:bg-[#005c8e] transition duration-300"
+            className="w-full inline-flex items-center bg-[#0077b5] text-white py-3 px-6 rounded-lg font-semibold text-md hover:bg-[#005c8e] transition duration-300 shadow-md"
           >
             <FaLinkedin className="mr-2 text-2xl" />
             Feel free to connect on LinkedIn!

@@ -33,7 +33,7 @@ export default async function PostPage({ params }: PageProps) {
   }
 
   return (
-    <article className="max-w-screen-xl mx-auto p-6">
+    <article className="max-w-screen-xl mx-auto p-6 bg-primary min-h-screen">
       <HomeButton />
       <ProjectHeader post={post} />
       <ProjectDetails post={post} />
@@ -65,7 +65,7 @@ function HomeButton() {
   return (
     <div className="z-50 fixed top-6 right-6">
       <Link href="/" className="group">
-        <div className="flex items-center gap-2 bg-hotpink text-white rounded-lg p-5 shadow-xl transition-all duration-300 animate-bounce">
+        <div className="flex items-center gap-2 bg-accent text-white rounded-lg p-5 shadow-xl transition-all duration-300 animate-bounce">
           <FaArrowLeft className="text-2xl" aria-hidden="true" />
           <span className="font-bold text-white">Back to Home</span>
         </div>
@@ -106,7 +106,7 @@ function ProjectDetails({ post }: { post: Post }) {
   ];
 
   return (
-    <section className="bg-[#9e7a68] text-white p-6 rounded-lg shadow-md mb-8">
+    <section className="bg-secondary text-accent p-6 rounded-lg shadow-md mb-8">
       <ul className="space-y-4 text-lg">
         {details.map(({ label, value }) => (
           <li key={label}>
@@ -120,7 +120,7 @@ function ProjectDetails({ post }: { post: Post }) {
 
 function ProjectContent({ content }: { content: string }) {
   return (
-    <div className="prose prose-lg text-gray-700 dark:text-gray-300 markdown-content">
+    <div className="prose prose-lg text-accent markdown-content">
       <ReactMarkdown components={{ a: LinkRenderer }}>{content}</ReactMarkdown>
     </div>
   );

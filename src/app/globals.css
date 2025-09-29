@@ -4,11 +4,11 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #8B6F47;
 }
 ::selection {
-  background-color: #F8B7C4; 
-  color: #fff; 
+  background-color: #E8D5D1; 
+  color: #8B6F47; 
 }
 
 ::-webkit-scrollbar {
@@ -92,7 +92,7 @@ html {
 }
 
 .markdown-content h4{
-  color: #9e7a68;
+  color: #8B6F47;
 }
 .markdown-content a {
   color: #1d72b8;

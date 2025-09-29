@@ -9,7 +9,7 @@ export const getPosts = async () => {
       title: "Custom Math Worksheet Generator",
       type: "Full Stack Development, UI/UX Design",
       industry: "Educational, EdTech",
-      role: "Full Stack Engineer, UI/UX Designer",
+      role: "Full Stack Engineer, UI/UX Designer, Product Developer",
       tools: "React, JavaScript, Material UI, MongoDB, Vercel",
       summary: "A versatile educational platform that empowers teachers to create engaging math worksheets with customizable problems, difficulty levels, and interactive elements like hidden messages, making math practice both purposeful and enjoyable for students.",
       fullContent: `
@@ -67,7 +67,7 @@ I led the user experience design process focusing on two distinct user journeys:
       title: "Custom Spotify Vinyl Player",
       type: "Full Stack Development, UI/UX Design",
       industry: "Music, Entertainment",
-      role: "Full Stack Developer, UI/UX Designer",
+      role: "Full Stack Developer, UI/UX Designer, Founder, Product Manager",
       tools: "Next.js 14, TypeScript, Tailwind CSS, Spotify Web API, MongoDB, Vercel",
       summary: "A modern web application that transforms the Spotify listening experience into an immersive vinyl player interface, complete with realistic record spinning animations, playlist management, and social features like shared song notes.",
       fullContent: `

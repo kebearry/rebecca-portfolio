@@ -40,7 +40,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
             {roles.map((role, index) => (
               <span
                 key={index}
-                className="bg-hotpink text-white rounded-full px-3 py-1 text-xs"
+                className="bg-secondary text-accent rounded-full px-3 py-1 text-xs font-medium"
               >
                 {role}
               </span>
@@ -53,7 +53,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
       <div className="mt-auto w-full">
         <a
           href={`/projects/${post.slug}`}
-          className="font-light block text-primary bg-white border border-primary hover:bg-primary hover:text-white dark:bg-gray-800 dark:text-primary-400 dark:border-primary-400 dark:hover:bg-primary-500 dark:hover:text-white py-3 rounded-xl text-center transition duration-300 transform"
+          className="font-semibold block text-accent bg-white border-2 border-accent hover:bg-accent hover:text-white dark:bg-gray-800 dark:text-accent dark:border-accent dark:hover:bg-accent dark:hover:text-white py-3 rounded-xl text-center transition duration-300 transform hover:scale-105"
         >
           {/* Read More Text */}
           Read more

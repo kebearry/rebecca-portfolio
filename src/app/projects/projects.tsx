@@ -7,7 +7,7 @@ export default async function Projects() {
   return (
     <section
       id="projects"
-      className="bg-secondary min-h-screen flex items-center justify-center text-white px-4 sm:px-8 py-8"
+      className="bg-primary min-h-screen flex items-center justify-center text-accent px-4 sm:px-8 py-8"
     >
       <div className="w-full max-w-screen-xl mx-auto flex flex-col sm:flex-row space-y-8 sm:space-y-0 sm:space-x-16">
         <div className="flex-1 max-w-md text-center sm:text-left">
