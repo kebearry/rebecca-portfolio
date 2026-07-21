@@ -7,13 +7,12 @@ const MAX_NAME = 100;
 const MAX_EMAIL = 254;
 const MAX_MESSAGE = 5000;
 
-const transporter = nodemailer.createTransport({
-  service: "Gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+function getMailAuth() {
+  const user = process.env.EMAIL_USER?.trim();
+  // Gmail app passwords are often copied with spaces — strip them
+  const pass = process.env.EMAIL_PASS?.replace(/\s+/g, "");
+  return { user, pass };
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -81,17 +80,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    const { user, pass } = getMailAuth();
+    if (!user || !pass) {
       console.error("Missing EMAIL_USER or EMAIL_PASS");
       return NextResponse.json(
-        { success: false, message: "Failed to send email" },
+        { success: false, message: "Email is not configured" },
         { status: 500 }
       );
     }
 
+    const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: { user, pass },
+    });
+
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
+      from: user,
+      to: user,
       replyTo: trimmedEmail,
       subject: `[Portfolio] New Contact Form Submission from ${trimmedName}`,
       text: `Name: ${trimmedName}\nEmail: ${trimmedEmail}\n\nMessage:\n${trimmedMessage}`,
@@ -102,9 +107,19 @@ export async function POST(req: NextRequest) {
       message: "Email sent successfully!",
     });
   } catch (error) {
-    console.error("Error sending email:", error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Error sending email:", message);
+
+    const isAuthFailure =
+      /Invalid login|BadCredentials|EAUTH|535/i.test(message);
+
     return NextResponse.json(
-      { success: false, message: "Failed to send email" },
+      {
+        success: false,
+        message: isAuthFailure
+          ? "Email login failed. Check EMAIL_USER / EMAIL_PASS on Vercel."
+          : "Failed to send email",
+      },
       { status: 500 }
     );
   }
