@@ -157,17 +157,26 @@ const ContactForm = () => {
           </p>
         )}
 
-        {/* LinkedIn Section */}
-        <div className="mt-8 text-center">
+        <div className="mt-8 text-center space-y-4">
           <a
             href="https://www.linkedin.com/in/rebecca965"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full inline-flex items-center bg-[#0077b5] text-white py-3 px-6 rounded-lg font-semibold text-md hover:bg-[#005c8e] transition duration-300 shadow-md"
+            className="w-full inline-flex items-center justify-center bg-[#0077b5] text-white py-3 px-6 rounded-lg font-semibold text-md hover:bg-[#005c8e] transition duration-300 shadow-md"
           >
             <FaLinkedin className="mr-2 text-2xl" />
             Feel free to connect on LinkedIn!
           </a>
+          <p className="text-sm text-accent/70">
+            <a
+              href="/Rebecca%20Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-accent underline underline-offset-2 hover:text-accent/80 transition-colors"
+            >
+              View my resume (PDF)
+            </a>
+          </p>
         </div>
       </div>
     </section>

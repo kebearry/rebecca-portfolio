@@ -48,11 +48,24 @@ const Banner = () => {
           product, content, and engineering. I care about what ships for end
           users and what content teams can sustain after launch.
         </p>
-        <Link href="#projects">
-          <button className="mt-6 px-6 py-3 glass text-accent rounded-full font-semibold border border-white/60 hover:bg-secondary/80 hover:border-secondary hover:shadow-md transition duration-300 cursor-pointer">
-            Explore My Work
-          </button>
-        </Link>
+        <div className="mt-6 space-y-3">
+          <Link href="#projects">
+            <button className="px-6 py-3 glass text-accent rounded-full font-semibold border border-white/60 hover:bg-secondary/80 hover:border-secondary hover:shadow-md transition duration-300 cursor-pointer">
+              Explore My Work
+            </button>
+          </Link>
+          <p className="text-sm text-accent/70">
+            Recruiter?{" "}
+            <a
+              href="/Rebecca%20Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-accent underline underline-offset-2 hover:text-accent/80 transition-colors"
+            >
+              View my resume (PDF)
+            </a>
+          </p>
+        </div>
       </div>
       <ScrollCue />
     </section>
