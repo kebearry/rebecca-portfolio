@@ -227,7 +227,7 @@ I was responsible for implementing the frontend of the website, ensuring that th
 ![Example Image](https://i.imgur.com/wyTbcAq.png)
 
 ## Links:
-- [Live Site](https://www.cpf.gov.sg/member)
+- [Live Site](protected:financial-service)
   `,
     },
     {
@@ -271,7 +271,7 @@ As the CMS developer, my responsibility was to configure and integrate the conte
 - **User Permissions:** I set up user roles and permissions, ensuring that only authorized team members could make changes to sensitive or high-priority content, further enhancing security and content quality.
 
 ## Links:
-  - [Live Site](https://fish.shimano.com/ja-JP)
+  - [Live Site](protected:fishing-equipments-ecomm)
   `,
     },
     {

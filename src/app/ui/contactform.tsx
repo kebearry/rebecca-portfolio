@@ -7,6 +7,7 @@ interface FormData {
   name: string;
   email: string;
   message: string;
+  website: string; // honeypot
 }
 
 const ContactForm = () => {
@@ -14,6 +15,7 @@ const ContactForm = () => {
     name: "",
     email: "",
     message: "",
+    website: "",
   });
   const [status, setStatus] = useState<{
     message: string;
@@ -36,7 +38,7 @@ const ContactForm = () => {
 
       if (response.ok) {
         setStatus({ message: "Message sent successfully!", type: "success" });
-        setFormData({ name: "", email: "", message: "" }); // Reset form
+        setFormData({ name: "", email: "", message: "", website: "" });
       } else {
         setStatus({
           message: "Failed to send message. Please try again.",
@@ -74,7 +76,21 @@ const ContactForm = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="relative space-y-6">
+          {/* Honeypot — leave empty; hidden from real users */}
+          <div className="absolute -left-[9999px] top-auto h-0 w-0 overflow-hidden" aria-hidden="true">
+            <label htmlFor="website">Website</label>
+            <input
+              type="text"
+              id="website"
+              name="website"
+              value={formData.website}
+              onChange={handleChange}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </div>
+
           <div>
             <label htmlFor="name" className="block text-sm font-medium mb-1 text-accent">
               Your Name

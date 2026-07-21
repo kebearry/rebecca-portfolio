@@ -1,42 +1,54 @@
 "use client";
 
-import React from "react";
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 interface LinkRendererProps {
   href?: string;
   children?: ReactNode;
 }
 
-const protectedSites =
-  process.env.NEXT_PUBLIC_PROTECTED_SITES?.split(",") || []; // Use environment variable for protected sites
-const password = process.env.NEXT_PUBLIC_PASSWORD || "defaultpassword"; // Use environment variable for password
+const PROTECTED_PREFIX = "protected:";
+
+function getProtectedId(href?: string): string | null {
+  if (!href?.startsWith(PROTECTED_PREFIX)) return null;
+  return href.slice(PROTECTED_PREFIX.length).trim() || null;
+}
 
 function LinkRenderer({ href, children }: LinkRendererProps) {
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    // Check if the clicked link starts with any of the protected sites in the array
-    const isProtected = protectedSites.some((site) => href?.startsWith(site));
+  const protectedId = getProtectedId(href);
 
-    if (isProtected) {
-      e.preventDefault(); // Prevent the default link behavior for protected links
+  const handleClick = async (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
+    if (!protectedId) return;
 
-      // Prompt for password only if the link is protected
-      const userPassword = prompt("Enter the password to access this site:");
+    e.preventDefault();
 
-      if (href && userPassword === password) {
-        // If password is correct, manually redirect to the destination URL
-        window.location.href = href; // Correct way to trigger the redirect
+    const userPassword = prompt("Enter the password to access this site:");
+    if (userPassword === null) return;
+
+    try {
+      const response = await fetch("/api/unlock-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: userPassword, id: protectedId }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.url) {
+        window.open(data.url, "_blank", "noopener,noreferrer");
       } else {
-        alert("Incorrect password!"); // Show error if password is incorrect
+        alert(data.message || "Incorrect password!");
       }
+    } catch {
+      alert("Unable to unlock link. Please try again.");
     }
   };
 
-  const isProtected = protectedSites.some((site) => href?.startsWith(site));
-
   return (
     <a
-      href={isProtected ? "#" : href} // Set href to "#" for protected links to hide the URL in the status bar
+      href={protectedId ? "#" : href}
       onClick={handleClick}
       target="_blank"
       rel="noreferrer"
