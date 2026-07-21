@@ -10,7 +10,7 @@ const Banner = () => {
     >
       <div className="absolute inset-0 bg-gradient-to-r from-secondary via-lightpink to-secondary opacity-60"></div>
       <div className="relative w-full max-w-4xl mx-auto p-6 space-y-4 text-left">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold animate__animated animate__fadeIn animate__delay-1s">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold">
           Hi there, I&apos;m{" "}
           <span className="relative z-10 font-bold text-3d text-accent">
             Rebecca Tan
@@ -18,7 +18,7 @@ const Banner = () => {
           .
         </h1>
         <div
-          className="text-lg sm:text-xl md:text-2xl opacity-100 animate__animated animate__fadeIn animate__delay-2s 
+          className="text-lg sm:text-xl md:text-2xl opacity-100
           whitespace-nowrap overflow-hidden border-r-4 border-secondary inline-block max-w-full"
           style={{
             animation:
@@ -27,7 +27,7 @@ const Banner = () => {
         >
           I bring designs to life through code.
         </div>
-        <p className="text-sm sm:text-base md:text-lg opacity-100 animate__animated animate__fadeIn animate__delay-3s">
+        <p className="text-sm sm:text-base md:text-lg opacity-100">
           I&apos;m a Solution Architect based in Singapore.
           <br />
           <br />
