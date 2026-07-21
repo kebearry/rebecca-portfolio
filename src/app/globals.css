@@ -134,6 +134,26 @@ html {
   box-shadow: 0 4px 24px rgba(139, 111, 71, 0.1);
 }
 
+@keyframes scroll-cue-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+.scroll-cue-icon {
+  animation: scroll-cue-bounce 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue-icon {
+    animation: none;
+  }
+}
+
 .text-3d {
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2), 2px 2px 6px rgba(0, 0, 0, 0.1);
 }

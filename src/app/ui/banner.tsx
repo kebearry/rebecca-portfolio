@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import ScrollCue from "./scrollcue";
 import "../globals.css";
 
 const Banner = () => {
@@ -53,6 +54,7 @@ const Banner = () => {
           </button>
         </Link>
       </div>
+      <ScrollCue />
     </section>
   );
 };
