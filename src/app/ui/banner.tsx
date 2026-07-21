@@ -17,16 +17,9 @@ const Banner = () => {
           </span>
           .
         </h1>
-        <div
-          className="text-lg sm:text-xl md:text-2xl opacity-100
-          whitespace-nowrap overflow-hidden border-r-4 border-secondary inline-block max-w-full"
-          style={{
-            animation:
-              "typing 4s steps(30) 1s forwards, blinkCaret 0.75s step-end 4s infinite",
-          }}
-        >
-          I bring designs to life through code.
-        </div>
+        <p className="text-lg sm:text-xl md:text-2xl font-medium text-accent/90">
+          I architect frontend and CMS at scale.
+        </p>
         <p className="text-sm sm:text-base md:text-lg opacity-100">
           I&apos;m a Solution Architect based in Singapore.
           <br />

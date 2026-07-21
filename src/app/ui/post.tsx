@@ -8,16 +8,47 @@ type PostProps = {
     slug: string;
     title: string;
     summary: string;
-    image: string; // Add image URL
-    role: string | undefined; // Roles as a comma-separated string (can be undefined)
+    image: string;
+    role: string | undefined;
   };
+  variant?: "featured" | "compact";
 };
 
-const Post: React.FC<PostProps> = ({ post }) => {
-  // Check if 'roles' exists and is a valid string, otherwise default to an empty string
+const Post: React.FC<PostProps> = ({ post, variant = "featured" }) => {
   const roles = post.role
     ? post.role.split(",").map((role) => role.trim())
     : [];
+
+  if (variant === "compact") {
+    return (
+      <li className="bg-white/80 dark:bg-gray-800/80 p-3 rounded-lg shadow-sm hover:shadow-md transition duration-300 ease-in-out flex flex-col h-full border border-secondary/40">
+        <div className="relative w-full h-28 sm:h-32 mb-3 overflow-hidden rounded-md">
+          <Image
+            src={post.image}
+            alt={post.title}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className="object-cover transition-transform duration-300 ease-in-out hover:scale-105"
+          />
+        </div>
+
+        <h3 className="text-sm sm:text-base font-semibold text-accent mb-1.5 leading-snug line-clamp-2">
+          {post.title}
+        </h3>
+
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2 flex-1">
+          {post.summary}
+        </p>
+
+        <a
+          href={`/projects/${post.slug}`}
+          className="text-sm font-medium text-accent hover:text-accent/70 transition duration-200"
+        >
+          Read more →
+        </a>
+      </li>
+    );
+  }
 
   return (
     <li className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-4 transform transition duration-300 ease-in-out hover:shadow-xl flex flex-col h-full">

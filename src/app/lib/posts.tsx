@@ -1,4 +1,32 @@
 // lib/posts.ts
+
+export const FEATURED_PROJECT_SLUGS = [
+  "mental-health",
+  "financial-service",
+  "fishing-equipments-ecomm",
+  "math-worksheet-generator",
+  "custom-vinyl-player",
+] as const;
+
+export const MORE_PROJECT_SLUGS = [
+  "parking-mobile-app",
+  "security-reporting-website-revamp",
+  "product-inventory",
+  "ecomm-design",
+  "sustainability-ambassador-program",
+  "smart-travel-app",
+  "non-fungible-token",
+] as const;
+
+type Post = Awaited<ReturnType<typeof getPosts>>[number];
+
+const orderBySlugs = (posts: Post[], slugs: readonly string[]) => {
+  const bySlug = new Map(posts.map((post) => [post.slug, post]));
+  return slugs
+    .map((slug) => bySlug.get(slug))
+    .filter((post): post is Post => post !== undefined);
+};
+
 export const getPosts = async () => {
   // Hardcoded posts with a summary and full markdown content
   return [
@@ -235,7 +263,7 @@ I was responsible for implementing the frontend of the website, ensuring that th
       image:
         "https://cdn.dribbble.com/userupload/23388689/file/original-07141c6e37cede9e327ffa10c89eabd3.png",
       slug: "fishing-equipments-ecomm",
-      title: "Fishing Equipments Ecommerce",
+      title: "Fishing Equipment Ecommerce",
       type: "CMS Development, Frontend Development",
       industry: "Sporting Goods,  Fishing Equipment",
       role: "CMS Developer, Frontend Developer",
@@ -243,7 +271,7 @@ I was responsible for implementing the frontend of the website, ensuring that th
       summary:
         "AEM ecommerce for fishing gear, with product detail pages, comparison, and editor-friendly CMS components.",
       fullContent: `
-  # Fishing Equipments Ecommerce
+  # Fishing Equipment Ecommerce
   
   ## Introduction
   
@@ -581,4 +609,14 @@ Planning a well-rounded trip is often overwhelming, as travelers need to conside
 `,
     },
   ];
+};
+
+export const getFeaturedPosts = async () => {
+  const posts = await getPosts();
+  return orderBySlugs(posts, FEATURED_PROJECT_SLUGS);
+};
+
+export const getMorePosts = async () => {
+  const posts = await getPosts();
+  return orderBySlugs(posts, MORE_PROJECT_SLUGS);
 };
