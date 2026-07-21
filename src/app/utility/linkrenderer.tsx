@@ -50,8 +50,9 @@ function LinkRenderer({ href, children }: LinkRendererProps) {
     <a
       href={protectedId ? "#" : href}
       onClick={handleClick}
-      target="_blank"
-      rel="noreferrer"
+      target={protectedId ? undefined : "_blank"}
+      rel={protectedId ? undefined : "noreferrer"}
+      className="text-accent font-medium underline underline-offset-2 hover:text-accent/70 transition-colors"
     >
       {children}
     </a>

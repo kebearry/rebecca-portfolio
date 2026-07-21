@@ -213,7 +213,7 @@ As the CMS developer, my responsibility was to configure and integrate the conte
 - **Integration with Sitecore Search:** I integrated Sitecore Search with the CMS to enhance content discoverability across the website. This integration enabled content editors to ensure that search functionality was seamlessly aligned with the content structure. By leveraging Sitecore's search indexing and ranking capabilities, I improved the search experience, making it faster and more relevant for users. Additionally, content filters and refinements were incorporated into the search feature, empowering users to narrow down results based on categories, content types, and relevance
 
 ## Links:
-- [Live Site](https://www.beyondblue.org.au/)
+- [Live Site](protected:mental-health)
   `,
     },
     {
