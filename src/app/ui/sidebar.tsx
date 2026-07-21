@@ -76,76 +76,74 @@ const Sidebar = () => {
       <div className="sm:hidden flex justify-end p-4 z-30 fixed top-0 right-2">
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="relative w-12 h-12 bg-black bg-opacity-40 rounded-full shadow-lg"
+          className="relative w-12 h-12 glass rounded-full shadow-lg"
           aria-label="Toggle navigation menu"
           aria-expanded={isMenuOpen}
         >
-          <div className="absolute top-1/4 left-1/2 w-6 h-1 bg-white transform -translate-x-1/2"></div>
-          <div className="absolute top-1/2 left-1/2 w-6 h-1 bg-white transform -translate-x-1/2 -translate-y-0.5"></div>
-          <div className="absolute bottom-1/4 left-1/2 w-6 h-1 bg-white transform -translate-x-1/2"></div>
+          <div className="absolute top-1/4 left-1/2 w-6 h-1 bg-accent transform -translate-x-1/2"></div>
+          <div className="absolute top-1/2 left-1/2 w-6 h-1 bg-accent transform -translate-x-1/2 -translate-y-0.5"></div>
+          <div className="absolute bottom-1/4 left-1/2 w-6 h-1 bg-accent transform -translate-x-1/2"></div>
         </button>
       </div>
 
       {/* Mobile Menu */}
       <div
-        className={`fixed top-0 right-0 w-2/3 h-screen z-20 p-6 transition-transform duration-300 ${
-          isMenuOpen
-            ? "translate-x-0 bg-opacity-70 bg-black"
-            : "translate-x-full"
-        } sm:hidden flex flex-col items-center space-y-6`}
+        className={`fixed top-0 right-0 w-2/3 h-screen z-20 p-6 transition-transform duration-300 glass-panel ${
+          isMenuOpen ? "translate-x-0" : "translate-x-full"
+        } sm:hidden flex flex-col items-center space-y-4`}
       >
         <div
-          className={`cursor-pointer ${
+          className={`cursor-pointer rounded-xl px-4 py-3 ${
             activeIcon === "banner"
-              ? "bg-secondary text-white"
-              : ""
+              ? "bg-secondary/80 text-accent font-semibold"
+              : "text-accent"
           } w-full flex items-center justify-start space-x-2`}
           onClick={() => handleClick("banner")}
         >
           <div className="text-xl">🏠</div>
-          <span className="text-white">Home</span>
+          <span>Home</span>
         </div>
         <div
-          className={`cursor-pointer ${
+          className={`cursor-pointer rounded-xl px-4 py-3 ${
             activeIcon === "projects"
-              ? "bg-secondary text-white"
-              : ""
+              ? "bg-secondary/80 text-accent font-semibold"
+              : "text-accent"
           } w-full flex items-center justify-start space-x-2`}
           onClick={() => handleClick("projects")}
         >
           <div className="text-xl">📝</div>
-          <span className="text-white">Projects</span>
+          <span>Projects</span>
         </div>
         <div
-          className={`cursor-pointer ${
+          className={`cursor-pointer rounded-xl px-4 py-3 ${
             activeIcon === "timeline"
-              ? "bg-secondary text-white"
-              : ""
+              ? "bg-secondary/80 text-accent font-semibold"
+              : "text-accent"
           } w-full flex items-center justify-start space-x-2`}
           onClick={() => handleClick("timeline")}
         >
           <div className="text-xl">⏳</div>
-          <span className="text-white">Timeline</span>
+          <span>Timeline</span>
         </div>
         <div
-          className={`cursor-pointer ${
+          className={`cursor-pointer rounded-xl px-4 py-3 ${
             activeIcon === "contact"
-              ? "bg-secondary text-white"
-              : ""
+              ? "bg-secondary/80 text-accent font-semibold"
+              : "text-accent"
           } w-full flex items-center justify-start space-x-2`}
           onClick={() => handleClick("contact")}
         >
           <div className="text-xl">✉️</div>
-          <span className="text-white">Contact</span>
+          <span>Contact</span>
         </div>
       </div>
 
       {/* Desktop Sidebar */}
-      <div className="hidden sm:flex fixed top-1/2 right-4 transform -translate-y-1/2 w-16 bg-white bg-opacity-90 text-accent flex-col items-center justify-center rounded-full z-10 h-[90vh] space-y-8 hover:w-32 transition-all duration-300 shadow-lg">
+      <div className="hidden sm:flex fixed top-1/2 right-4 transform -translate-y-1/2 w-16 glass-panel text-accent flex-col items-center justify-center rounded-full z-10 h-[90vh] space-y-8 hover:w-32 transition-all duration-300">
         <div
-          className={`group w-full cursor-pointer ${
+          className={`group w-full cursor-pointer rounded-full py-2 ${
             activeIcon === "banner"
-              ? "bg-secondary font-semibold text-accent"
+              ? "bg-secondary/80 font-semibold text-accent"
               : ""
           } flex items-center justify-center space-x-2`}
           onClick={() => handleClick("banner")}
@@ -157,9 +155,9 @@ const Sidebar = () => {
         </div>
 
         <div
-          className={`group w-full cursor-pointer ${
+          className={`group w-full cursor-pointer rounded-full py-2 ${
             activeIcon === "projects"
-              ? "bg-secondary text-accent"
+              ? "bg-secondary/80 text-accent"
               : ""
           } flex items-center justify-center space-x-2`}
           onClick={() => handleClick("projects")}
@@ -171,9 +169,9 @@ const Sidebar = () => {
         </div>
 
         <div
-          className={`group w-full cursor-pointer ${
+          className={`group w-full cursor-pointer rounded-full py-2 ${
             activeIcon === "timeline"
-              ? "bg-secondary text-accent"
+              ? "bg-secondary/80 text-accent"
               : ""
           } flex items-center justify-center space-x-2`}
           onClick={() => handleClick("timeline")}
@@ -185,9 +183,9 @@ const Sidebar = () => {
         </div>
 
         <div
-          className={`group w-full cursor-pointer ${
+          className={`group w-full cursor-pointer rounded-full py-2 ${
             activeIcon === "contact"
-              ? "bg-secondary text-accent"
+              ? "bg-secondary/80 text-accent"
               : ""
           } flex items-center justify-center space-x-2`}
           onClick={() => handleClick("contact")}

@@ -68,7 +68,7 @@ const ContactForm = () => {
       id="contact"
       className="w-full min-h-screen bg-gradient-to-br from-secondary via-primary to-lightpink flex items-center justify-center p-4"
     >
-      <div className="max-w-md w-full bg-white/95 backdrop-blur-sm rounded-lg shadow-xl p-8 border border-secondary">
+      <div className="max-w-md w-full glass-panel rounded-2xl p-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-2 text-accent">Send me a message!</h2>
           <p className="text-accent/70">
@@ -101,7 +101,7 @@ const ContactForm = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-secondary rounded-md focus:ring-2 focus:ring-secondary focus:border-accent transition duration-200 text-accent"
+              className="w-full px-4 py-2 glass rounded-md border border-white/60 focus:ring-2 focus:ring-secondary focus:border-accent transition duration-200 text-accent bg-white/40"
               required
             />
           </div>
@@ -116,7 +116,7 @@ const ContactForm = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-secondary rounded-md focus:ring-2 focus:ring-secondary focus:border-accent transition duration-200 text-accent"
+              className="w-full px-4 py-2 glass rounded-md border border-white/60 focus:ring-2 focus:ring-secondary focus:border-accent transition duration-200 text-accent bg-white/40"
               required
             />
           </div>
@@ -131,7 +131,7 @@ const ContactForm = () => {
               value={formData.message}
               onChange={handleChange}
               rows={4}
-              className="w-full px-4 py-2 border border-secondary rounded-md focus:ring-2 focus:ring-secondary focus:border-accent transition duration-200 resize-none text-accent"
+              className="w-full px-4 py-2 glass rounded-md border border-white/60 focus:ring-2 focus:ring-secondary focus:border-accent transition duration-200 resize-none text-accent bg-white/40"
               required
             />
           </div>

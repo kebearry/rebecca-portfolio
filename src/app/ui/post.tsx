@@ -87,7 +87,7 @@ const Post: React.FC<PostProps> = ({ post, variant = "featured" }) => {
       <div className="mt-auto w-full">
         <a
           href={`/projects/${post.slug}`}
-          className="font-semibold block text-accent bg-white border-2 border-accent hover:bg-accent hover:text-white dark:bg-gray-800 dark:text-accent dark:border-accent dark:hover:bg-accent dark:hover:text-white py-3 rounded-xl text-center transition duration-300 transform hover:scale-105"
+          className="font-semibold block text-accent bg-white border-2 border-accent hover:bg-secondary hover:border-secondary hover:text-accent py-3 rounded-xl text-center transition duration-300 transform hover:scale-105"
         >
           {/* Read More Text */}
           Read more
