@@ -11,7 +11,7 @@ export const getPosts = async () => {
       industry: "Educational, EdTech",
       role: "Full Stack Engineer, UI/UX Designer, Product Developer",
       tools: "React, JavaScript, Material UI, MongoDB, Vercel",
-      summary: "A versatile educational platform that empowers teachers to create engaging math worksheets with customizable problems, difficulty levels, and interactive elements like hidden messages, making math practice both purposeful and enjoyable for students.",
+      summary: "Teachers create customizable math worksheets with difficulty controls and hidden-message rewards for students.",
       fullContent: `
 # Custom Math Worksheet Generator
 
@@ -69,7 +69,7 @@ I led the user experience design process focusing on two distinct user journeys:
       industry: "Music, Entertainment",
       role: "Full Stack Developer, UI/UX Designer, Founder, Product Manager",
       tools: "Next.js 14, TypeScript, Tailwind CSS, Spotify Web API, MongoDB, Vercel",
-      summary: "A modern web application that transforms the Spotify listening experience into an immersive vinyl player interface, complete with realistic record spinning animations, playlist management, and social features like shared song notes.",
+      summary: "Spotify listening reimagined as a vinyl player, with spinning animations, playlists, and shared song notes.",
       fullContent: `
 # Custom Spotify Vinyl Player
 
@@ -153,7 +153,7 @@ I led the design process focusing on creating an engaging and intuitive interfac
       role: "CMS Developer, Frontend Developer",
       tools: "Sitecore XM Cloud, Sitecore Search, NextJS, TailwindCSS",
       summary:
-        "The revamp of the non-profit mental health website focused on enhancing accessibility, performance, and content management using Sitecore XM Cloud and React.",
+        "Accessibility-focused mental health site rebuild on Sitecore XM Cloud and React.",
       fullContent: `
   # Non-Profit Mental Health Website Revamp
   
@@ -199,7 +199,7 @@ As the CMS developer, my responsibility was to configure and integrate the conte
       role: "Frontend Developer",
       tools: "Adobe Experience Manager, React",
       summary:
-        "The revamped website, built on AEM, serves the Government and Financial Services industries, offering users a streamlined platform to access financial services and information.",
+        "Government financial services site on AEM, rebuilt for clearer access to schemes and information.",
       fullContent: `
   # Financial Service Website Revamp
   
@@ -241,7 +241,7 @@ I was responsible for implementing the frontend of the website, ensuring that th
       role: "CMS Developer, Frontend Developer",
       tools: "Adobe Experience Manager, VanillaJS, jQuery",
       summary:
-        "From rods and reels to lures and accessories, this website built on AEM offers high-quality products tailored to enhance fishing experiences. The website also includes detailed product information, user-friendly navigation, and seamless product comparison, ensuring customers can easily find the equipment they need.",
+        "AEM ecommerce for fishing gear, with product detail pages, comparison, and editor-friendly CMS components.",
       fullContent: `
   # Fishing Equipments Ecommerce
   
@@ -285,7 +285,7 @@ As the CMS developer, my responsibility was to configure and integrate the conte
       role: "UI/UX Designer, Full Stack Developer",
       tools: "Figma, React, Jupyter, Vercel",
       summary:
-        "A streamlined inventory management system designed specifically for Apple stores to assist call center agents in quickly addressing customer inquiries. This app allows agents to effortlessly check the availability of products across multiple store locations, providing real-time data to enhance customer service efficiency and accuracy.",
+        "Real-time Apple store inventory lookup for call center agents across multiple locations.",
       fullContent: `
   # Apple Product Inventory
   
@@ -333,7 +333,7 @@ Example 3: "What iPhone 13 models are available in Ohio, United States?"*
       role: "Graphic Design, UI/UX Designer, Full Stack Developer",
       tools: "Figma, React, Vercel, Adobe Illustrator",
       summary:
-        "This NFT website is a passion project designed to promote and facilitate the Baonation NFTs. It provides collectors with an easy way to purchase and trade NFTs using MetaMask for secure transactions. ",
+        "Passion project NFT site for Baonation, with MetaMask purchase and trade flows.",
       fullContent: `
   # Non Fungible Token Website
   
@@ -374,7 +374,7 @@ The relationship between NFTs and images has opened new avenues for digital arti
       role: "Co-founder & Visionary (Conceptual Stage), UI Designer, Frontend Developer",
       tools: "Figma, React Native",
       summary:
-        "Our award winning parking mobile application integrates AWS technologies, machine learning, and real-time capabilities into a seamless location-based solution. Drivers can easily find the most optimal parking spot, not only enjoying unparalleled convenience but also saving costs by locating the cheapest available car parks near their destination. ",
+        "Award-winning parking app that finds the cheapest available spots with real-time location data.",
       fullContent: `
   # Award Winning Parking Mobile App
   
@@ -423,49 +423,14 @@ A survey conducted with 31 drivers revealed that over 70% find it very time-cons
       industry: "eCommerce, Retail, Apparel",
       tools: "Figma, Notion",
       summary:
-        "An end-to-end ecommerce website design, covering both pre-login and member-exclusive purchase journeys, focused on seamless user experience and intuitive navigation to drive conversions",
+        "End-to-end ecommerce UX for browse-to-checkout, including member journeys and conversion-focused flows.",
       fullContent: `
 # Ecommerce Website Design
 ## The Problem
 In Singapore's highly saturated blogshop industry, many businesses operate without physical stores, making their online presence the sole channel for engaging with customers. With an increasing number of online-only brands, it's critical for a blogshop to stand out by providing a seamless and memorable user experience. The challenge is to design an eCommerce website that not only drives traffic but also enhances conversion rates, ensuring that first-time visitors and repeat customers alike can easily navigate through the site and complete purchases. 
 
-## How Are Our Competitors Supporting or Hindering Buyers' Journey?
-
-#### Competitor 1: Example A
-**Strengths:**
-- Streamlined Navigation
-- Mobile Optimization
-- Clear CTAs and Checkout Flow
----
-**Weaknesses:**
-- Cluttered or Complicated UI
-- Slow Load Times
-- Limited Product Details
-- Complicated Checkout Process
-
----
-
-#### Competitor 2: Example B
-**Strengths:**
-- Fast Load Times
-- Easy Payment Options
----
-**Weaknesses:**
-- Poor Mobile Optimization
-- Lack of Product Reviews
-
----
-
-#### Competitor 3: Example C
-**Strengths:**
-- Simple Checkout Process
-- Free Returns
----
-
-**Weaknesses:**
-- Limited Product Images
-- No Personalization
-- Lack of Clear Brand Identity  
+## What We Saw in the Market
+Many blogshop sites in Singapore struggle with the same friction points: cluttered product pages, weak mobile layouts, thin product detail, and checkout flows that force users to leave the page. Faster competitors often win on speed and simple payments, but still fall short on reviews, personalization, and brand clarity. The opportunity was a cleaner, conversion-focused experience that works as well for first-time visitors as it does for returning members.
 
 ## Our Design Features:
 - **Mobile First Design:** Responsive layout that automatically adjusts to all screen sizes.
@@ -491,7 +456,7 @@ In Singapore's highly saturated blogshop industry, many businesses operate witho
       industry: "Travel, Aviation",
       tools: "Figma, Notion, Google Sheets",
       summary:
-        "Introducing a comprehensive, end-to-end digital experience (website and mobile app) designed for eco-conscious travelers. This platform offers an opt-in sustainable journey, empowering flyers to make environmentally responsible choices while enhancing their travel experience.",
+        "Website and inflight app concept that helps flyers opt into more sustainable travel choices.",
       fullContent: `
 # Airline Sustainability Ambassador Program
 
@@ -538,7 +503,7 @@ The following insights were gathered from qualitative research involving 50 user
       industry: "Security, Government",
       tools: "Figma, Notion, Zeplin",
       summary:
-        "The Security Reporting Website Revamp project modernizes outdated security dashboards with a clean, intuitive design. It simplifies data presentation, making it easier for security teams to quickly access and interpret real-time reports, track incidents, and make informed decisions efficiently.",
+        "Cleaner security reporting dashboards so teams can scan incidents and act faster.",
       fullContent: `
 # Security Reporting Revamp
 
@@ -546,35 +511,8 @@ The following insights were gathered from qualitative research involving 50 user
 
 Traditional security reporting platforms suffer from outdated, cluttered interfaces that overwhelm users and make it difficult to interpret critical data. These old-school dashboards are not visually engaging, often leading to confusion and slower decision-making. Security personnel need a more streamlined, user-friendly solution that presents key security metrics in an easily digestible format.
 
-## How  are Existing Competitors Supporting or Hindering Users' Journey
-#### Competitor 1: Example A
-**Strengths:**
-- Powerful analytics
-- Scalability
-- Customizable dashboards
-
-
-**Weaknesses:**
-- Complex to customise
-- Performance issues with large data sets
-#### Competitor 2: Example B
-**Strengths:**
-- Open source analytics
-- Scalability
-
-**Weaknesses:**
-- Complex to customise
-- Limited out of the box features
-- Resource heavy
-#### Competitor 3: Example C
-**Strengths:**
-- Strong threat detection
-- Advanced analytics
-
-**Weaknesses:**
-- Complex to customise
-- Limited customizations available
-- Less scalable
+## What Was Getting in the Way
+Existing security dashboards were powerful but hard to scan: dense layouts, slow customization, and metrics that were difficult to act on under pressure. Teams needed a clearer hierarchy, faster filtering, and guided actions for standard incidents.
 
 ## How does the Security Website Revamp address users' needs?
 ### User Friendly, Easy-to-Interpret Dashboard
@@ -591,9 +529,6 @@ Traditional security reporting platforms suffer from outdated, cluttered interfa
 ### Robust Website Security Reporting
 ![Example Image](https://i.imgur.com/Wnkx3Uu.png)
 ![Example Image](https://i.imgur.com/UOmCHKe.png)
-
-### Links:
-[Promotional Video](https://www.youtube.com/watch?v=0eUvtaxMNZ4)
 `,
     },
     {
@@ -607,7 +542,7 @@ Traditional security reporting platforms suffer from outdated, cluttered interfa
       tools: "Figma, Notion, inVision",
       title: "Floy Smart Travel App",
       summary:
-        "A one stop smart application that learns about what you like, and plans an entire itinerary for you, right down to flight, itinerary, lodging and transport options.",
+        "Preference-based travel app that plans flights, lodging, transport, and the full itinerary.",
       fullContent: `
 # Floy Smart Travel App
 

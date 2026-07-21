@@ -25,12 +25,15 @@ const Post: React.FC<PostProps> = ({ post }) => {
       <Image
         src={post.image}
         alt={post.title}
-        width={500} // Set the fixed image width
-        height={300} // Set the fixed image height
+        width={500}
+        height={300}
         className="object-cover transition-transform duration-300 ease-in-out transform hover:scale-110 mb-4"
       />
 
-      {/* Post Summary */}
+      <h3 className="text-xl font-bold text-accent mb-2 leading-snug">
+        {post.title}
+      </h3>
+
       <p className="text-gray-600 dark:text-gray-300 mb-4">{post.summary}</p>
 
       {/* Roles (Tags for Project Role) */}

@@ -11,7 +11,7 @@ export interface TimelineItem {
 
 export const timelineData: TimelineItem[] = [
   {
-    year: "2024",
+    year: "2022 - Present",
     title: "Solution Architect",
     company: "Sitecore",
     description:

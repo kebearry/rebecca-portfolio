@@ -10,8 +10,25 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Rebecca | Application Developer ",
-  description: "Rebecca Portfolio",
+  metadataBase: new URL("https://rebecca-portfolio.vercel.app"),
+  title: "Rebecca Tan | Solution Architect",
+  description:
+    "Solution Architect specializing in frontend experiences and CMS platforms across Sitecore, AEM, Magnolia, and more. Based in Singapore.",
+  openGraph: {
+    title: "Rebecca Tan | Solution Architect",
+    description:
+      "Solution Architect specializing in frontend experiences and CMS platforms across Sitecore, AEM, Magnolia, and more. Based in Singapore.",
+    url: "https://rebecca-portfolio.vercel.app",
+    siteName: "Rebecca Tan Portfolio",
+    locale: "en_SG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Rebecca Tan | Solution Architect",
+    description:
+      "Solution Architect specializing in frontend experiences and CMS platforms across Sitecore, AEM, Magnolia, and more. Based in Singapore.",
+  },
 };
 
 export default function RootLayout({

@@ -9,19 +9,17 @@ const Banner = () => {
       className="relative bg-primary text-accent h-screen flex items-center justify-center overflow-hidden"
     >
       <div className="absolute inset-0 bg-gradient-to-r from-secondary via-lightpink to-secondary opacity-60"></div>
-      <div className="relative text-center p-6 space-y-4">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-center font-bold animate__animated animate__fadeIn animate__delay-1s text-left">
+      <div className="relative w-full max-w-4xl mx-auto p-6 space-y-4 text-left">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold animate__animated animate__fadeIn animate__delay-1s">
           Hi there, I&apos;m{" "}
-          <span className="text-accent relative inline-block">
-            <span className="relative z-10 text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-3d">
-              Rebecca
-            </span>
+          <span className="relative z-10 font-bold text-3d text-accent">
+            Rebecca Tan
           </span>
           .
         </h1>
         <div
-          className="text-lg sm:text-xl md:text-2xl opacity-100 max-w-fit mx-auto animate__animated animate__fadeIn animate__delay-2s 
-          whitespace-nowrap overflow-hidden border-r-4 border-secondary px-2 inline-block "
+          className="text-lg sm:text-xl md:text-2xl opacity-100 animate__animated animate__fadeIn animate__delay-2s 
+          whitespace-nowrap overflow-hidden border-r-4 border-secondary inline-block max-w-full"
           style={{
             animation:
               "typing 4s steps(30) 1s forwards, blinkCaret 0.75s step-end 4s infinite",
@@ -29,34 +27,33 @@ const Banner = () => {
         >
           I bring designs to life through code.
         </div>
-        <p className="text-sm sm:text-base md:text-lg opacity-100 max-w-2xl animate__animated animate__fadeIn animate__delay-3s text-left">
-          Before transitioning into Application Development, I explored roles in
-          Digital Marketing, Graphic Design, Search Engine Optimization, Content
-          Marketing, and IT Project Management. Though I excelled in these
-          areas, something was missing. I discovered my true passion for
-          building immersive digital worlds with code, and I haven&apos;t looked
-          back since.
+        <p className="text-sm sm:text-base md:text-lg opacity-100 animate__animated animate__fadeIn animate__delay-3s">
+          I&apos;m a Solution Architect based in Singapore.
           <br />
           <br />
-          My expertise lies in{" "}
+          I specialize in{" "}
           <span className="relative inline-block font-semibold">
             <span className="absolute inset-0 bg-secondary opacity-80 rounded-xl -top-0 -bottom-0 -left-1 -right-1 z-0"></span>
             <span className="relative z-10 opacity-90 text-accent">
-              Frontend Development
+              frontend experiences
             </span>
-          </span>
-          , where I focus on building seamless, interactive user experiences,
+          </span>{" "}
           and{" "}
           <span className="relative inline-block font-semibold">
             <span className="absolute inset-0 bg-secondary opacity-80 rounded-xl -top-0 -bottom-0 -left-1 -right-1 z-0"></span>
-            <span className="relative z-10 opacity-90 text-accent">CMS Development</span>
+            <span className="relative z-10 opacity-90 text-accent">
+              CMS platforms
+            </span>
           </span>
-          , where I create intuitive and scalable systems that empower users to
-          manage content effortlessly.
+          . I&apos;ve delivered and advised across Sitecore, Adobe Experience
+          Manager, Magnolia, and related stacks like Next.js, personalization,
+          and commerce integrations.
+          <br />
+          <br />
+          Coming from design, marketing, SEO, and delivery helps me bridge
+          product, content, and engineering. I care about what ships for end
+          users and what content teams can sustain after launch.
         </p>
-        <div className="text-sm sm:text-base md:text-lg text-left">
-          <strong>I am currently based in Singapore.</strong>
-        </div>
         <Link href="#projects">
           <button className="mt-6 px-6 py-3 bg-white text-accent rounded-full font-semibold hover:bg-accent hover:text-white transition duration-300 cursor-pointer">
             Explore My Work
