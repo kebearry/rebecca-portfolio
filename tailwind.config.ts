@@ -35,6 +35,7 @@ export default {
       },
       fontFamily: {
         sans: ["var(--font-poppins)", "sans-serif"],
+        display: ["var(--font-plus-jakarta)", "var(--font-poppins)", "sans-serif"],
       },
     },
   },

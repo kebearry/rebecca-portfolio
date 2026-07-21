@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google"; // Import Poppins font
+import { Plus_Jakarta_Sans, Poppins } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
-// Use Poppins font with specific weights (e.g., 400 and 600)
 const poppins = Poppins({
-  variable: "--font-poppins", // Define the CSS variable for the font
+  variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["400", "600"],
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -39,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} antialiased`}>
+      <body className={`${poppins.variable} ${plusJakartaSans.variable} antialiased`}>
         {children}
         <Analytics />
       </body>
