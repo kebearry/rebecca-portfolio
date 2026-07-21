@@ -49,10 +49,11 @@ const Banner = () => {
           users and what content teams can sustain after launch.
         </p>
         <div className="mt-6 space-y-3">
-          <Link href="#projects">
-            <button className="px-6 py-3 glass text-accent rounded-full font-semibold border border-white/60 hover:bg-secondary/80 hover:border-secondary hover:shadow-md transition duration-300 cursor-pointer">
-              Explore My Work
-            </button>
+          <Link
+            href="#projects"
+            className="inline-block px-6 py-3 glass text-accent rounded-full font-semibold border border-white/60 hover:bg-accent hover:text-primary hover:border-accent hover:shadow-md transition duration-300"
+          >
+            Explore My Work
           </Link>
           <p className="text-sm text-accent/70">
             Recruiter?{" "}

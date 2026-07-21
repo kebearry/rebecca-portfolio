@@ -156,8 +156,8 @@ const Timeline: React.FC = () => {
             My Work Experience
           </h2>
           <p className="text-sm sm:text-md text-accent/70 mt-2">
-            Discover my career journey and the roles that shaped me as a
-            developer.
+            Discover my career journey and the roles that shaped me as an
+            architect.
           </p>
         </div>
 
