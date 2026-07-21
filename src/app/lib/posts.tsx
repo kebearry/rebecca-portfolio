@@ -56,8 +56,8 @@ I led the user experience design process focusing on two distinct user journeys:
 - **Deployment:** Vercel hosting for the application
 
 ## Links
-- [Live Site](your-live-site-url)
-- [GitHub Repository](your-github-url)
+- [Live Site](https://custom-math-worksheet-generator.vercel.app/)
+- [GitHub Repository](https://github.com/kebearry/math-worksheet-generator)
 `,
     },
     {
