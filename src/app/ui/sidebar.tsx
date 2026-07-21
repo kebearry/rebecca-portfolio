@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 
 const SECTION_IDS = ["banner", "projects", "timeline", "contact"] as const;
+type SectionId = (typeof SECTION_IDS)[number];
 
 const Sidebar = () => {
   const [activeIcon, setActiveIcon] = useState<string>("banner");
@@ -10,8 +11,7 @@ const Sidebar = () => {
   const activeHashRef = useRef<string>("banner");
   const isNavigatingRef = useRef(false);
 
-  const updateHash = useCallback((sectionId: string) => {
-    if (!SECTION_IDS.includes(sectionId as (typeof SECTION_IDS)[number])) return;
+  const updateHash = useCallback((sectionId: SectionId) => {
     if (activeHashRef.current === sectionId) return;
 
     activeHashRef.current = sectionId;
@@ -23,7 +23,7 @@ const Sidebar = () => {
     if (isNavigatingRef.current) return;
 
     const midpoint = window.innerHeight / 2;
-    let currentSection = SECTION_IDS[0];
+    let currentSection: SectionId = SECTION_IDS[0];
 
     for (const sectionId of SECTION_IDS) {
       const section = document.getElementById(sectionId);
@@ -41,7 +41,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     const hash = window.location.hash.replace("#", "");
-    if (SECTION_IDS.includes(hash as (typeof SECTION_IDS)[number])) {
+    if (SECTION_IDS.includes(hash as SectionId)) {
       activeHashRef.current = hash;
       setActiveIcon(hash);
 
@@ -61,7 +61,7 @@ const Sidebar = () => {
     if (!section) return;
 
     isNavigatingRef.current = true;
-    updateHash(icon);
+    updateHash(icon as SectionId);
     section.scrollIntoView({ behavior: "smooth" });
     setIsMenuOpen(false);
 
