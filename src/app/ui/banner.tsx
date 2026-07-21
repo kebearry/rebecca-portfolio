@@ -55,7 +55,7 @@ const Banner = () => {
           users and what content teams can sustain after launch.
         </p>
         <Link href="#projects">
-          <button className="mt-6 px-6 py-3 bg-white text-accent rounded-full font-semibold hover:bg-accent hover:text-white transition duration-300 cursor-pointer">
+          <button className="mt-6 px-6 py-3 bg-white text-accent rounded-full font-semibold border-2 border-transparent hover:bg-secondary hover:border-secondary hover:shadow-md transition duration-300 cursor-pointer">
             Explore My Work
           </button>
         </Link>

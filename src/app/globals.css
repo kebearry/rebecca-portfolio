@@ -33,10 +33,69 @@ body {
   font-family: var(--font-poppins), sans-serif;
 }
 
-*,
-*::before,
-*::after {
-  cursor: pointer; 
+/* Only hide the system cursor when the custom diamond is active */
+body.custom-cursor-active,
+body.custom-cursor-active * {
+  cursor: none !important;
+}
+
+a,
+button,
+[role="button"],
+summary,
+label[for],
+select,
+input[type="submit"],
+input[type="button"] {
+  cursor: pointer;
+}
+
+input,
+textarea {
+  cursor: text;
+}
+
+@keyframes cursor-invite-pulse {
+  0% {
+    transform: rotate(45deg) scale(0.85);
+    opacity: 0.85;
+  }
+  70% {
+    transform: rotate(45deg) scale(2.2);
+    opacity: 0.15;
+  }
+  100% {
+    transform: rotate(45deg) scale(2.4);
+    opacity: 0;
+  }
+}
+
+.cursor-invite-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  margin-top: -6px;
+  border: 1px solid #e8d5d1;
+  border-radius: 1px;
+  pointer-events: none;
+  animation: cursor-invite-pulse 1.4s ease-out infinite;
+}
+
+.cursor-invite-ring--button {
+  border-color: #f9e4e7;
+  border-width: 1.5px;
+  box-shadow: 0 0 10px rgba(249, 228, 231, 0.5);
+}
+
+.cursor-invite-ring--link {
+  animation-duration: 1.8s;
+}
+
+.cursor-invite-ring--delay {
+  animation-delay: 0.55s;
 }
 html {
   scroll-behavior: smooth;
