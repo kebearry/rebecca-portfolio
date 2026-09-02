@@ -39,7 +39,7 @@ export default async function Projects() {
           <h1 className="text-4xl font-bold mb-4">Projects</h1>
           <p className="text-accent/80 leading-relaxed">
             A mix of client delivery, CMS implementations, and products
-            I&apos;ve built end-to-end — start with the featured work below.
+            I&apos;ve built end-to-end. Start with the featured work below.
           </p>
         </div>
 

@@ -9,7 +9,7 @@ const MAX_MESSAGE = 5000;
 
 function getMailAuth() {
   const user = process.env.EMAIL_USER?.trim();
-  // Gmail app passwords are often copied with spaces — strip them
+  // Gmail app passwords are often copied with spaces; strip them
   const pass = process.env.EMAIL_PASS?.replace(/\s+/g, "");
   return { user, pass };
 }

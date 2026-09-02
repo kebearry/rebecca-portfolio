@@ -77,7 +77,7 @@ const ContactForm = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="relative space-y-6">
-          {/* Honeypot — leave empty; hidden from real users */}
+          {/* Honeypot: leave empty; hidden from real users */}
           <div className="absolute -left-[9999px] top-auto h-0 w-0 overflow-hidden" aria-hidden="true">
             <label htmlFor="website">Website</label>
             <input

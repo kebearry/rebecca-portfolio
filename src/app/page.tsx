@@ -1,7 +1,8 @@
 import Banner from "./ui/banner";
 import CustomCursor from "./ui/customcursor";
 import Sidebar from "./ui/sidebar";
-import Blog from "./projects/projects";
+import Projects from "./projects/projects";
+import BlogSection from "./blog/section";
 import Timeline from "./ui/timeline";
 import ContactForm from "./ui/contactform";
 
@@ -11,7 +12,8 @@ export default function Page() {
       <CustomCursor />
       <Sidebar />
       <Banner />
-      <Blog />
+      <Projects />
+      <BlogSection />
       <Timeline />
       <ContactForm />
     </>

@@ -1,26 +1,34 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { usePathname } from "next/navigation";
+import { HOME_SCROLL_TARGET_KEY } from "./backtohomesection";
 
-const SECTION_IDS = ["banner", "projects", "timeline", "contact"] as const;
+const SECTION_IDS = ["banner", "projects", "blog", "timeline", "contact"] as const;
 type SectionId = (typeof SECTION_IDS)[number];
 
 const Sidebar = () => {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const [activeIcon, setActiveIcon] = useState<string>("banner");
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const activeHashRef = useRef<string>("banner");
   const isNavigatingRef = useRef(false);
 
-  const updateHash = useCallback((sectionId: SectionId) => {
-    if (activeHashRef.current === sectionId) return;
+  const updateHash = useCallback(
+    (sectionId: SectionId) => {
+      if (!isHome) return;
+      if (activeHashRef.current === sectionId) return;
 
-    activeHashRef.current = sectionId;
-    window.history.replaceState(null, "", `#${sectionId}`);
-    setActiveIcon(sectionId);
-  }, []);
+      activeHashRef.current = sectionId;
+      window.history.replaceState(null, "", `/#${sectionId}`);
+      setActiveIcon(sectionId);
+    },
+    [isHome]
+  );
 
   const handleScroll = useCallback(() => {
-    if (isNavigatingRef.current) return;
+    if (!isHome || isNavigatingRef.current) return;
 
     const midpoint = window.innerHeight / 2;
     let currentSection: SectionId = SECTION_IDS[0];
@@ -37,9 +45,24 @@ const Sidebar = () => {
     }
 
     updateHash(currentSection);
-  }, [updateHash]);
+  }, [isHome, updateHash]);
 
   useEffect(() => {
+    if (!isHome) return;
+
+    const storedTarget = sessionStorage.getItem(HOME_SCROLL_TARGET_KEY);
+    if (storedTarget && SECTION_IDS.includes(storedTarget as SectionId)) {
+      sessionStorage.removeItem(HOME_SCROLL_TARGET_KEY);
+      activeHashRef.current = storedTarget;
+      setActiveIcon(storedTarget);
+
+      requestAnimationFrame(() => {
+        document.getElementById(storedTarget)?.scrollIntoView({ behavior: "auto" });
+        window.history.replaceState(null, "", `/#${storedTarget}`);
+      });
+      return;
+    }
+
     const hash = window.location.hash.replace("#", "");
     if (SECTION_IDS.includes(hash as SectionId)) {
       activeHashRef.current = hash;
@@ -54,7 +77,7 @@ const Sidebar = () => {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
+  }, [handleScroll, isHome]);
 
   const handleClick = (icon: string) => {
     const section = document.getElementById(icon);
@@ -116,6 +139,17 @@ const Sidebar = () => {
         </div>
         <div
           className={`cursor-pointer rounded-xl px-4 py-3 ${
+            activeIcon === "blog"
+              ? "bg-secondary/80 text-accent font-semibold"
+              : "text-accent"
+          } w-full flex items-center justify-start space-x-2`}
+          onClick={() => handleClick("blog")}
+        >
+          <div className="text-xl">✍️</div>
+          <span>Blog</span>
+        </div>
+        <div
+          className={`cursor-pointer rounded-xl px-4 py-3 ${
             activeIcon === "timeline"
               ? "bg-secondary/80 text-accent font-semibold"
               : "text-accent"
@@ -165,6 +199,20 @@ const Sidebar = () => {
           <div className="text-xl text-center">📝</div>
           <span className="hidden group-hover:inline-block transition-opacity duration-300 text-center text-sm ml-2">
             Projects
+          </span>
+        </div>
+
+        <div
+          className={`group w-full cursor-pointer rounded-full py-2 ${
+            activeIcon === "blog"
+              ? "bg-secondary/80 text-accent"
+              : ""
+          } flex items-center justify-center space-x-2`}
+          onClick={() => handleClick("blog")}
+        >
+          <div className="text-xl text-center">✍️</div>
+          <span className="hidden group-hover:inline-block transition-opacity duration-300 text-center text-sm ml-2">
+            Blog
           </span>
         </div>
 

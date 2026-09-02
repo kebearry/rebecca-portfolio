@@ -3,10 +3,15 @@ import { getPosts } from "../../lib/posts";
 import ReactMarkdown from "react-markdown";
 import Image from "next/image";
 import Link from "next/link";
-import { markdownComponents, caseStudyUrlTransform } from "../../utility/markdowncomponents";
+import {
+  markdownComponents,
+  caseStudyUrlTransform,
+  markdownRemarkPlugins,
+} from "../../utility/markdowncomponents";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { FaArrowLeft } from "react-icons/fa";
+import BackToHomeSection from "../../ui/backtohomesection";
 
 interface Post {
   slug: string;
@@ -65,13 +70,13 @@ export async function generateMetadata({
 function HomeButton() {
   return (
     <div className="z-50 fixed top-5 left-5 sm:top-6 sm:left-6">
-      <Link
-        href="/#projects"
+      <BackToHomeSection
+        section="projects"
         className="group flex items-center gap-2 glass-panel text-accent rounded-full px-4 py-2.5 sm:px-5 sm:py-3 font-semibold text-sm sm:text-base border border-white/60 hover:bg-secondary/80 hover:border-secondary transition duration-300 shadow-md"
       >
         <FaArrowLeft className="text-base sm:text-lg" aria-hidden="true" />
         <span>Back</span>
-      </Link>
+      </BackToHomeSection>
     </div>
   );
 }
@@ -152,6 +157,7 @@ function ProjectContent({ content }: { content: string }) {
       <div className="prose prose-lg max-w-none text-accent markdown-content">
         <ReactMarkdown
           urlTransform={caseStudyUrlTransform}
+          remarkPlugins={markdownRemarkPlugins}
           components={markdownComponents}
         >
           {content}

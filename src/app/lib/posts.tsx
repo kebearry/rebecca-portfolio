@@ -3,6 +3,7 @@
 export const FEATURED_PROJECT_SLUGS = [
   "mental-health",
   "financial-service",
+  "retirement-income-planning-tool",
   "fishing-equipments-ecomm",
   "math-worksheet-generator",
   "custom-vinyl-player",
@@ -30,6 +31,56 @@ const orderBySlugs = (posts: Post[], slugs: readonly string[]) => {
 export const getPosts = async () => {
   // Hardcoded posts with a summary and full markdown content
   return [
+    {
+      id: -5,
+      image: "https://cdn.dribbble.com/userupload/48447909/file/ca24e41b688fcc4a7d60d53b3d76c41d.png?resize=1024x768&vertical=center",
+      slug: "retirement-income-planning-tool",
+      title: "Retirement Income Planning Tool",
+      type: "Interactive Calculator, Frontend Development, CMS Development",
+      industry: "Financial Services, Retirement Planning",
+      role: "CMS Developer, Frontend Developer",
+      tools: "React, TypeScript, Next.js, Sitecore JSS, REST APIs, PDF Templating, Email Templating",
+      summary: "Multi-step retirement planning tool built on Sitecore JSS, modelling superannuation longevity, pension eligibility, and income strategy comparisons.",
+      fullContent: `
+# Retirement Income Planning Tool
+
+## Introduction
+
+This project was an interactive retirement planning tool designed for people approaching or in retirement. It helped users understand how long their retirement savings might last, whether they may be eligible for government pension support, and how different income strategies could affect their long-term financial security.
+
+What made the project valuable was that it was more than a simple calculator. It combined guided education, scenario modelling, lead capture, and personalised follow-up into a single journey, helping users work through complex retirement questions without needing to interpret dense financial assumptions on their own.
+
+## About My Contribution
+
+I was responsible for building the front-end experience end to end, including the multi-step journey, validation, client-side state handling, API integration, results visualisation, and CMS configuration for assumptions, form settings, and the supporting PDF and email output components used to deliver personalised follow-up content.
+
+#### Frontend Development:
+
+**Key Frontend Features:**
+
+- **Multi-Step Retirement Modelling Flow:** Built a 3-step guided experience covering savings longevity projections, government pension eligibility checks, and side-by-side income strategy comparisons. The flow needed to feel approachable for users while still collecting enough structured information to support meaningful financial outputs.
+
+- **Dynamic Results and Decision Support:** Created results screens with projections, summaries, and plain-language messaging that translated financial modelling into actionable guidance. This helped turn complex outputs into a format suitable for self-service exploration, marketing follow-up, and advisory conversations.
+
+- **Lead Capture and Personalised Follow-Up:** Integrated lead capture and reusable PDF/email-oriented output components so users could receive tailored summaries and next-step guidance after completing the tool.
+
+#### CMS Development:
+
+- **Configurable Assumptions and Form Settings:** Exposed modelling assumptions, helper copy, and selected form settings through Sitecore so product, content, and compliance teams could update guidance and configuration without developer involvement.
+
+- **Content-Driven Cross-Channel Outputs:** Structured email and PDF outputs as reusable, content-driven components so the same scenario information could be delivered consistently across browser, email, and generated documents.
+
+#### Architecture and Technical Decisions:
+
+- **Step-and-Substep Navigation with State Persistence:** Used URL-based navigation with session storage to preserve progress across a multi-step and substep journey, support back/forward movement cleanly, and reduce the risk of losing in-progress user inputs.
+
+- **Backend Calculations with CMS-Managed Configuration:** Kept core financial calculation logic in backend APIs, while assumptions, explanatory content, and selected form settings were exposed through CMS-managed configuration. This gave non-developer teams a controlled way to update modelling inputs and guidance without changing the frontend implementation.
+
+## Outcome
+
+The result was a clearer and more approachable way for users to explore retirement scenarios, understand pension eligibility, and compare income strategies without being overwhelmed by technical or financial complexity. It brought education, modelling, and conversion into one cohesive journey, while giving internal teams a maintainable way to evolve assumptions, form behaviour, and follow-up content over time. The simplified flow also supported earlier data capture in the journey, contributing to a meaningful uplift in completions and lead volume after launch.
+`,
+    },
     {
       id: -4,
       image: "https://cdn.dribbble.com/userupload/42943972/file/original-492d89eb211053e886a7354ad5d2e475.png?resize=1024x768&vertical=center",
