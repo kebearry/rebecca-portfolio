@@ -35,6 +35,9 @@ export const metadata: Metadata = {
     description:
       "Solution Architect specializing in frontend experiences and CMS platforms across Sitecore, AEM, Magnolia, and more. Based in Singapore.",
   },
+  verification: {
+    google: "dcBve9fArH51uXAj4wy2CdoLXqcQhfXdwihqkVuugqo",
+  },
 };
 
 export default function RootLayout({
