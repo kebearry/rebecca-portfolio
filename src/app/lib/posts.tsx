@@ -1,22 +1,23 @@
 // lib/posts.ts
 
 export const FEATURED_PROJECT_SLUGS = [
+  "global-search-migration",
+  "retirement-income-planning-tool",
   "mental-health",
   "financial-service",
-  "retirement-income-planning-tool",
   "fishing-equipments-ecomm",
-  "math-worksheet-generator",
-  "custom-vinyl-player",
 ] as const;
 
-export const MORE_PROJECT_SLUGS = [
-  "parking-mobile-app",
-  "security-reporting-website-revamp",
+export const OTHER_PROJECT_SLUGS = [
+  "math-worksheet-generator",
+  "custom-vinyl-player",
+  "non-fungible-token",
+  "smart-travel-app",
   "product-inventory",
   "ecomm-design",
+  "parking-mobile-app",
   "sustainability-ambassador-program",
-  "smart-travel-app",
-  "non-fungible-token",
+  "security-reporting-website-revamp",
 ] as const;
 
 type Post = Awaited<ReturnType<typeof getPosts>>[number];
@@ -31,6 +32,79 @@ const orderBySlugs = (posts: Post[], slugs: readonly string[]) => {
 export const getPosts = async () => {
   // Hardcoded posts with a summary and full markdown content
   return [
+    {
+      id: -6,
+      image:
+        "https://cdn.dribbble.com/userupload/48897959/file/35989a95931218a0d6b6ac1669372565.png?resize=1024x768&vertical=center",
+      slug: "global-search-migration",
+      title: "Global Search: Funnelback to Sitecore Search",
+      type: "Frontend Development, Sitecore Search Integration",
+      industry: "Higher Education",
+      role: "Frontend Lead",
+      tools:
+        "Sitecore XM Cloud, Sitecore Search, Next.js, TypeScript, React",
+      summary:
+        "Like-for-like migration of a major university's global search from Funnelback to Sitecore Search, with legacy URL compatibility and production parity across six result types.",
+      fullContent: `
+# Global Search: Funnelback to Sitecore Search
+
+## Introduction
+
+A major university relied on Funnelback to power its public search experience. Students, staff, and prospective students used it every day to find courses, scholarships, news, FAQs, and people across the institution's digital estate.
+
+The goal of this project was not to redesign search. It was to replace Funnelback incrementally with Sitecore Search while keeping the experience familiar for users and compatible with existing bookmarked URLs.
+
+This case study covers the **global search** migration: the main search site with tabbed results across all content types. Separate follow-on work covered dedicated scholarship search and the scholarship search wizard.
+
+## The Challenge
+
+A search replacement sounds straightforward until you look at what production actually had to support:
+
+- Six result tabs: All Results, Courses, Scholarships, News, FAQs, and People
+- Years of bookmarked Funnelback URLs with \`collection\`, \`profile\`, \`sort\`, pagination, and facet parameters
+- Different result layouts per content type (course level tags, scholarship amounts and open dates, people contact cards, and more)
+- Performance expectations on a high-traffic university search site
+
+The frontend could not simply call a new API and render generic cards. It had to translate between Funnelback-era URL contracts and Sitecore Search payloads while delivering a like-for-like experience.
+
+## About My Contribution
+
+I led a global frontend team of three for the search replacement on the university's Sitecore XM Cloud headless stack, managing two developers across different time zones while owning the search replacement component, integration library, shared search UI, URL compatibility, response mapping, performance tuning, and production alignment with the live Funnelback site.
+
+#### Search Experience
+
+- **Tabbed global search:** Built the end-to-end search UI across All Results, Courses, Scholarships, News, FAQs, and People, with tab-specific result rendering and facet behaviour.
+- **Content-type result mapping:** Mapped Sitecore Search responses into the correct card format per type, including course metadata, scholarship badges (institution vs external), news dates, FAQ snippets, and people contact details.
+- **Shared search components:** Extracted reusable search UI (input, tabs, facets, result items, pagination) so the global search experience could share patterns with other search surfaces on the site.
+
+#### Funnelback Compatibility Layer
+
+- **Legacy URL support:** Parsed and translated Funnelback URL parameters (\`collection\`, \`profile\`, \`query\`, \`sort\`, \`page\`, facet filters) into Sitecore Search requests so existing links kept working.
+- **Facet parameter mapping:** Mapped legacy Funnelback facet names to Sitecore Search facet fields, including scholarship filters such as citizenship and study level, with clear handling when a legacy filter could not be mapped.
+- **URL normalization:** Fixed scheme-less result URLs from search indexes so links resolved correctly outside the search subdomain.
+
+#### Integration and Architecture
+
+- **Sitecore Search REST integration:** Connected the frontend to Sitecore Search via the Discover REST API, with a Cloud SDK fallback for local development.
+- **Request and response transformation:** Built the layer that turns URL state into search requests and normalizes Discover payloads into a consistent result model for the UI.
+- **Performance optimisations:** Reduced unnecessary API calls through tab prefetching, deferred facet loading on the All Results tab, and request deduplication during fast query changes.
+- **Search analytics:** Wired browser-side search events for views, clicks, suggestions, and filter usage to support measurement after launch.
+
+#### Production Parity
+
+- **Behaviour matched to live Funnelback:** Validated search behaviour against the production Funnelback site, including edge cases such as quoted queries, empty People tab behaviour, no-results suggestions, and scholarship deep links from elsewhere on the site.
+- **Accessibility:** Added live regions for loading and error states, keyboard-friendly tabs, and accessible contact actions on people results.
+
+## Outcome
+
+The university's global search now runs on Sitecore Search while preserving the user experience teams and students already relied on. Bookmarked URLs, scholarship filter links, and tabbed browsing continue to work, and the frontend has a maintainable integration layer instead of a one-off Funnelback dependency.
+
+The migration gave the institution a path to retire Funnelback for global search without forcing users through a visible platform change, and it established shared search patterns that could support further search replacements across the estate.
+
+## Links:
+- [Live Site](protected:higher-ed-global-search)
+`,
+    },
     {
       id: -5,
       image: "https://cdn.dribbble.com/userupload/48447909/file/ca24e41b688fcc4a7d60d53b3d76c41d.png?resize=1024x768&vertical=center",
@@ -79,6 +153,9 @@ I was responsible for building the front-end experience end to end, including th
 ## Outcome
 
 The result was a clearer and more approachable way for users to explore retirement scenarios, understand pension eligibility, and compare income strategies without being overwhelmed by technical or financial complexity. It brought education, modelling, and conversion into one cohesive journey, while giving internal teams a maintainable way to evolve assumptions, form behaviour, and follow-up content over time. The simplified flow also supported earlier data capture in the journey, contributing to a meaningful uplift in completions and lead volume after launch.
+
+## Links:
+- [Live Site](protected:retirement-income-planning-tool)
 `,
     },
     {
@@ -667,7 +744,7 @@ export const getFeaturedPosts = async () => {
   return orderBySlugs(posts, FEATURED_PROJECT_SLUGS);
 };
 
-export const getMorePosts = async () => {
+export const getOtherProjectPosts = async () => {
   const posts = await getPosts();
-  return orderBySlugs(posts, MORE_PROJECT_SLUGS);
+  return orderBySlugs(posts, OTHER_PROJECT_SLUGS);
 };

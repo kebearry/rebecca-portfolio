@@ -1,4 +1,4 @@
-import { getFeaturedPosts, getMorePosts } from "../lib/posts";
+import { getFeaturedPosts, getOtherProjectPosts } from "../lib/posts";
 import Post from "../ui/post";
 
 type PostItem = Awaited<ReturnType<typeof getFeaturedPosts>>[number];
@@ -13,7 +13,7 @@ function FeaturedGrid({ posts }: { posts: PostItem[] }) {
   );
 }
 
-function MoreProjectsGrid({ posts }: { posts: PostItem[] }) {
+function CompactProjectsGrid({ posts }: { posts: PostItem[] }) {
   return (
     <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 list-none p-0 m-0">
       {posts.map((post) => (
@@ -24,9 +24,9 @@ function MoreProjectsGrid({ posts }: { posts: PostItem[] }) {
 }
 
 export default async function Projects() {
-  const [featuredPosts, morePosts] = await Promise.all([
+  const [featuredPosts, otherProjectPosts] = await Promise.all([
     getFeaturedPosts(),
-    getMorePosts(),
+    getOtherProjectPosts(),
   ]);
 
   return (
@@ -38,25 +38,28 @@ export default async function Projects() {
         <div className="max-w-2xl">
           <h1 className="text-4xl font-bold mb-4">Projects</h1>
           <p className="text-accent/80 leading-relaxed">
-            A mix of client delivery, CMS implementations, and products
-            I&apos;ve built end-to-end. Start with the featured work below.
+            Client delivery and CMS implementation work across higher education,
+            financial services, nonprofit, and ecommerce, plus experiments and
+            earlier projects across mobile, ecommerce, and product design.
           </p>
         </div>
 
         <div className="space-y-8">
-          <h2 className="text-2xl font-bold">Featured</h2>
+          <h2 className="text-2xl font-bold">Client &amp; delivery work</h2>
           <FeaturedGrid posts={featuredPosts} />
         </div>
 
         <div className="space-y-6">
           <div>
-            <h2 className="text-xl font-bold text-accent/90">More projects</h2>
+            <h2 className="text-xl font-bold text-accent/90">
+              Experiments &amp; side projects
+            </h2>
             <p className="mt-2 text-accent/60 text-sm">
-              Earlier work and broader experiments across mobile, ecommerce,
-              and product design.
+              Personal builds and design explorations up front, followed by
+              mobile apps and earlier client work.
             </p>
           </div>
-          <MoreProjectsGrid posts={morePosts} />
+          <CompactProjectsGrid posts={otherProjectPosts} />
         </div>
       </div>
     </section>
