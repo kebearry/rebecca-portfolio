@@ -10,6 +10,114 @@ export type BlogPost = {
 
 const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "sitecore-search-options-explained",
+    title: "Embedded Search, Sitecore Search, and SitecoreAI Search",
+    summary:
+      "Start with Embedded Search as the usual SitecoreAI baseline, then compare Sitecore Search and SitecoreAI Search with clear use cases and a feature matrix.",
+    publishedAt: "2026-09-03",
+    tags: [
+      "Sitecore Search",
+      "Embedded Search",
+      "SitecoreAI Search",
+      "Sitecore",
+      "Architecture",
+      "Discovery",
+    ],
+    fullContent: `
+# Embedded Search, Sitecore Search, and SitecoreAI Search
+
+Sitecore search naming confuses people for a simple reason: it sounds like there is one search product with new labels.
+
+There is not.
+
+I have seen teams mix these names up and plan for the wrong search path. As of September 2026, if you are already on a standard SitecoreAI content site, **Embedded Search is usually a given** for normal website and content search. The harder decision is usually Sitecore Search vs SitecoreAI Search.
+
+## Start here: Embedded Search
+
+**What it is:** Content site search inside SitecoreAI.
+
+Embedded Search is designed for website and content search experiences within SitecoreAI environments, whereas SitecoreAI Search is the broader AI-driven search offering within the SitecoreAI platform.
+
+**Why Sitecore built it:** So SitecoreAI customers can make site content searchable faster, without standing up the full standalone Sitecore Search product.
+
+**Clear use case:**  
+A company already runs its marketing site on SitecoreAI. Visitors need to find pages, articles, and help content quickly. Embedded Search is the expected content site search path there.
+
+You may still need **Sitecore Search** on top of Embedded Search. Example: a SitecoreAI marketing site also needs to search a product catalog in another system, boost key pages today, and cover a legacy microsite that is not on SitecoreAI. Embedded Search covers the SitecoreAI site content. Sitecore Search covers the wider search platform needs.
+
+## The bigger decision: Sitecore Search vs SitecoreAI Search
+
+Once Embedded Search covers normal content site search, the remaining choice is usually about maturity and AI depth.
+
+### Sitecore Search
+
+**What it is:** The mature search product that runs on its own.
+
+**Why it exists:** Teams need a full search platform with strong controls today.
+
+**Clear use case:**  
+A university needs global site search live in three months. Editors must boost important pages, match related words like "uni" and "university", and show a short AI answer above results. Choose Sitecore Search.
+
+**Choose this when:** you need reliable search soon, with fewer gaps.
+
+### SitecoreAI Search
+
+**What it is:** The fuller AI search path inside SitecoreAI.
+
+**Why it exists:** Sitecore is building toward AI-first discovery inside one SitecoreAI platform, including short AI answers and later AI search experiences. Some of that is still rolling out.
+
+**Clear use case:**  
+A team is rebuilding content discovery inside SitecoreAI over the next year. They want search that can grow into richer AI experiences, and they can wait while some features arrive. Choose SitecoreAI Search.
+
+**Choose this when:** you want AI-led discovery inside SitecoreAI, beyond normal content site search.
+
+## Sitecore Search vs SitecoreAI Search feature matrix
+
+Statuses below are point-in-time positioning as of September 2026. Roadmaps move. Treat them as positioning interpretations, not confirmed roadmap commitments.
+
+| Capability | Sitecore Search | SitecoreAI Search |
+| --- | --- | --- |
+| Bring website pages in through a sitemap | Now | Now |
+| Bring content in through an API | Now | Next |
+| Search content that already lives in SitecoreAI | Not planned | Now |
+| Match related words, like "uni" and "university" | Now | To be confirmed |
+| Let teams control which results rank higher or lower | Now | To be confirmed |
+| Recommendations | Now | Next |
+| Suggestions and results while someone types | Now | Next |
+| Short AI answers on top of results | Now | Next |
+| AI summaries of results | Not planned | Next |
+| Search that understands meaning, not just exact words | Next | Future |
+| Search that works like a conversation with follow-up questions | Later | Future |
+| Search that can take multi-step actions for the user | Not planned | Future |
+
+Timing key: **Now** = available today. **Next** = near-term roadmap. **Later** = after Next. **Future** = further out, less precise timing. **Not planned** = not on the roadmap for that product right now. **To be confirmed** = not decided or not publicly clear yet.
+
+What some of these rows mean in practice:
+
+- **Sitemap:** point search at \`yoursite.com/sitemap.xml\` so public pages get indexed
+- **API intake:** push products, courses, or help articles from another system into search on a schedule
+- **SitecoreAI-native content:** search pages and content that already live in SitecoreAI, without a separate crawl setup
+- **Recommendations:** show "related articles" or "people also viewed" beside a result
+- **Typeahead:** start typing \`schol\` and see scholarship suggestions before you hit enter
+- **Short AI answers:** ask \`what scholarships are available?\` and get a short answer above the result list
+- **AI summaries:** get a short summary of the top results, not just a list of links
+- **Understands meaning:** search \`help paying for school\` and still find scholarship pages even if those exact words are not on the page
+- **Works like a conversation:** ask \`undergraduate scholarships\`, then \`only for international students\`, and search keeps the context
+- **Takes multi-step actions:** ask \`find a computer science course and show me how to apply\`, and search helps across both steps
+
+As of September 2026, Sitecore Search is usually the more complete option for production-grade search controls. SitecoreAI Search is still catching up on several of those controls.
+
+## Quick chooser
+
+- Already on SitecoreAI and need normal content site search? **Embedded Search** is usually the baseline
+- Need mature search controls live soon? **Sitecore Search**
+- Building AI-led discovery inside SitecoreAI and can accept gaps? **SitecoreAI Search**
+- Want richer AI later? Plan **SitecoreAI Search** after that baseline
+
+If you are still early on search planning itself, start with [Sitecore Search: 5 Questions to Answer Before You Build](/blog/sitecore-search-five-questions).
+`,
+  },
+  {
     slug: "sitecore-search-five-questions",
     title: "Sitecore Search: 5 Questions to Answer Before You Build",
     summary:
