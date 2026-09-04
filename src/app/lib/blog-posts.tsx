@@ -10,6 +10,180 @@ export type BlogPost = {
 
 const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "sitecore-search-document-extractors",
+    title: "Sitecore Search Document Extractors: How Attributes Get Filled",
+    summary:
+      "Why a crawled URL can still be useless in Sitecore Search, and how Trailworks fills name and price with a document extractor.",
+    publishedAt: "2026-09-04",
+    tags: ["Sitecore Search", "Sitecore", "Discovery", "Architecture"],
+    fullContent: `
+# Sitecore Search Document Extractors: How Attributes Get Filled
+
+A crawler can fetch a URL and the item can still be useless in search.
+
+Search only knows what the **document extractor** stored. If that mapping missed the heading or the price field, the result has no **name**, or the Product Finder cannot sort.
+
+That mapping is the difference between an indexed URL and a searchable item.
+
+## What it is
+
+A document extractor is a setting on a **web crawler** or an **API crawler**. It is not a third way to get content in.
+
+A web crawler reads pages, and files like PDFs. An API crawler reads JSON. The extractor turns either one into attributes on the index document.
+
+On a basic web crawler, the same mapping screen is called **Attribute Extraction**, not Document Extractors.
+
+Each URL or file becomes one document. A long HTML page is still one result. A 10-page PDF is still one result.
+
+[Five questions](/blog/sitecore-search-five-questions) is where Trailworks picks the crawler. This post is the mapping on that crawler.
+
+## Create the attribute, then fill it
+
+Create the attribute in **Administration → Domain settings**. Then the source has to fill it. Creating it does nothing on its own. That is TechAdmin work, and it is the step people skip.
+
+After a crawl, open the item in **Content Collection**. You will see what was stored. The [CEC post](/blog/sitecore-search-cec-explained) is the map for that screen.
+
+## When Trailworks search looks empty
+
+Trailworks keeps **one entity per type**, same as the [entity modeling post](/blog/sitecore-search-entity-modeling). Articles, events, and products are not one blob with a type field.
+
+A gear article should appear for **waterproof jacket**. Content Collection has the URL. **name** is blank. Boosting the widget will not invent a heading. The advanced web crawler fetched the page. The extractor never mapped the \`h1\`.
+
+Stormbreak Waterproof Shell should sort by price in Product Finder. The product is in the index. **price** is empty. The API crawler fetched the catalog. The extractor never mapped the price field.
+
+Same failure. Different shape.
+
+| Source | Crawler | What must be filled |
+| --- | --- | --- |
+| XM Cloud articles | Advanced web crawler | Name from the heading, description from the meta tag |
+| Commerce products | API crawler | Name, price, availability from JSON |
+
+SharePoint guides and Zendesk help follow the same pattern. The rest of this post walks the two failures above.
+
+## How you write the mapping
+
+The extractor needs a way to point at a value on the page or in the JSON.
+
+**XPath** is a path through HTML. Sitecore uses it on web crawlers when every article uses the same tags. You type the path next to the attribute. You do not write a function.
+
+\`\`\`text
+name: //h1
+description: //meta[@name='description']/@content
+\`\`\`
+
+**JavaScript** is the same job with code. Sitecore runs it as **Cheerio**, which uses CSS-style selectors on the HTML: \`$('h1').text()\` means "get the heading text." Use it when you need a fallback, such as heading first, then the page title. This is not the same as asking the crawler to load the page in a browser. Cheerio only reads HTML the crawler already has.
+
+**JSONPath** is a path through JSON. Sitecore uses it on API crawlers. \`$.price\` means the price field on that object.
+
+Use XPath or JSONPath when the shape is stable. Use JavaScript when it is not.
+
+## The article extractor
+
+**XPath** is enough when every page has the same heading. Trailworks article templates are not that tidy, so this source uses JavaScript. Scope it to article URLs on the advanced web crawler.
+
+On the advanced web crawler, you attach this function to the source **tag** for Article. That tag is how this source fills the Article entity. Events get a different extractor, not a different \`type\` value in this function.
+
+\`$ = response.body\` is the page. Return an **array of objects**. The keys must match Domain settings. The starter set often uses \`name\`, not title.
+
+\`\`\`javascript
+function extract(request, response) {
+    $ = response.body;
+
+    return [{
+        "name": $('h1').first().text() || $('title').text(),
+        "description": $('meta[name="description"]').attr('content') || $('meta[property="og:description"]').attr('content') || "",
+        "url": $('meta[property="og:url"]').attr('content') || request.url,
+        "type": "article",
+        "image_url": $('meta[property="og:image"]').attr('content') || ""
+    }];
+}
+\`\`\`
+
+\`type\` and \`url\` are mandatory attributes for every domain. The \`"type": "article"\` value above is that required attribute, not a substitute for a separate Event entity. Without \`type\` and \`url\`, Search will not create the index document even if \`name\` is perfect.
+
+\`$('h1').first()\` takes the first heading only. Without \`.first()\`, Cheerio can join every \`h1\` on the page into one string.
+
+If \`name\` is empty in the validator, open View Source on the sample URL. If the heading is already in that HTML and the selector still misses it, fix the selector. If the heading is missing from the raw HTML, the page is filling in later in the browser. That case is covered under Validate, then crawl.
+
+## The product extractor
+
+Products are JSON. Use **JSONPath** on the API crawler. Do not paste Cheerio selectors against a catalog payload.
+
+JSONPath is typed next to each attribute in CEC. It is not a \`function extract\`.
+
+\`\`\`text
+id: $.sku
+name: $.name
+description: $.description
+price: $.price
+availability: $.inStock
+url: $.url
+type: product
+\`\`\`
+
+\`$.inStock\` stores the raw boolean. If Product Finder needs strings such as \`in_stock\`, map that with the JavaScript extractor below.
+
+\`type\` can be a fixed value on the attribute rule when every item in the source is a product.
+
+If you need logic, such as turning \`true\` into \`in_stock\`, use a JavaScript extractor for the whole document and still return an array of objects. On an API crawler, \`response.body\` is the JSON payload, not HTML. Prefer JSONPath when the fields are already named.
+
+\`\`\`javascript
+function extract(request, response) {
+    var product = response.body;
+
+    return [{
+        "id": product.sku,
+        "name": product.name,
+        "description": product.description || "",
+        "price": product.price,
+        "availability": product.inStock ? "in_stock" : "out_of_stock",
+        "url": product.url,
+        "type": "product"
+    }];
+}
+\`\`\`
+
+If the catalog wraps items in a list, the path starts at that list. One object is still one index document.
+
+## When you need a second extractor
+
+One extractor is enough when every URL, or every payload, looks the same.
+
+The basic **web crawler** only has one Attribute Extraction block. A second document extractor needs an **advanced web crawler** or an **API crawler**.
+
+Add a second extractor when the markup or the JSON is a different shape. Trailworks events on the same XM Cloud site, with a different heading, are a second extractor on \`/events/\`. SharePoint guides that mix HTML and PDFs are the same idea.
+
+Do not add extractors because content came from two systems. That is two sources.
+
+## Validate, then crawl
+
+The **validator** tests your mapping against sample URLs. It does not create index documents.
+
+Paste the article URL, and a product API endpoint the crawler would hit. One happy-path page is not enough. An error on an attribute means that mapping fails for that input. An empty **mandatory** attribute means Search will not index the item at all.
+
+The validator only sees the first HTML the server sends. It does not run the page in a browser, so it never waits for React or other client-side JavaScript to fill in headings and body text. An XM Cloud article can look empty there even when a real crawl will find the content.
+
+On an **advanced web crawler**, there is a crawl setting that loads pages like a browser so client-side JavaScript runs before extraction (in CEC this is usually **Render JavaScript**). That is separate from the Cheerio JavaScript you write in the extractor. If Render JavaScript is on, trust a small crawl and **Content Collection** more than the validator for JS-heavy pages.
+
+## If the result looks empty
+
+| What you see | What to check |
+| --- | --- |
+| The mapping looks wrong on a sample URL | Validator, then a small crawl if the page is JS-heavy |
+| The item is missing | Sources, or a mandatory attribute the extractor never filled |
+| The item is there, name or filters are blank | The document extractor. Open Content Collection |
+| The attribute does not exist at all | Domain settings, then the extractor |
+
+Republish the source after you change the mapping.
+
+## Where this fits
+
+Question 2 in the [five questions](/blog/sitecore-search-five-questions) post is how content gets into Search. This is the part of that question that decides whether the index is usable.
+
+If the hard part is which attributes belong on which type, that is [entity modeling](/blog/sitecore-search-entity-modeling). If you need the console map, that is [CEC](/blog/sitecore-search-cec-explained).
+`,
+  },
+  {
     slug: "sitecore-search-cec-explained",
     title: "Sitecore Search CEC Explained: The Workbench Behind Search",
     summary:
@@ -114,6 +288,8 @@ Those decisions belong in planning first. CEC cannot fix an unclear search scope
 ## Where this fits with the rest of Sitecore Search
 
 If you are still deciding what to build, start with [Sitecore Search: 5 Questions to Answer Before You Build](/blog/sitecore-search-five-questions).
+
+If the mapping from page or JSON into attributes is the hard part, continue with [Sitecore Search Document Extractors](/blog/sitecore-search-document-extractors).
 
 If entity modeling is the hard part, continue with [How to Model Entities in Sitecore Search](/blog/sitecore-search-entity-modeling).
 
@@ -308,16 +484,20 @@ A **system** is where content lives today. A **content source** in Sitecore Sear
 
 | System | Content source | How it gets in |
 | --- | --- | --- |
-| XM Cloud | Site crawl | Crawler |
-| Commerce platform | Product catalog | API |
-| SharePoint | Buying guide library | Document extraction |
-| Zendesk | Help center | API |
+| XM Cloud | Site crawl | Web crawler |
+| Commerce platform | Product catalog | API crawler |
+| SharePoint | Buying guide library | Web crawler |
+| Zendesk | Help center | API crawler |
 
-A **crawler** reads pages from a website automatically. An **API** pulls structured data from another system on a schedule. **Document extraction** pulls text and metadata out of files like PDFs.
+A **web crawler** reads pages, and files like PDFs, from a website. An **API crawler** pulls JSON from another system on a schedule.
+
+A **document extractor** is not a third way in. It is a setting on either crawler: how title, description, and the other attributes are mapped from the page or the JSON. [Sitecore Search Document Extractors](/blog/sitecore-search-document-extractors) covers why that mapping decides whether the index is usable, and how to validate it before you crawl.
 
 Once ingested, everything is stored in the **Search Index** and becomes searchable.
 
 This is often the messy part. Crawling one website can be straightforward. Connecting multiple systems, handling security, and keeping everything up to date takes more planning and testing.
+
+Locked content is still a crawler job. A private API uses an API crawler: allowlist the Sitecore Search crawler IPs if the lock is the network, or send the authorization header if the lock is auth. A private website uses an advanced web crawler: the same IP allowlist, or browser login if visitors sign in through a page. Trailworks products still come from the commerce API, even if that API is private.
 
 For Trailworks, the friction shows up in refresh timing. Zendesk articles can change daily, but the commerce catalog syncs on a slower schedule. If search feels stale for products but current for support content, users lose trust quickly. The key decision is not just how each source gets into the index, but how often it needs to refresh and who owns fixing it when something breaks.
 
