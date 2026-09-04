@@ -10,6 +10,117 @@ export type BlogPost = {
 
 const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "sitecore-search-cec-explained",
+    title: "Sitecore Search CEC Explained: The Workbench Behind Search",
+    summary:
+      "A map of the Sitecore Search Customer Engagement Console: where to go when search is wrong, what the left menu is for, and a practical starting path.",
+    publishedAt: "2026-09-04",
+    tags: ["Sitecore Search", "CEC", "Sitecore", "Discovery", "Architecture"],
+    fullContent: `
+# Sitecore Search CEC Explained: The Workbench Behind Search
+
+Sitecore Search has two sides.
+
+Developers wire up APIs, sources, and the site experience. Business teams need a place to configure search, tune results, and check performance without living in code.
+
+That place is the **Customer Engagement Console**, or **CEC**. Most day-to-day search decisions happen here.
+
+A few words come up immediately:
+
+- A **widget** is the search or recommendation experience on the site
+- A **page** in CEC holds those widgets, like a search results layout. It is not a CMS page
+- A **rule** lives on a widget variation. It boosts, buries, or otherwise changes what that widget shows
+- A **source** is how content gets into Search
+- **Content Collection** is where you check what was indexed
+
+That is enough to move around.
+
+## The left menu
+
+CEC is a left-hand menu of sections, not a row of tabs. Some sections have their own tabs once you open them.
+
+![Sitecore Search CEC home screen: Site Performance](/blog/cec.png)
+
+Site Performance is the home screen. From top to bottom, the menu is usually:
+
+1. Site Performance
+2. Pages
+3. Widgets
+4. Analytics
+5. Global Resources
+6. Content Collection
+7. Sources
+8. Developer Resources
+9. Administration
+
+Older docs sometimes call Content Collection **Catalog**.
+
+Not every login sees the full menu. Roles are assigned in the Sitecore Cloud portal, and they change which icons appear.
+
+Most business users can open Pages, Widgets, Analytics, Global Resources, and Content Collection. That is enough to boost results, add synonyms, and check whether content was indexed.
+
+**Developer Resources** appears for the Developer role and above. That is where API keys, the API Explorer, and the event monitor live.
+
+**Sources** and **Domain settings** are tighter. Working with sources and changing domain settings is a TechAdmin permission. If those sections are missing, the login is working as designed. You can still confirm a missing result in Content Collection. You will need someone with TechAdmin access to republish a crawler or enable an attribute.
+
+The menu is more useful as a diagnostic map than as a product tour. Confirm the symptom first, then go to the place that can fix it:
+
+| If this is wrong | Open this |
+| --- | --- |
+| A result is missing or stale | Content Collection, then Sources |
+| Boost, bury, pin, or preview | Widgets |
+| The wrong widgets appear together | Pages |
+| "uni" vs "university" | Global Resources → Synonyms |
+| Default ranking or facets | Global Resources → Global widget |
+| Filters or result types still look wrong | Administration → Domain settings |
+| "Is search working?" | Site Performance, then Analytics |
+| API keys, events, or tracking | Developer Resources |
+
+Example: a scholarship page should appear in search and does not. Look it up in Content Collection. If it is not there, the problem is ingestion: open Sources and check the last crawl. Boosting the widget will not help. If it is there, leave Sources and look at synonyms, ranking, or the widget instead. Open the item: you will see the attributes Search stored, which source it came from, and, if tracking is on, visitor affinity. That is enough to tell whether the problem is ingestion or relevance.
+
+## Domain settings and unified discovery
+
+**Domain settings decides what is possible.** That is where attributes are enabled for filtering, faceting, sorting, or ranking. The global widget and widget rules decide what is actually on. If a filter is missing, check Domain settings first, then the global widget, then the widget variation. That is the debug order.
+
+Open **Administration → Domain settings → Attributes**. Most implementations start from the default Content entity and a starter set of attributes. Anything extra is a custom attribute you create there. Creating it does nothing until a source fills it: map title from an \`h1\`, description from a meta tag or the first paragraph of a PDF, then republish. That extraction step is TechAdmin work.
+
+Search supports **unified content discovery** from the same place. Sources can bring articles, products, and help content into one platform. Attributes on the entity decide whether those items can be matched, filtered, sorted, ranked, or returned in the API.
+
+A widget request is still per entity. One call returns one type. A unified experience is either one entity with a type field, so blogs and help share a result list, or one page with several widgets. The [entity modeling post](/blog/sitecore-search-entity-modeling) covers that choice. Domain settings is where it gets configured.
+
+## A practical starting path
+
+If you are new to CEC, do not try to learn every section at once. This path is how to learn the console, not how to debug a live issue. When something is already wrong, use the table above.
+
+1. Check **Content Collection** and confirm your important content is indexed
+2. If it is missing or stale, go to **Sources** before you touch widgets. Republishing a crawler needs TechAdmin access
+3. Open **Widgets** and **Pages** and understand what experiences already exist
+4. Review **Global Resources** for synonyms, then the global widget if defaults look off
+5. If filters or ranking still look wrong, open **Administration → Domain settings**
+6. Use **Site Performance** and **Analytics** once traffic is flowing
+
+That order matches how search usually fails in real projects: missing content, unclear experiences, weak matching, then weak measurement.
+
+If analytics look empty, or personalization is not learning, check events in **Developer Resources** before assuming the widgets are wrong.
+
+## Do not start in CEC when
+
+- The team has not agreed what content should be searchable
+- Nobody owns how content gets into the index
+- Success metrics are still undefined
+
+Those decisions belong in planning first. CEC cannot fix an unclear search scope.
+
+## Where this fits with the rest of Sitecore Search
+
+If you are still deciding what to build, start with [Sitecore Search: 5 Questions to Answer Before You Build](/blog/sitecore-search-five-questions).
+
+If entity modeling is the hard part, continue with [How to Model Entities in Sitecore Search](/blog/sitecore-search-entity-modeling).
+
+If you are choosing between Embedded Search, Sitecore Search, and SitecoreAI Search, read [Embedded Search, Sitecore Search, and SitecoreAI Search](/blog/sitecore-search-options-explained).
+`,
+  },
+  {
     slug: "sitecore-search-options-explained",
     title: "Embedded Search, Sitecore Search, and SitecoreAI Search",
     summary:
