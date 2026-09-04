@@ -809,3 +809,15 @@ export async function getBlogSlugs(): Promise<string[]> {
   const posts = await getBlogPosts();
   return posts.map((post) => post.slug);
 }
+
+export async function getBlogTags(): Promise<string[]> {
+  const posts = await getBlogPosts();
+  return [...new Set(posts.flatMap((post) => post.tags))].sort((a, b) =>
+    a.localeCompare(b)
+  );
+}
+
+export function blogTagFilterHref(tag?: string): string {
+  if (!tag) return "/";
+  return `/?tag=${encodeURIComponent(tag)}`;
+}

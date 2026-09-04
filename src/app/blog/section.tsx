@@ -1,8 +1,12 @@
-import { getBlogPosts } from "../lib/blog-posts";
-import BlogPostCard from "../ui/blogpostcard";
+import { getBlogPosts, getBlogTags } from "../lib/blog-posts";
+import BlogPosts from "../ui/blogposts";
 
-export default async function BlogSection() {
-  const posts = await getBlogPosts();
+type BlogSectionProps = {
+  initialTag?: string;
+};
+
+export default async function BlogSection({ initialTag }: BlogSectionProps) {
+  const [posts, tags] = await Promise.all([getBlogPosts(), getBlogTags()]);
 
   return (
     <section
@@ -20,17 +24,7 @@ export default async function BlogSection() {
         </div>
 
         {posts.length > 0 ? (
-          <ul
-            className={`grid gap-6 sm:gap-8 list-none p-0 m-0 ${
-              posts.length === 1
-                ? "grid-cols-1 max-w-2xl"
-                : "grid-cols-1 lg:grid-cols-2"
-            }`}
-          >
-            {posts.map((post) => (
-              <BlogPostCard key={post.slug} post={post} />
-            ))}
-          </ul>
+          <BlogPosts posts={posts} tags={tags} initialTag={initialTag} />
         ) : (
           <div className="glass-panel rounded-2xl p-8 sm:p-10 max-w-2xl">
             <h3 className="text-xl font-bold text-accent mb-3">

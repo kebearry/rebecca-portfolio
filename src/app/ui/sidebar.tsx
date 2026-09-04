@@ -21,7 +21,11 @@ const Sidebar = () => {
       if (activeHashRef.current === sectionId) return;
 
       activeHashRef.current = sectionId;
-      window.history.replaceState(null, "", `/#${sectionId}`);
+      window.history.replaceState(
+        null,
+        "",
+        `/${window.location.search}#${sectionId}`
+      );
       setActiveIcon(sectionId);
     },
     [isHome]
@@ -58,7 +62,11 @@ const Sidebar = () => {
 
       requestAnimationFrame(() => {
         document.getElementById(storedTarget)?.scrollIntoView({ behavior: "auto" });
-        window.history.replaceState(null, "", `/#${storedTarget}`);
+        window.history.replaceState(
+          null,
+          "",
+          `/${window.location.search}#${storedTarget}`
+        );
       });
       return;
     }

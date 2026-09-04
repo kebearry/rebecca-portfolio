@@ -14,6 +14,7 @@ import {
 } from "../../utility/markdowncomponents";
 import ShareArticle from "../../ui/sharearticle";
 import BackToHomeSection from "../../ui/backtohomesection";
+import BlogTagLink from "../../ui/blogtaglink";
 const SITE_URL = "https://rebecca-portfolio.vercel.app";
 
 interface PageProps {
@@ -114,12 +115,11 @@ export default async function BlogPostPage({ params }: PageProps) {
         {post.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-6">
             {post.tags.map((tag) => (
-              <span
+              <BlogTagLink
                 key={tag}
-                className="bg-secondary text-accent rounded-full px-3 py-1 text-xs font-medium"
-              >
-                {tag}
-              </span>
+                tag={tag}
+                className="bg-secondary text-accent rounded-full px-3 py-1 text-xs font-medium hover:bg-secondary/80 transition duration-200"
+              />
             ))}
           </div>
         )}

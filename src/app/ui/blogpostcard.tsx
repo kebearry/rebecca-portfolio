@@ -4,6 +4,7 @@ import {
   formatBlogDate,
   type BlogPost,
 } from "../lib/blog-posts";
+import BlogTagLink from "./blogtaglink";
 
 type BlogPostCardProps = {
   post: BlogPost;
@@ -36,12 +37,11 @@ const BlogPostCard = ({ post }: BlogPostCardProps) => {
       {post.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-6">
           {post.tags.map((tag) => (
-            <span
+            <BlogTagLink
               key={tag}
-              className="bg-secondary text-accent rounded-full px-3 py-1 text-xs font-medium"
-            >
-              {tag}
-            </span>
+              tag={tag}
+              className="bg-secondary text-accent rounded-full px-3 py-1 text-xs font-medium hover:bg-secondary/80 transition duration-200"
+            />
           ))}
         </div>
       )}
