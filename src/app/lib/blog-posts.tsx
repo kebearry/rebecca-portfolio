@@ -10,6 +10,92 @@ export type BlogPost = {
 
 const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "sitecore-search-widgets-variations",
+    title:
+      "Sitecore Search Widgets and Variations: Where the Experience Actually Lives",
+    summary:
+      "Widgets, variations, and the global widget in Sitecore Search — with a Trailworks Product Finder campaign.",
+    publishedAt: "2026-09-09",
+    tags: ["Sitecore Search", "CEC", "Sitecore", "Discovery", "Architecture"],
+    fullContent: `
+# Sitecore Search Widgets and Variations: Where the Experience Actually Lives
+
+The search experience does not live in the index. It lives on a **widget**: the Sitecore Search setup behind an id called **rfk_id**. The site asks for that id. Marketers control what it returns.
+
+This post is that layer: the **global widget**, a widget's **Default variation**, optional **extra variations**, and optional **rules**. The [CEC map](/blog/sitecore-search-cec-explained) shows where Widgets sits in the console.
+
+## Trailworks: Product Finder in one pass
+
+Trailworks sells outdoor gear. For spring, marketing wants **waterproof jacket** on Product Finder to behave a certain way. Header search and other widgets should stay normal.
+
+Here is what already exists:
+
+| Piece | What it is |
+| --- | --- |
+| Product Finder | One **Search Results** widget, \`rfk_id\` = \`tw_product_finder\`, entity = Product |
+| Header search | A **Preview Search** widget; separate \`rfk_id\` |
+| Global widget | Defaults every search surface inherits: availability facet on, sort = relevance |
+
+The Product Finder page on the site already uses \`tw_product_finder\`. If it did not, changes in CEC would not show up for shoppers.
+
+Until now, Product Finder's active variation had **no rules**. It still worked. Results came from the index plus whatever the global widget defined.
+
+For the campaign, marketing opens **Widgets → tw_product_finder → active variation** and adds **one rule**:
+
+- **Context:** only when the keyphrase is waterproof jacket. Leave Context empty and this rule would run on **every** query on Product Finder, which is broader than the campaign.
+- **Pin:** Stormbreak Waterproof Shell in **slot 1**. It stays first even if natural ranking would put something else there.
+- **Boost:** items in the Rain collection. They rise when they already match the query. They are not forced into a slot.
+- **Bury:** last-season jackets that still sell but should not lead. They stay in the list, at the bottom.
+- **Blacklist:** a discontinued SKU that must not appear for this campaign.
+
+Pin when a specific item must occupy a slot. Boost when a set of items should rise only if they already qualify. Bury when they can stay visible at the bottom. Blacklist when they must not appear for that context.
+
+They publish. Only Product Finder changes. Header search never got this rule, so it keeps using the global defaults.
+
+Later they add a **second rule** on the same variation: Context = returning visitors, **Boost** the Trailblazer loyalty collection. Both rules show on the Rules tab with a **Rank**. Drag to reorder. When two rules conflict, the one with the lower rank number wins (rank 1 beats rank 2).
+
+Two weeks later, a monsoon promo should lift Rain across **every** search surface. That is not another rule on \`tw_product_finder\`. That is a **scheduled variation on the global widget**: boost Rain for the campaign window, then let it expire. Product Finder still keeps its pin for waterproof jacket, because rules on this widget win over conflicting global defaults.
+
+## The stack
+
+\`\`\`flow
+Global widget
+Widget variation
+Optional rules on that variation
+Site uses the rfk_id
+\`\`\`
+
+Search combines the active global widget variation with the active variation of the widget in the request. A variation with no rules just uses the global defaults.
+
+- A **widget** is the search or recommendation setup in CEC. Most sites use **Preview Search** (typeahead), **Search Results** (full results), and maybe **Recommendation**. Entity shape still comes from the [modeling post](/blog/sitecore-search-entity-modeling).
+- A **variation** is not optional. Creating a widget also creates a Default variation. Extra variations are optional: schedule a campaign, run a test week, then switch back without editing the live Default.
+- A **rule** is optional. Skip rules and the active variation keeps using the global widget.
+
+Shared defaults belong on the global widget. Changes for one experience belong on that widget's variation.
+
+## Where to put the change
+
+| Need | Put it here |
+| --- | --- |
+| Availability facet on for every search surface | Global widget (default variation) |
+| Stormbreak #1 for waterproof jacket on Product Finder only | Rule on \`tw_product_finder\`, with Context |
+| Different behavior for waterproof jacket vs returning visitors on Product Finder | Two rules on the same \`tw_product_finder\` variation; set Rank if they conflict |
+| Two-week Rain promotion on every search box | Scheduled variation on the **global** widget |
+| Same Rain promotion, Product Finder only | \`tw_product_finder\` variation, not global |
+| Test-week Product Finder setup, then revert cleanly | Extra widget variation; leave Default alone |
+| Discontinued SKU gone from Product Finder only | Rule on that widget variation (Context empty if always) |
+| Discontinued SKU gone everywhere | Rule on a global widget variation |
+
+Same widget, different contexts → two rules and Rank. A whole setup you might throw away after a test week → extra variation; leave Default alone.
+
+## Where this fits
+
+Planning and entities first: [5 questions](/blog/sitecore-search-five-questions) and [entity modeling](/blog/sitecore-search-entity-modeling). CEC orientation: [CEC explained](/blog/sitecore-search-cec-explained).
+
+This post is the widget layer: which variation owns the change, and whether a rule is needed at all. Attributes still have to be allowed in Domain settings before a widget can filter or facet on them. After that, the global widget and the widget variation decide what is on.
+`,
+  },
+  {
     slug: "sitecore-search-document-extractors",
     title: "Sitecore Search Document Extractors: How Attributes Get Filled",
     summary:
@@ -292,6 +378,8 @@ If you are still deciding what to build, start with [Sitecore Search: 5 Question
 If the mapping from page or JSON into attributes is the hard part, continue with [Sitecore Search Document Extractors](/blog/sitecore-search-document-extractors).
 
 If entity modeling is the hard part, continue with [How to Model Entities in Sitecore Search](/blog/sitecore-search-entity-modeling).
+
+If widgets, variations, and rules are the hard part, continue with [Sitecore Search Widgets and Variations](/blog/sitecore-search-widgets-variations).
 
 If you are choosing between Embedded Search, Sitecore Search, and SitecoreAI Search, read [Embedded Search, Sitecore Search, and SitecoreAI Search](/blog/sitecore-search-options-explained).
 `,
@@ -803,6 +891,24 @@ export async function getBlogPostBySlug(
 ): Promise<BlogPost | undefined> {
   const posts = await getBlogPosts();
   return posts.find((post) => post.slug === slug);
+}
+
+export async function getAdjacentBlogPosts(slug: string): Promise<{
+  previous: BlogPost | null;
+  next: BlogPost | null;
+}> {
+  const posts = await getBlogPosts();
+  const index = posts.findIndex((post) => post.slug === slug);
+
+  if (index === -1) {
+    return { previous: null, next: null };
+  }
+
+  // Posts are newest-first: previous = older, next = newer.
+  return {
+    previous: posts[index + 1] ?? null,
+    next: posts[index - 1] ?? null,
+  };
 }
 
 export async function getBlogSlugs(): Promise<string[]> {

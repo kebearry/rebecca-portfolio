@@ -1,11 +1,18 @@
 import { getBlogPosts, getBlogTags } from "../lib/blog-posts";
 import BlogPosts from "../ui/blogposts";
 
+/** How many posts to show initially, and how many each "Show more" adds. */
+const BLOG_PAGE_SIZE = 4;
+
 type BlogSectionProps = {
   initialTag?: string;
+  pageSize?: number;
 };
 
-export default async function BlogSection({ initialTag }: BlogSectionProps) {
+export default async function BlogSection({
+  initialTag,
+  pageSize = BLOG_PAGE_SIZE,
+}: BlogSectionProps) {
   const [posts, tags] = await Promise.all([getBlogPosts(), getBlogTags()]);
 
   return (
@@ -24,7 +31,12 @@ export default async function BlogSection({ initialTag }: BlogSectionProps) {
         </div>
 
         {posts.length > 0 ? (
-          <BlogPosts posts={posts} tags={tags} initialTag={initialTag} />
+          <BlogPosts
+            posts={posts}
+            tags={tags}
+            initialTag={initialTag}
+            pageSize={pageSize}
+          />
         ) : (
           <div className="glass-panel rounded-2xl p-8 sm:p-10 max-w-2xl">
             <h3 className="text-xl font-bold text-accent mb-3">

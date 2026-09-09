@@ -5,6 +5,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import {
   estimateReadingTime,
   formatBlogDate,
+  getAdjacentBlogPosts,
   getBlogPostBySlug,
   getBlogSlugs,
 } from "../../lib/blog-posts";
@@ -15,6 +16,7 @@ import {
 import ShareArticle from "../../ui/sharearticle";
 import BackToHomeSection from "../../ui/backtohomesection";
 import BlogTagLink from "../../ui/blogtaglink";
+import BlogPostNav from "../../ui/blogpostnav";
 const SITE_URL = "https://rebecca-portfolio.vercel.app";
 
 interface PageProps {
@@ -83,6 +85,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const readingTime = estimateReadingTime(post.fullContent);
   const articleUrl = `${SITE_URL}/blog/${post.slug}`;
+  const { previous, next } = await getAdjacentBlogPosts(post.slug);
 
   return (
     <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 pb-16">
@@ -142,6 +145,8 @@ export default async function BlogPostPage({ params }: PageProps) {
           </ReactMarkdown>
         </div>
       </section>
+
+      <BlogPostNav previous={previous} next={next} />
     </article>
   );
 }
