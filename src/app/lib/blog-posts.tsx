@@ -14,19 +14,19 @@ const BLOG_POSTS: BlogPost[] = [
     title:
       "Sitecore Search Widgets and Variations: Where the Experience Actually Lives",
     summary:
-      "Widgets, variations, and the global widget in Sitecore Search — with a Trailworks Product Finder campaign.",
+      "When to change one Sitecore Search widget versus the global widget, with Trailworks Product Finder and a site-wide monsoon campaign.",
     publishedAt: "2026-09-09",
     tags: ["Sitecore Search", "CEC", "Sitecore", "Discovery", "Architecture"],
     fullContent: `
-# Sitecore Search Widgets and Variations: Where the Experience Actually Lives
-
 The search experience does not live in the index. It lives on a **widget**: the Sitecore Search setup behind an id called **rfk_id**. The site asks for that id. Marketers control what it returns.
 
-This post is that layer: the **global widget**, a widget's **Default variation**, optional **extra variations**, and optional **rules**. The [CEC map](/blog/sitecore-search-cec-explained) shows where Widgets sits in the console.
+This post is that layer: a widget's **Default variation**, optional **extra variations**, optional **rules**, and when to use the **global widget**. The [CEC map](/blog/sitecore-search-cec-explained) shows where Widgets and Global Resources sit in the console.
 
-## Trailworks: Product Finder in one pass
+**Series:** [Options](/blog/sitecore-search-options-explained) → [5 questions](/blog/sitecore-search-five-questions) → [Entities](/blog/sitecore-search-entity-modeling) → [Extractors](/blog/sitecore-search-document-extractors) → [CEC](/blog/sitecore-search-cec-explained) → [Filters and facets](/blog/sitecore-search-filters-facets) → **Widgets**
 
-Trailworks sells outdoor gear. For spring, marketing wants **waterproof jacket** on Product Finder to behave a certain way. Header search and other widgets should stay normal.
+## Trailworks: one widget, one campaign
+
+Trailworks sells outdoor gear. For spring, marketing wants **waterproof jacket** on Product Finder to behave a certain way. Header search should stay normal.
 
 Here is what already exists:
 
@@ -34,65 +34,76 @@ Here is what already exists:
 | --- | --- |
 | Product Finder | One **Search Results** widget, \`rfk_id\` = \`tw_product_finder\`, entity = Product |
 | Header search | A **Preview Search** widget; separate \`rfk_id\` |
-| Global widget | Defaults every search surface inherits: availability facet on, sort = relevance |
 
 The Product Finder page on the site already uses \`tw_product_finder\`. If it did not, changes in CEC would not show up for shoppers.
 
-Until now, Product Finder's active variation had **no rules**. It still worked. Results came from the index plus whatever the global widget defined.
+Until now, Product Finder's active variation had **no rules**. It still worked. Results came from the index and whatever was set on that widget.
 
 For the campaign, marketing opens **Widgets → tw_product_finder → active variation** and adds **one rule**:
 
 - **Context:** only when the keyphrase is waterproof jacket. Leave Context empty and this rule would run on **every** query on Product Finder, which is broader than the campaign.
 - **Pin:** Stormbreak Waterproof Shell in **slot 1**. It stays first even if natural ranking would put something else there.
 - **Boost:** items in the Rain collection. They rise when they already match the query. They are not forced into a slot.
-- **Bury:** last-season jackets that still sell but should not lead. They stay in the list, at the bottom.
-- **Blacklist:** a discontinued SKU that must not appear for this campaign.
 
-Pin when a specific item must occupy a slot. Boost when a set of items should rise only if they already qualify. Bury when they can stay visible at the bottom. Blacklist when they must not appear for that context.
+Pin when a specific item must occupy a slot. Boost when a set of items should rise only if they already qualify. **Bury** and **blacklist** are the same rule toolbox for the opposite job: push last-season jackets down, or hide a discontinued SKU for this campaign.
 
-They publish. Only Product Finder changes. Header search never got this rule, so it keeps using the global defaults.
+They publish. Only Product Finder changes. Header search never got this rule, so shoppers typing in the header still see normal ranking.
 
 Later they add a **second rule** on the same variation: Context = returning visitors, **Boost** the Trailblazer loyalty collection. Both rules show on the Rules tab with a **Rank**. Drag to reorder. When two rules conflict, the one with the lower rank number wins (rank 1 beats rank 2).
 
-Two weeks later, a monsoon promo should lift Rain across **every** search surface. That is not another rule on \`tw_product_finder\`. That is a **scheduled variation on the global widget**: boost Rain for the campaign window, then let it expire. Product Finder still keeps its pin for waterproof jacket, because rules on this widget win over conflicting global defaults.
+That is enough for a Product Finder-only campaign. You did not need a second concept yet.
+
+## Trailworks: when every search surface should change
+
+Two weeks later, a monsoon promo should lift Rain across **every** search box: Product Finder, header search, and anything else on the site.
+
+You could open each widget and paste the same boost. That is brittle. Miss one \`rfk_id\` and that surface stays wrong until someone notices.
+
+Sitecore Search has one shared widget for that job: the **global widget**, under **Global Resources → Global widget**. It is not a search box on the site. Shoppers never call its \`rfk_id\`. Every real widget (Product Finder, header search, and the rest) can inherit what you set there.
+
+Trailworks opens the global widget, creates a **scheduled variation**, and adds one rule: **Boost** the Rain collection for the campaign window, then let it expire. They publish.
+
+What shoppers get:
+
+| Surface | What happens |
+| --- | --- |
+| Header search | Inherits the Rain boost from the global widget. No rule was added on the header widget itself. |
+| Product Finder | Gets the Rain boost too, and still keeps the waterproof jacket pin on \`tw_product_finder\`. Rules on this widget win when they conflict with global defaults. |
+| After the schedule ends | Global variation expires. Rain boost drops everywhere. Product Finder pin remains until someone removes that rule. |
+
+So: change **one** widget when only that experience should move. Use the **global widget** when the same default or campaign should land on every surface without editing each \`rfk_id\`.
+
+You can run Product Finder with nothing special on the global widget. Turning a facet on for one experience is [filters and facets](/blog/sitecore-search-filters-facets). Putting that same default on every surface is a global widget job.
 
 ## The stack
 
 \`\`\`flow
-Global widget
-Widget variation
+Optional global widget defaults
+Widget variation for this rfk_id
 Optional rules on that variation
 Site uses the rfk_id
 \`\`\`
 
-Search combines the active global widget variation with the active variation of the widget in the request. A variation with no rules just uses the global defaults.
-
-- A **widget** is the search or recommendation setup in CEC. Most sites use **Preview Search** (typeahead), **Search Results** (full results), and maybe **Recommendation**. Entity shape still comes from the [modeling post](/blog/sitecore-search-entity-modeling).
-- A **variation** is not optional. Creating a widget also creates a Default variation. Extra variations are optional: schedule a campaign, run a test week, then switch back without editing the live Default.
-- A **rule** is optional. Skip rules and the active variation keeps using the global widget.
-
-Shared defaults belong on the global widget. Changes for one experience belong on that widget's variation.
+Search combines the active global widget variation (if you use one) with the active variation of the widget in the request. A widget is the experience behind an \`rfk_id\`. A variation always exists (Default, plus optional extras you can schedule or test). Rules on a variation are optional. The global widget is optional shared defaults until several surfaces need the same change.
 
 ## Where to put the change
 
 | Need | Put it here |
 | --- | --- |
-| Availability facet on for every search surface | Global widget (default variation) |
+| Availability facet on for every search surface | Global widget (default variation); enable the facet first per [filters and facets](/blog/sitecore-search-filters-facets) |
 | Stormbreak #1 for waterproof jacket on Product Finder only | Rule on \`tw_product_finder\`, with Context |
 | Different behavior for waterproof jacket vs returning visitors on Product Finder | Two rules on the same \`tw_product_finder\` variation; set Rank if they conflict |
 | Two-week Rain promotion on every search box | Scheduled variation on the **global** widget |
 | Same Rain promotion, Product Finder only | \`tw_product_finder\` variation, not global |
 | Test-week Product Finder setup, then revert cleanly | Extra widget variation; leave Default alone |
-| Discontinued SKU gone from Product Finder only | Rule on that widget variation (Context empty if always) |
+| Last-season jackets down, or a discontinued SKU hidden, on Product Finder only | Bury or blacklist on that widget variation |
 | Discontinued SKU gone everywhere | Rule on a global widget variation |
 
 Same widget, different contexts → two rules and Rank. A whole setup you might throw away after a test week → extra variation; leave Default alone.
 
 ## Where this fits
 
-Planning and entities first: [5 questions](/blog/sitecore-search-five-questions) and [entity modeling](/blog/sitecore-search-entity-modeling). CEC orientation: [CEC explained](/blog/sitecore-search-cec-explained).
-
-This post is the widget layer: which variation owns the change, and whether a rule is needed at all. Attributes still have to be allowed in Domain settings before a widget can filter or facet on them. After that, the global widget and the widget variation decide what is on.
+This is the widget layer: which variation owns the change, whether a rule is needed, and when the global widget is worth using. Attributes must be filled by [extractors](/blog/sitecore-search-document-extractors) and allowed in Domain settings before a widget can filter or facet on them. That handoff is [filters and facets](/blog/sitecore-search-filters-facets). After that, the widget variation turns them on.
 `,
   },
   {
@@ -103,13 +114,13 @@ This post is the widget layer: which variation owns the change, and whether a ru
     publishedAt: "2026-09-04",
     tags: ["Sitecore Search", "Sitecore", "Discovery", "Architecture"],
     fullContent: `
-# Sitecore Search Document Extractors: How Attributes Get Filled
-
 A crawler can fetch a URL and the item can still be useless in search.
 
 Search only knows what the **document extractor** stored. If that mapping missed the heading or the price field, the result has no **name**, or the Product Finder cannot sort.
 
 That mapping is the difference between an indexed URL and a searchable item.
+
+**Series:** [Options](/blog/sitecore-search-options-explained) → [5 questions](/blog/sitecore-search-five-questions) → [Entities](/blog/sitecore-search-entity-modeling) → **Extractors** → [CEC](/blog/sitecore-search-cec-explained) → [Filters and facets](/blog/sitecore-search-filters-facets) → [Widgets](/blog/sitecore-search-widgets-variations)
 
 ## What it is
 
@@ -264,9 +275,7 @@ Republish the source after you change the mapping.
 
 ## Where this fits
 
-Question 2 in the [five questions](/blog/sitecore-search-five-questions) post is how content gets into Search. This is the part of that question that decides whether the index is usable.
-
-If the hard part is which attributes belong on which type, that is [entity modeling](/blog/sitecore-search-entity-modeling). If you need the console map, that is [CEC](/blog/sitecore-search-cec-explained).
+Question 2 in the [five questions](/blog/sitecore-search-five-questions) post is how content gets into Search. This is the part of that question that decides whether the index is usable. Once attributes are filled, [filters and facets](/blog/sitecore-search-filters-facets) decide what visitors can narrow by.
 `,
   },
   {
@@ -277,13 +286,13 @@ If the hard part is which attributes belong on which type, that is [entity model
     publishedAt: "2026-09-04",
     tags: ["Sitecore Search", "CEC", "Sitecore", "Discovery", "Architecture"],
     fullContent: `
-# Sitecore Search CEC Explained: The Workbench Behind Search
-
 Sitecore Search has two sides.
 
 Developers wire up APIs, sources, and the site experience. Business teams need a place to configure search, tune results, and check performance without living in code.
 
 That place is the **Customer Engagement Console**, or **CEC**. Most day-to-day search decisions happen here.
+
+**Series:** [Options](/blog/sitecore-search-options-explained) → [5 questions](/blog/sitecore-search-five-questions) → [Entities](/blog/sitecore-search-entity-modeling) → [Extractors](/blog/sitecore-search-document-extractors) → **CEC** → [Filters and facets](/blog/sitecore-search-filters-facets) → [Widgets](/blog/sitecore-search-widgets-variations)
 
 A few words come up immediately:
 
@@ -340,7 +349,7 @@ Example: a scholarship page should appear in search and does not. Look it up in 
 
 ## Domain settings and unified discovery
 
-**Domain settings decides what is possible.** That is where attributes are enabled for filtering, faceting, sorting, or ranking. The global widget and widget rules decide what is actually on. If a filter is missing, check Domain settings first, then the global widget, then the widget variation. That is the debug order.
+**Domain settings decides what is possible.** That is where attributes are enabled for filtering, faceting, sorting, or ranking. The widget variation decides what is actually on for that experience. If a filter is missing, check Domain settings first, then the widget variation. That is the debug order.
 
 Open **Administration → Domain settings → Attributes**. Most implementations start from the default Content entity and a starter set of attributes. Anything extra is a custom attribute you create there. Creating it does nothing until a source fills it: map title from an \`h1\`, description from a meta tag or the first paragraph of a PDF, then republish. That extraction step is TechAdmin work.
 
@@ -373,15 +382,7 @@ Those decisions belong in planning first. CEC cannot fix an unclear search scope
 
 ## Where this fits with the rest of Sitecore Search
 
-If you are still deciding what to build, start with [Sitecore Search: 5 Questions to Answer Before You Build](/blog/sitecore-search-five-questions).
-
-If the mapping from page or JSON into attributes is the hard part, continue with [Sitecore Search Document Extractors](/blog/sitecore-search-document-extractors).
-
-If entity modeling is the hard part, continue with [How to Model Entities in Sitecore Search](/blog/sitecore-search-entity-modeling).
-
-If widgets, variations, and rules are the hard part, continue with [Sitecore Search Widgets and Variations](/blog/sitecore-search-widgets-variations).
-
-If you are choosing between Embedded Search, Sitecore Search, and SitecoreAI Search, read [Embedded Search, Sitecore Search, and SitecoreAI Search](/blog/sitecore-search-options-explained).
+This post is the console map. For filters vs facets (Domain settings vs what is on), continue with [Filters and facets](/blog/sitecore-search-filters-facets). For pin, boost, bury, and variations, continue with [Widgets and variations](/blog/sitecore-search-widgets-variations).
 `,
   },
   {
@@ -399,13 +400,13 @@ If you are choosing between Embedded Search, Sitecore Search, and SitecoreAI Sea
       "Discovery",
     ],
     fullContent: `
-# Embedded Search, Sitecore Search, and SitecoreAI Search
-
 Sitecore search naming confuses people for a simple reason: it sounds like there is one search product with new labels.
 
 There is not.
 
 I have seen teams mix these names up and plan for the wrong search path. As of September 2026, if you are already on a standard SitecoreAI content site, **Embedded Search is usually a given** for normal website and content search. The harder decision is usually Sitecore Search vs SitecoreAI Search.
+
+**Series:** **Options** → [5 questions](/blog/sitecore-search-five-questions) → [Entities](/blog/sitecore-search-entity-modeling) → [Extractors](/blog/sitecore-search-document-extractors) → [CEC](/blog/sitecore-search-cec-explained) → [Filters and facets](/blog/sitecore-search-filters-facets) → [Widgets](/blog/sitecore-search-widgets-variations)
 
 ## Start here: Embedded Search
 
@@ -489,7 +490,7 @@ As of September 2026, Sitecore Search is usually the more complete option for pr
 - Building AI-led discovery inside SitecoreAI and can accept gaps? **SitecoreAI Search**
 - Want richer AI later? Plan **SitecoreAI Search** after that baseline
 
-If you are still early on search planning itself, start with [Sitecore Search: 5 Questions to Answer Before You Build](/blog/sitecore-search-five-questions).
+If you have already chosen Sitecore Search, continue with [Sitecore Search: 5 Questions to Answer Before You Build](/blog/sitecore-search-five-questions).
 `,
   },
   {
@@ -500,8 +501,6 @@ If you are still early on search planning itself, start with [Sitecore Search: 5
     publishedAt: "2026-09-02",
     tags: ["Sitecore Search", "Sitecore", "CMS", "Discovery", "Architecture"],
     fullContent: `
-# Sitecore Search: 5 Questions to Answer Before You Build
-
 "We need search."
 
 You have probably heard this before. What people usually mean is simpler: users cannot find what they need, and the site feels harder to use than it should.
@@ -518,7 +517,9 @@ Before building anything in Sitecore Search, it helps to answer five questions:
 4. How is relevance controlled?
 5. How is search success measured?
 
-This is the first of two posts on planning Sitecore Search. Here, I walk through all five questions using a running example. The [follow-up post](/blog/sitecore-search-entity-modeling) goes deeper on entity modeling, which is usually where question 1 gets complicated.
+This is the planning opener for the Sitecore Search series. Here, I walk through all five questions using a running example. Later posts go deeper where each question gets hard.
+
+**Series:** [Options](/blog/sitecore-search-options-explained) → **5 questions** → [Entities](/blog/sitecore-search-entity-modeling) → [Extractors](/blog/sitecore-search-document-extractors) → [CEC](/blog/sitecore-search-cec-explained) → [Filters and facets](/blog/sitecore-search-filters-facets) → [Widgets](/blog/sitecore-search-widgets-variations)
 
 ## Example: Trailworks
 
@@ -648,6 +649,8 @@ Here is how the pieces fit together:
 
 You rarely configure just one of these. They work together, and this is where search starts to feel useful or frustrating.
 
+The deep cuts live elsewhere in the series: [filters and facets](/blog/sitecore-search-filters-facets) for narrowing results, and [widgets and variations](/blog/sitecore-search-widgets-variations) for pin, boost, bury, and blacklist on a specific experience.
+
 ## 5. How Is Search Success Measured?
 
 After launch, the real question is: did search actually help?
@@ -706,13 +709,13 @@ Before anyone opens the Sitecore Search admin, run a working session with these 
     publishedAt: "2026-09-03",
     tags: ["Sitecore Search", "Sitecore", "Architecture", "Discovery"],
     fullContent: `
-# How to Model Entities in Sitecore Search
-
 Entities are one of the first things you configure in Sitecore Search, and one of the easiest to get wrong.
 
 Search needs to know what kind of thing each result is: a product, an article, a help page. In Sitecore Search, each type is called an **entity**. An entity defines what details are stored on each result (the **attributes**), what filters users see, and how results are displayed. Get the boundaries wrong and everything downstream gets harder: how content gets into the index, widget setup, and ranking rules.
 
-This is the second of two posts on planning Sitecore Search. The [first post](/blog/sitecore-search-five-questions) walks through five planning questions using Trailworks, a fictional outdoor brand. There, each content type maps to one entity. That is a clean starting point. Most real projects need more thought than that.
+This post goes deeper on question 1 from the [five questions](/blog/sitecore-search-five-questions) opener. There, each content type maps to one entity. That is a clean starting point. Most real projects need more thought than that.
+
+**Series:** [Options](/blog/sitecore-search-options-explained) → [5 questions](/blog/sitecore-search-five-questions) → **Entities** → [Extractors](/blog/sitecore-search-document-extractors) → [CEC](/blog/sitecore-search-cec-explained) → [Filters and facets](/blog/sitecore-search-filters-facets) → [Widgets](/blog/sitecore-search-widgets-variations)
 
 I usually start entity work by mapping systems and content types before opening the admin. This post covers the three patterns I see most often, what each one costs you, and how to evaluate which applies to your setup.
 
@@ -861,7 +864,83 @@ Here is a quick reference:
 
 Entity modeling is a design decision, not something Sitecore Search decides for you. The boundaries you draw affect how content gets into the index, which attributes exist, and how search experiences behave.
 
-Sketch your systems and content types on paper before you create a single entity in the admin. Map what users search for, check whether your fields and filters support combining or splitting, then configure. If you have not already, start with the [five questions framework](/blog/sitecore-search-five-questions) for the full planning picture.
+Sketch your systems and content types on paper before you create a single entity in the admin. Map what users search for, check whether your fields and filters support combining or splitting, then configure. Next up for attributes on those entities: [document extractors](/blog/sitecore-search-document-extractors), then [filters and facets](/blog/sitecore-search-filters-facets).
+`,
+  },
+  {
+    slug: "sitecore-search-filters-facets",
+    title: "Sitecore Search Filters and Facets: What Narrows Results",
+    summary:
+      "How filters and facets narrow Sitecore Search results, starting from Trailworks Product Finder and a missing hard filter.",
+    publishedAt: "2026-09-08",
+    tags: ["Sitecore Search", "Sitecore", "Discovery", "Architecture", "Filters"],
+    fullContent: `
+Trailworks Product Finder should show jackets you can buy. Size chips should mean something. Buying guides should stay out of that list.
+
+When that fails, teams usually blame ranking. The real gap is usually how results get **narrowed**: filters, facets, and hard filters.
+
+**Series:** [Options](/blog/sitecore-search-options-explained) → [5 questions](/blog/sitecore-search-five-questions) → [Entities](/blog/sitecore-search-entity-modeling) → [Extractors](/blog/sitecore-search-document-extractors) → [CEC](/blog/sitecore-search-cec-explained) → **Filters and facets** → [Widgets](/blog/sitecore-search-widgets-variations)
+
+## Trailworks: waterproof jacket on Product Finder
+
+Shopper types **waterproof jacket** on Product Finder (\`tw_product_finder\`, entity = Product).
+
+1. A **hard filter** keeps the pool to products (and, if you set it, not discontinued). Buying guides never enter the list.
+2. Search returns matching jackets. **Facet** options are built from those results only: sizes that exist, price ranges that exist, collections that exist.
+3. Shopper clicks size **M**. Results shrink. Other facets update with the new set.
+
+Campaign pins and boosts can still run inside that set. They do not replace the hard filter. That layer is the [widgets](/blog/sitecore-search-widgets-variations) post.
+
+Without the hard filter, the same query can surface a Rain Jacket Buying Guide. Size facets look empty or weird because guides have no size. Facet counts lie because the pool was never product-only.
+
+Header search stays lighter: do not copy Product Finder's size and price facets onto every surface. Guides Library gets **topic**, not size. Put each control on the widget that needs it.
+
+## Names for what you just saw
+
+A **filter** limits which items Search returns.
+
+A **facet** is the UI that shows categories from attribute values already on those items. Facet options are dynamic: they follow the query and whatever hard filters already applied. Empty attributes mean empty facets.
+
+**Visible filters** are on the page. The visitor chooses size, price, collection.
+
+**Hard filters** run with no click. Visitors cannot clear them. They run before ranking, before facet counts, and before anything the visitor picks. Examples: Product Finder stays on products; Guides Library stays on buying guides; a campaign page stays on the Rain collection.
+
+Hard filter is not a **blacklist** rule. A hard filter says this pool never includes X. A blacklist says for this query or context, hide these items. Always-true constraints belong on the page or widget as a hard filter. Campaign exceptions belong in rules.
+
+Same attribute can do both jobs. Trailworks uses **availability** as a facet shoppers click, and as a hard filter so discontinued SKUs never enter Product Finder.
+
+## Where you turn it on
+
+Two steps. Miss either one and the control never shows up.
+
+1. **Administration → Domain settings**: enable the attribute for filtering or faceting. That makes it **possible**.
+2. **This widget** (and page hard filters if the whole CEC page should be scoped): turn it **on**.
+
+For Product Finder, turn size and price on \`tw_product_finder\`. Give Guides Library its own topic facet on its widget. Do not copy one surface's controls onto every other widget.
+
+Creating the attribute does nothing until a [document extractor](/blog/sitecore-search-document-extractors) fills it. [CEC](/blog/sitecore-search-cec-explained) is the map for the screens.
+
+\`\`\`flow
+Attribute filled in Content Collection?
+Enabled in Domain settings?
+Turned on for this widget or page hard filter?
+\`\`\`
+
+## When it looks broken
+
+| Symptom | Check |
+| --- | --- |
+| Facet missing in the UI | Domain settings, then this widget variation |
+| Facet shows, options empty | Content Collection, then the extractor |
+| Wrong types in the list, or weird facet counts | Page or widget hard filter |
+| Discontinued items appear | Hard filter on availability |
+| Facet list is huge or useless (SKU, free text) | Facet only on short, meaningful value lists; price as ranges |
+| Three chips for one collection (\`Rain\` / \`rain\` / \`Rain Collection\`) | Source data or extractor normalization |
+
+## Where this fits
+
+Question 4 in the [five questions](/blog/sitecore-search-five-questions) post is how relevance is controlled. This post is the narrowing half. Entity shape is [entity modeling](/blog/sitecore-search-entity-modeling). Campaign pin, boost, bury, and blacklist are [widgets](/blog/sitecore-search-widgets-variations).
+
 `,
   },
 ];

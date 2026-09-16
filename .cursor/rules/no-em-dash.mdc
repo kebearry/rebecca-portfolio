@@ -1,0 +1,17 @@
+---
+description: Never use em dashes or en dashes in writing
+alwaysApply: true
+---
+
+# No em dashes
+
+Never use the em dash (`—`) or en dash (`–`) in user-facing copy, blog posts, summaries, comments, commit messages, or chat replies.
+
+Use a comma, period, colon, parentheses, or a normal hyphen (`-`) instead.
+
+```text
+❌ BAD: Filters vs facets — visible controls
+✅ GOOD: Filters vs facets: visible controls
+✅ GOOD: Filters vs facets (visible controls)
+✅ GOOD: Filters vs facets, with visible controls
+```
