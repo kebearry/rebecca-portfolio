@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>waterproof jacket - Outdoor retailer product search</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font: 14px/1.4 "Helvetica Neue", Arial, sans-serif; color: #1a1a1a; background: #f7f5f2; }
+    .ribbon { background: #111; color: #fff; padding: 8px 24px; font-size: 12px; letter-spacing: 0.02em; }
+    .ribbon strong { font-weight: 700; }
+    .ribbon span { opacity: 0.75; }
+    header { background: #1b3a2f; color: #fff; padding: 12px 24px; display: flex; align-items: center; gap: 20px; }
+    .brand { font-weight: 700; letter-spacing: 0.04em; font-size: 15px; }
+    .search { flex: 1; max-width: 520px; background: #fff; border-radius: 4px; padding: 10px 14px; display: flex; }
+    .search input { border: 0; outline: 0; flex: 1; font-size: 15px; color: #1a1a1a; }
+    .layout { display: flex; gap: 28px; padding: 20px 24px 28px; max-width: 1200px; }
+    aside { width: 220px; flex-shrink: 0; }
+    aside h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; margin: 16px 0 8px; color: #555; }
+    aside h2:first-child { margin-top: 0; }
+    aside label { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 13px; color: #333; }
+    aside input { accent-color: #1b3a2f; }
+    main { flex: 1; }
+    .meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+    .meta h1 { font-size: 22px; font-weight: 600; }
+    .meta span { font-size: 13px; color: #666; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .card { background: #fff; border: 1px solid #e4e0da; border-radius: 6px; overflow: hidden; }
+    .img { height: 150px; background: linear-gradient(155deg, #c5d4c8, #7a9a86); }
+    .img.g2 { background: linear-gradient(155deg, #d4cfc5, #9a8f7a); }
+    .img.g3 { background: linear-gradient(155deg, #c5ced4, #7a8a9a); }
+    .body { padding: 12px; }
+    .price { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+    .title { font-size: 14px; margin-bottom: 4px; }
+    .attrs { font-size: 12px; color: #666; }
+    .badge { display: inline-block; margin-top: 6px; font-size: 11px; background: #e8f0eb; color: #1b3a2f; padding: 2px 8px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <div class="ribbon"><strong>Same industry peer</strong> <span>· Outdoor retailer website · Product catalog search</span></div>
+  <header>
+    <div class="brand">PEAK OUTFITTERS</div>
+    <div class="search"><input value="waterproof jacket" readonly /></div>
+  </header>
+  <div class="layout">
+    <aside>
+      <h2>Category</h2>
+      <label><input type="checkbox" checked /> Jackets</label>
+      <label><input type="checkbox" /> Shells</label>
+      <label><input type="checkbox" /> Softshells</label>
+      <h2>Size</h2>
+      <label><input type="checkbox" /> S</label>
+      <label><input type="checkbox" checked /> M</label>
+      <label><input type="checkbox" checked /> L</label>
+      <label><input type="checkbox" /> XL</label>
+      <h2>Price</h2>
+      <label><input type="checkbox" /> Under $100</label>
+      <label><input type="checkbox" checked /> $100-$200</label>
+      <label><input type="checkbox" /> $200+</label>
+      <h2>Availability</h2>
+      <label><input type="checkbox" checked /> In stock</label>
+    </aside>
+    <main>
+      <div class="meta">
+        <h1>Waterproof jackets</h1>
+        <span>48 products · Sort: Best match</span>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="img"></div>
+          <div class="body">
+            <div class="price">$179</div>
+            <div class="title">Alpine Pro 3L Shell</div>
+            <div class="attrs">Men's · Packable · 20K waterproof</div>
+            <span class="badge">In stock</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="img g2"></div>
+          <div class="body">
+            <div class="price">$129</div>
+            <div class="title">Trail Shell Waterproof Jacket</div>
+            <div class="attrs">Women's · Hooded · DWR finish</div>
+            <span class="badge">In stock</span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="img g3"></div>
+          <div class="body">
+            <div class="price">$149</div>
+            <div class="title">Stormline Softshell</div>
+            <div class="attrs">Unisex · Breathable · 15K</div>
+            <span class="badge">In stock</span>
+          </div>
+        </article>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>waterproof - Outdoor brand header search</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font: 14px/1.45 system-ui, -apple-system, Segoe UI, sans-serif; color: #111; background: #fff; }
+    .ribbon { background: #111; color: #fff; padding: 8px 24px; font-size: 12px; letter-spacing: 0.02em; }
+    .ribbon strong { font-weight: 700; }
+    .ribbon span { opacity: 0.75; }
+    header { border-bottom: 1px solid #e5e5e5; padding: 14px 24px; display: flex; align-items: center; gap: 16px; }
+    .brand { font-weight: 700; font-size: 18px; }
+    .search { flex: 1; max-width: 560px; border: 1px solid #ccc; border-radius: 24px; padding: 10px 16px; display: flex; }
+    .search input { border: 0; outline: 0; flex: 1; font-size: 15px; }
+    main { max-width: 720px; margin: 0 auto; padding: 20px 24px 28px; }
+    .pack { margin-bottom: 22px; }
+    .pack-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .pack-label::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #111; }
+    .pack.guides .pack-label::before { background: #8b4513; }
+    .pack.help .pack-label::before { background: #1967d2; }
+    .products { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .pcard { border: 1px solid #e5e5e5; border-radius: 8px; overflow: hidden; }
+    .pimg { height: 90px; background: linear-gradient(150deg, #d7e3f4, #9eb6d4); }
+    .pimg.g2 { background: linear-gradient(150deg, #e8d9c8, #b8956e); }
+    .pimg.g3 { background: linear-gradient(150deg, #cfe8d8, #7fad93); }
+    .pbody { padding: 8px 10px 10px; }
+    .pbody .price { font-weight: 700; font-size: 13px; }
+    .pbody .t { font-size: 12px; color: #333; margin-top: 2px; }
+    .row { border-bottom: 1px solid #eee; padding: 12px 0; }
+    .row .type { font-size: 11px; font-weight: 600; color: #8b4513; margin-bottom: 2px; }
+    .pack.help .row .type { color: #1967d2; }
+    .row .title { font-size: 15px; color: #111; margin-bottom: 2px; }
+    .row .snip { font-size: 13px; color: #555; }
+  </style>
+</head>
+<body>
+  <div class="ribbon"><strong>Same industry peer</strong> <span>· Outdoor brand website · Header search mixing products, guides, and help</span></div>
+  <header>
+    <div class="brand">Peak Outfitters</div>
+    <div class="search"><input value="waterproof" readonly /></div>
+  </header>
+  <main>
+    <section class="pack">
+      <div class="pack-label">Products</div>
+      <div class="products">
+        <article class="pcard">
+          <div class="pimg"></div>
+          <div class="pbody"><div class="price">$179</div><div class="t">Alpine Pro 3L Shell</div></div>
+        </article>
+        <article class="pcard">
+          <div class="pimg g2"></div>
+          <div class="pbody"><div class="price">$129</div><div class="t">Trail Shell Jacket</div></div>
+        </article>
+        <article class="pcard">
+          <div class="pimg g3"></div>
+          <div class="pbody"><div class="price">$45</div><div class="t">DWR Reproof Kit</div></div>
+        </article>
+      </div>
+    </section>
+    <section class="pack guides">
+      <div class="pack-label">Guides</div>
+      <div class="row">
+        <div class="type">Buying guide</div>
+        <div class="title">How to choose a waterproof jacket</div>
+        <div class="snip">Ratings, membranes, and fit for hiking vs city rain.</div>
+      </div>
+      <div class="row">
+        <div class="type">Care guide</div>
+        <div class="title">How to waterproof a jacket</div>
+        <div class="snip">Clean, treat, and heat-activate DWR the right way.</div>
+      </div>
+    </section>
+    <section class="pack help">
+      <div class="pack-label">Help</div>
+      <div class="row">
+        <div class="type">Help article</div>
+        <div class="title">Returns on rainwear</div>
+        <div class="snip">Window, condition rules, and how to start a return.</div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

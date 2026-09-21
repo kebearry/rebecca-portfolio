@@ -1,3 +1,10 @@
+export type BlogPostStoryShare = {
+  hook: string;
+  title: string;
+  blurb: string;
+  cta: string;
+};
+
 export type BlogPost = {
   slug: string;
   title: string;
@@ -6,9 +13,147 @@ export type BlogPost = {
   tags: string[];
   fullContent: string;
   draft?: boolean;
+  /** Softer Instagram Story copy. Falls back to title/summary if omitted. */
+  storyShare?: BlogPostStoryShare;
 };
 
 const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: "serp-ui-patterns",
+    title: "Planning Search UI: Patterns from Giants and Peer Industries",
+    summary:
+      "Big engines teach results-page modules. Peer industries teach which recipe fits your site. A pattern pass for anyone planning search UI, with Trailworks examples.",
+    publishedAt: "2026-09-21",
+    tags: ["Search", "UX", "SERP", "Discovery", "Architecture"],
+    storyShare: {
+      hook: "steal this if you build site search",
+      title: "not every search needs the same page",
+      blurb:
+        "sample industry: outdoor retail. Google shows the building blocks. outdoor peers show which layout fits which job. four layouts inside.",
+      cta: "full patterns on the link sticker",
+    },
+    fullContent: `
+Planning search UI from Google alone is how teams ship one results template and wonder why a Product Finder feels like a blog. Big engines teach the **grammar** of a results page: modules, intent, answer-first layouts. Peer industries teach **fit**: which recipe belongs on a catalog, a guide library, or a help center.
+
+I looked at both. Giants for how-to, brand, and shopping compositions. Peers for outdoor retailer, magazine, brand, and help-center search in the same industry as Trailworks ([five questions](/blog/sitecore-search-five-questions)). Peer figures reconstruct typical outdoor site-search patterns; each image is labeled with the site type.
+
+The page is a **layout engine**. Intent picks the **recipe**. Below: four recipes with the matching peer lens, then patterns that cut across those recipes.
+
+## Intent picks the recipe
+
+The engine does not only rank documents. It picks which **blocks** belong on this query, then stacks them. Layout changes with intent more than with branding.
+
+| Intent you type | Modules that tend to dominate |
+| --- | --- |
+| Informational (\`how to waterproof a jacket\`) | Answer / AI overview, People Also Ask-style follow-ups, videos, then links |
+| Navigational (\`trailworks login\`, a brand name) | Sitelinks, fact panel, few distractions |
+| Transactional (\`waterproof jacket buy\`) | Shopping cards, ads, reviews, tighter product result cards |
+| Local (\`outdoor gear near me\`) | Map / local pack, business cards, then web results |
+
+Trailworks in this series is mostly catalog, guides, and help, so the walkthrough focuses there. Local follows the same rule when you need it: a map or store pack, not another document list.
+
+If your site search treats every query like "find documents," you are fighting that pattern. Design a small set of modules, then decide which combination each experience needs.
+
+## Recipe 1: how-to wants an answer first
+
+For many informational queries, the first thing on the page is not a link. It is an answer block: a short summary, an AI overview with citations, or an extracted snippet. Related questions sit under or beside that. They branch the session without a fresh search box visit. Videos and classic links come after.
+
+![Google-style informational SERP for how to waterproof a jacket: AI Mode tab, People Also Ask, videos, and web results stacked as modules](/blog/serp-google-informational.png)
+
+Bing and DuckDuckGo run the same job with different labels: answer or assist up top, then classic links. The pattern is shared. The labels are not.
+
+Two UI implications:
+
+1. **Zero-click is a feature of the page design**, not only an SEO complaint. The results page tries to finish the job on itself, so the user may never open a link.
+2. **Citations and source links still matter.** The answer module usually points back to pages. Your result card is often supporting evidence, not the only destination.
+
+**Same-industry peer for Guides Library.** Outdoor gear magazines and brand education hubs search how-to queries with topic chips, a short answer, then long-form articles. Steal that shape for Guides Library.
+
+![Outdoor gear magazine site search for how to waterproof a jacket: topic chips, quick answer, then guide articles](/blog/peer-guides-library.png)
+
+If you add generative answers to site search: answer on top, sources visible, related questions as the next move. On Trailworks, that belongs on **Guides Library** (and maybe a how-to hit inside global search), not as default Product Finder UI.
+
+## Recipe 2: a brand wants a destination
+
+A navigational query is not "teach me." It is "take me there." On the open web, giants often answer with **sitelinks** (shortcut links under the main result) plus a **fact panel** (Google calls this a knowledge panel) for a known brand. The list still exists. The panel answers "what is this thing?" without making you open a page.
+
+![Google-style navigational SERP for Sitecore: organic result with sitelinks plus a knowledge panel on the right](/blog/serp-google-navigational.png)
+
+Structured attributes are not only for facets (the clickable filters with counts on a catalog). They are how a known entity becomes a fact panel beside the list. Empty attributes mean empty panels, same lesson as in the [extractors](/blog/sitecore-search-document-extractors) post.
+
+Giants teach fact panels for brands the engine already knows. On your own outdoor site, the same "go somewhere" job usually looks different: search for \`stores\` or \`account\` should hit a destination page, not a product grid.
+
+**Same-industry peer for destinations.** On an outdoor retailer's website, \`stores\` opens store locator, hours, and pickup with a fact panel and a couple of related pages. Steal that for Trailworks login, orders, stores, and landing pages. Product cards stay in Recipe 3.
+
+![Outdoor retailer site search for stores: destination page with sitelinks and a stores fact panel](/blog/peer-brand-destination.png)
+
+## Recipe 3: shopping wants a catalog (and mixed search wants packs)
+
+This recipe has two outdoor peers: **catalog search** for Product Finder, then **mixed header search** for global search.
+
+Transactional intent brings product cards, filter pills, price, and ratings into the page itself. Images, videos, shopping, news, and local packs show up as **carousels or grids inside the page**, not as filters you must open first.
+
+![Google Shopping-style layout for waterproof jacket: filter pills, product cards, and catalog chrome instead of a plain link list](/blog/serp-google-shopping.png)
+
+Giants teach product cards inside the open-web results page. Outdoor peers teach the same job on a brand site: left-rail facets and in-stock honesty, not only a grid of cards.
+
+Some result types need their own visual language. A video row with thumbnails, a product row with price and availability, a people row with contact details. Mixing them into one identical card style makes the page harder to scan.
+
+**Same-industry peer for Product Finder.** Outdoor retailer catalogs search \`waterproof jacket\` with left-rail facets and product cards: size, price, in-stock, waterproof rating. That is the peer for Trailworks Product Finder, not a web link list.
+
+![Outdoor retailer catalog search for waterproof jacket: size and price facets beside product cards](/blog/peer-outdoor-retail.png)
+
+**Same-industry peer for global / header search.** Outdoor brand sites often mix products, guides, and help in one header box. Results come back as **typed packs** (grouped blocks by type: products, then guides, then help), not one card style. Steal that for Trailworks global search.
+
+![Outdoor brand header search for waterproof: separate packs for products, guides, and help](/blog/peer-mixed-global.png)
+
+The [entity modeling](/blog/sitecore-search-entity-modeling) choice and the [filters](/blog/sitecore-search-filters-facets) on each surface are how you keep those packs honest.
+
+## Recipe 4: help wants a suggested answer, then a short list
+
+Support queries are not catalog browse and not brand discovery. Outdoor brand help centers put a suggested article up top, then a tight list. Steal that for Trailworks support content.
+
+![Outdoor brand help-center search for return raincoat: suggested article then tight help results](/blog/peer-support-help.png)
+
+## Cross-cutting patterns
+
+**Promos, pins, and boosts.** Giants label paid modules that still look like organic cards. Outdoor retailers do the same on product search: a campaign item keeps product-card layout, with a **Promoted** (or similar) label so it is not mistaken for natural rank. In Sitecore Search terms: a **pin** forces an item into a slot; a **boost** only lifts items that already match the query.
+
+![Outdoor retailer product search with a labeled Promoted pin above organic waterproof jacket results](/blog/peer-promo-boost.png)
+
+Same Peak Outfitters catalog surface as Recipe 3; the point here is the **Promoted** badge on the pin, not the grid itself. On Trailworks, the monsoon pin for Stormbreak on \`waterproof jacket\` and a Rain collection boost should read the same way on Product Finder: same card grammar, honest label ([widgets](/blog/sitecore-search-widgets-variations)).
+
+**Refinement.** Informational surfaces lean on topic chips and related questions. Catalog surfaces lean on facets (size, price, and similar filters with counts). Same job (narrow or branch), different controls.
+
+![Outdoor gear magazine search with topic chips and People also searched questions under the results](/blog/peer-refinement.png)
+
+Same Trail Notes magazine surface as Recipe 1; notice the **People also searched** block under the list. On Trailworks: topic + related questions on Guides Library and global search; size and price facets on Product Finder. The [filters and facets](/blog/sitecore-search-filters-facets) post is the narrowing toolkit.
+
+**Conversation.** Giants put follow-up chat in a second mode (AI Mode / Copilot-style), with citations and suggested next questions, while classic results stay one tab away.
+
+![Google AI Mode-style conversation for how to waterproof a jacket: answer, follow-up, citations, and suggested next questions](/blog/peer-conversation.png)
+
+On Trailworks, ship modular Product Finder and Guides Library first. Add follow-up chat only when you have citations, tracking, and a task one results page cannot finish.
+
+## Trailworks map
+
+Benchmark **outdoor websites** that already solve each job:
+
+| Trailworks surface | Job | Outdoor peer website search | What the figure shows |
+| --- | --- | --- | --- |
+| Guides Library | Learn how-to | Gear magazine / education hub article search | Topic chips, quick answer, guides (Recipe 1) |
+| Destinations | Go somewhere | Outdoor retailer site search for stores / account | Destination + sitelinks + fact panel (Recipe 2) |
+| Product Finder | Buy gear | Outdoor retailer catalog search | Facets + product cards (Recipe 3) |
+| Global / header | Mix types | Outdoor brand header search | Typed packs for product / guide / help (Recipe 3) |
+| Help / support | Fix a problem | Outdoor brand help-center search | Suggested article, then a short list (Recipe 4) |
+
+Promos, related questions, and conversation cut across those surfaces: label pins on Product Finder, related searches on Guides Library, chat only when a session task needs it.
+
+## Where this fits
+
+Use this post to **plan results page UI**. Use the Sitecore series to build it: [5 questions](/blog/sitecore-search-five-questions) through [widgets](/blog/sitecore-search-widgets-variations) cover what is searchable, how it gets in, and which experience owns the change.
+`,
+  },
   {
     slug: "sitecore-search-widgets-variations",
     title:

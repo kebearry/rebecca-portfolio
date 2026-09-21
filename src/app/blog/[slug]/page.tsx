@@ -133,6 +133,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         title={post.title}
         summary={post.summary}
         tags={post.tags}
+        instagramStory={Boolean(post.storyShare)}
       />
 
       <section className="glass-panel rounded-2xl p-6 sm:p-8 lg:p-10 mt-8">
