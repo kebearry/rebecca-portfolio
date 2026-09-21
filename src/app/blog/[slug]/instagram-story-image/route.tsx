@@ -3,11 +3,10 @@ import { join } from "path";
 import { ImageResponse } from "next/og";
 import { getBlogPostBySlug } from "../../../lib/blog-posts";
 
-export const size = {
+const size = {
   width: 1080,
   height: 1920,
 };
-export const contentType = "image/png";
 
 interface RouteProps {
   params: Promise<{ slug: string }>;
@@ -38,9 +37,10 @@ async function loadLocalFont(weight: "600" | "700") {
 
 async function loadAvatar() {
   try {
-    return await readFile(
+    const data = await readFile(
       join(process.cwd(), "public/blog/story-avatar.png")
     );
+    return `data:image/png;base64,${data.toString("base64")}`;
   } catch {
     return null;
   }
@@ -49,7 +49,7 @@ async function loadAvatar() {
 export async function GET(_request: Request, { params }: RouteProps) {
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
-  const [bold, semibold, avatarData] = await Promise.all([
+  const [bold, semibold, avatarSrc] = await Promise.all([
     loadLocalFont("700"),
     loadLocalFont("600"),
     loadAvatar(),
@@ -218,10 +218,10 @@ export async function GET(_request: Request, { params }: RouteProps) {
               boxShadow: "0 18px 40px rgba(139, 111, 71, 0.18)",
             }}
           >
-            {avatarData ? (
+            {avatarSrc ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={avatarData.buffer as ArrayBuffer}
+                src={avatarSrc}
                 width={248}
                 height={248}
                 alt=""
