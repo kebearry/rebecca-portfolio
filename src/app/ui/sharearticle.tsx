@@ -12,28 +12,6 @@ interface ShareArticleProps {
   instagramStory?: boolean;
 }
 
-function toHashtag(tag: string): string {
-  const normalized = tag.replace(/[^a-zA-Z0-9]/g, "");
-  return normalized ? `#${normalized}` : "";
-}
-
-function buildLinkedInShareText({
-  title,
-  url,
-  summary,
-  tags = [],
-}: ShareArticleProps): string {
-  const hashtags = tags.map(toHashtag).filter(Boolean).join(" ");
-  const intro = summary?.trim() || title;
-  const parts = [intro, url];
-
-  if (hashtags) {
-    parts.push(hashtags);
-  }
-
-  return parts.join("\n\n");
-}
-
 function storyImageUrlFromArticle(url: string): string {
   return `${url.replace(/\/$/, "")}/instagram-story-image`;
 }
@@ -55,11 +33,15 @@ function isAbortError(error: unknown): boolean {
   );
 }
 
+function isIosDevice() {
+  if (typeof navigator === "undefined") return false;
+  return /iPad|iPhone|iPod/.test(navigator.userAgent);
+}
+
 const ShareArticle = ({
   url,
   title,
   summary,
-  tags = [],
   instagramStory = false,
 }: ShareArticleProps) => {
   const [copied, setCopied] = useState(false);
@@ -68,29 +50,26 @@ const ShareArticle = ({
     "idle" | "working" | "shared" | "saved" | "error"
   >("idle");
   const [storyError, setStoryError] = useState<string | null>(null);
-  const [linkedInError, setLinkedInError] = useState<string | null>(null);
+  const [storyHint, setStoryHint] = useState<string | null>(null);
 
-  const shareText = useMemo(
-    () => buildLinkedInShareText({ url, title, summary, tags }),
-    [url, title, summary, tags]
-  );
-
-  const linkedInUrl = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(shareText)}`;
+  // Official share-offsite works with the LinkedIn iOS app. Prefill text is unreliable there.
+  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
   const storyImageUrl = useMemo(
     () => (instagramStory ? storyImageUrlFromArticle(url) : ""),
     [instagramStory, url]
   );
 
-  const shareError = storyError || linkedInError || copyError;
+  const shareMessage = storyError || copyError;
+  const shareHint = storyHint;
 
-  const clearErrorsSoon = (clear: () => void, ms = 5000) => {
+  const clearSoon = (clear: () => void, ms = 6000) => {
     window.setTimeout(clear, ms);
   };
 
   const handleCopy = async () => {
     setCopyError(null);
-    setLinkedInError(null);
     setStoryError(null);
+    setStoryHint(null);
     try {
       if (!navigator.clipboard?.writeText) {
         throw new Error("clipboard-unsupported");
@@ -105,29 +84,33 @@ const ShareArticle = ({
           ? "Couldn't copy the link. This browser does not allow clipboard access."
           : "Couldn't copy the link. Your browser may be blocking clipboard access, or the page is not on HTTPS.";
       setCopyError(message);
-      clearErrorsSoon(() => setCopyError(null));
+      clearSoon(() => setCopyError(null));
     }
   };
 
-  const handleLinkedIn = () => {
-    setCopyError(null);
-    setStoryError(null);
-    setLinkedInError(null);
-
-    const popup = window.open(linkedInUrl, "_blank", "noopener,noreferrer");
-    if (popup == null) {
-      setLinkedInError(
-        "Couldn't open LinkedIn. Your browser blocked the pop-up. Allow pop-ups for this site, or use Copy link."
-      );
-      clearErrorsSoon(() => setLinkedInError(null));
+  const openStoryImageForManualSave = () => {
+    // iOS Safari ignores <a download>. Opening the image lets the user long-press → Save Image.
+    const opened = window.open(storyImageUrl, "_blank", "noopener,noreferrer");
+    if (opened == null) {
+      window.location.assign(storyImageUrl);
     }
+    setStoryStatus("saved");
+    setStoryHint(
+      isIosDevice()
+        ? "Story image opened. Long-press the image, tap Save, then share it to Instagram Stories from your Photos."
+        : "Story image opened. Save it, then upload it to an Instagram Story."
+    );
+    clearSoon(() => {
+      setStoryHint(null);
+      setStoryStatus("idle");
+    }, 8000);
   };
 
   const handleInstagramStory = async () => {
     setStoryStatus("working");
     setStoryError(null);
+    setStoryHint(null);
     setCopyError(null);
-    setLinkedInError(null);
 
     try {
       let response: Response;
@@ -145,20 +128,25 @@ const ShareArticle = ({
         );
       }
 
-      const blob = await response.blob();
-      if (!blob.size) {
+      const rawBlob = await response.blob();
+      if (!rawBlob.size) {
         throw new Error(
           "The story image came back empty. Refresh the page and try again."
         );
       }
 
+      const pngBlob =
+        rawBlob.type === "image/png"
+          ? rawBlob
+          : new Blob([rawBlob], { type: "image/png" });
       const fileName = `${slugFromArticleUrl(url)}-instagram-story.png`;
-      const file = new File([blob], fileName, { type: "image/png" });
+      const file = new File([pngBlob], fileName, { type: "image/png" });
 
+      const canUseWebShare = typeof navigator.share === "function";
       const canShareFiles =
-        typeof navigator.share === "function" &&
-        typeof navigator.canShare === "function" &&
-        navigator.canShare({ files: [file] });
+        canUseWebShare &&
+        (typeof navigator.canShare !== "function" ||
+          navigator.canShare({ files: [file] }));
 
       if (canShareFiles) {
         try {
@@ -168,18 +156,27 @@ const ShareArticle = ({
             text: summary?.trim() || title,
           });
           setStoryStatus("shared");
+          setStoryHint(
+            "Pick Instagram from the share sheet, then add it as a Story."
+          );
+          clearSoon(() => {
+            setStoryHint(null);
+            setStoryStatus("idle");
+          }, 5000);
+          return;
         } catch (error) {
           if (isAbortError(error)) {
             setStoryStatus("idle");
             return;
           }
-          throw new Error(
-            "Couldn't open the share sheet. Your browser or device blocked file sharing. Try Copy link, or save the image from a mobile browser."
-          );
+          // Fall through to the iOS-friendly open-image path.
         }
-      } else {
+      }
+
+      // Desktop download fallback (works in Chrome/Firefox; not reliable on iOS Safari).
+      if (!isIosDevice()) {
         try {
-          const objectUrl = URL.createObjectURL(blob);
+          const objectUrl = URL.createObjectURL(pngBlob);
           const anchor = document.createElement("a");
           anchor.href = objectUrl;
           anchor.download = fileName;
@@ -188,14 +185,20 @@ const ShareArticle = ({
           anchor.remove();
           URL.revokeObjectURL(objectUrl);
           setStoryStatus("saved");
-        } catch {
-          throw new Error(
-            "This browser can't share files to Instagram, and saving the story image failed. Try Chrome or Safari on your phone."
+          setStoryHint(
+            "Story image downloaded. Upload that PNG to an Instagram Story."
           );
+          clearSoon(() => {
+            setStoryHint(null);
+            setStoryStatus("idle");
+          }, 6000);
+          return;
+        } catch {
+          // Fall through.
         }
       }
 
-      window.setTimeout(() => setStoryStatus("idle"), 2800);
+      openStoryImageForManualSave();
     } catch (error) {
       setStoryStatus("error");
       const message =
@@ -203,7 +206,7 @@ const ShareArticle = ({
           ? error.message
           : "Instagram Story share failed for an unknown reason. Try again, or use Copy link.";
       setStoryError(message);
-      clearErrorsSoon(() => {
+      clearSoon(() => {
         setStoryError(null);
         setStoryStatus("idle");
       });
@@ -216,7 +219,7 @@ const ShareArticle = ({
       : storyStatus === "shared"
         ? "Opened share"
         : storyStatus === "saved"
-          ? "Story saved"
+          ? "Image ready"
           : storyStatus === "error"
             ? "Try again"
             : "Instagram Story";
@@ -225,15 +228,17 @@ const ShareArticle = ({
     <div className="flex flex-col gap-2 pt-6 border-t border-accent/10">
       <div className="flex flex-wrap items-center gap-3">
         <span className="text-sm font-medium text-accent/60">Share</span>
-        <button
-          type="button"
-          onClick={handleLinkedIn}
+        {/* Real link avoids iOS window.open / noopener null pitfalls */}
+        <a
+          href={linkedInUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           aria-label={`Share "${title}" on LinkedIn`}
           className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold bg-[#0077b5] text-white hover:bg-[#005c8e] transition duration-200"
         >
           <FaLinkedin aria-hidden="true" />
           LinkedIn
-        </button>
+        </a>
         {instagramStory ? (
           <button
             type="button"
@@ -255,13 +260,18 @@ const ShareArticle = ({
           {copied ? "Copied!" : "Copy link"}
         </button>
       </div>
-      {shareError ? (
+      {shareMessage ? (
         <p
           role="alert"
           aria-live="polite"
           className="text-sm text-red-700/90 max-w-xl"
         >
-          {shareError}
+          {shareMessage}
+        </p>
+      ) : null}
+      {shareHint && !shareMessage ? (
+        <p aria-live="polite" className="text-sm text-accent/70 max-w-xl">
+          {shareHint}
         </p>
       ) : null}
     </div>

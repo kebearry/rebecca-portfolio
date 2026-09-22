@@ -36,7 +36,7 @@ const Post: React.FC<PostProps> = ({ post, variant = "featured" }) => {
           {post.title}
         </h3>
 
-        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2 flex-1">
+        <p className="text-xs sm:text-sm text-accent/75 mb-3 line-clamp-2 flex-1">
           {post.summary}
         </p>
 
@@ -65,7 +65,7 @@ const Post: React.FC<PostProps> = ({ post, variant = "featured" }) => {
         {post.title}
       </h3>
 
-      <p className="text-gray-600 dark:text-gray-300 mb-4">{post.summary}</p>
+      <p className="text-accent/75 mb-4 leading-relaxed">{post.summary}</p>
 
       {/* Roles (Tags for Project Role) */}
       {roles.length > 0 && (
