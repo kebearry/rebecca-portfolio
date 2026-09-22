@@ -1,9 +1,7 @@
-export type BlogPostStoryShare = {
-  hook: string;
-  title: string;
-  blurb: string;
-  cta: string;
-};
+import type { BlogPostStoryShare } from "./blog-story-share";
+import { getBlogStoryShareBySlug } from "./blog-story-share";
+
+export type { BlogPostStoryShare };
 
 export type BlogPost = {
   slug: string;
@@ -25,13 +23,7 @@ const BLOG_POSTS: BlogPost[] = [
       "Big engines teach results-page modules. Peer industries teach which recipe fits your site. A pattern pass for anyone planning search UI, with Trailworks examples.",
     publishedAt: "2026-09-21",
     tags: ["Search", "UX", "SERP", "Discovery", "Architecture"],
-    storyShare: {
-      hook: "steal this if you build site search",
-      title: "not every search needs the same page",
-      blurb:
-        "sample industry: outdoor retail. Google shows the building blocks. outdoor peers show which layout fits which job. four layouts inside.",
-      cta: "full patterns on the link sticker",
-    },
+    storyShare: getBlogStoryShareBySlug("serp-ui-patterns")?.storyShare,
     fullContent: `
 Planning search UI from Google alone is how teams ship one results template and wonder why a Product Finder feels like a blog. Big engines teach the **grammar** of a results page: modules, intent, answer-first layouts. Peer industries teach **fit**: which recipe belongs on a catalog, a guide library, or a help center.
 

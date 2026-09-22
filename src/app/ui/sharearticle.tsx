@@ -123,6 +123,11 @@ const ShareArticle = ({
       }
 
       if (!response.ok) {
+        if (response.status === 504 || response.status === 408) {
+          throw new Error(
+            "Story image timed out on the server (504). Wait a moment and try again."
+          );
+        }
         throw new Error(
           `Couldn't create the story image (HTTP ${response.status}). Refresh the page and try again.`
         );
