@@ -16,6 +16,15 @@ function storyImageUrlFromArticle(url: string): string {
   return `${url.replace(/\/$/, "")}/instagram-story-image`;
 }
 
+/** Same-origin OG path so localhost and prod both work without hardcoding host. */
+function linkedInThumbnailPathFromArticle(url: string): string {
+  try {
+    return `${new URL(url).pathname.replace(/\/$/, "")}/opengraph-image`;
+  } catch {
+    return "/opengraph-image";
+  }
+}
+
 function slugFromArticleUrl(url: string): string {
   try {
     const path = new URL(url).pathname.replace(/\/$/, "");
@@ -36,6 +45,17 @@ function isAbortError(error: unknown): boolean {
 function isIosDevice() {
   if (typeof navigator === "undefined") return false;
   return /iPad|iPhone|iPod/.test(navigator.userAgent);
+}
+
+function downloadPngBlob(blob: Blob, fileName: string) {
+  const objectUrl = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = fileName;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(objectUrl);
 }
 
 /** LinkedIn hashtags: "Sitecore Search" → #SitecoreSearch */
@@ -77,6 +97,7 @@ const ShareArticle = ({
   >("idle");
   const [storyError, setStoryError] = useState<string | null>(null);
   const [storyHint, setStoryHint] = useState<string | null>(null);
+  const [showLinkedInImage, setShowLinkedInImage] = useState(false);
 
   // Feed composer prefills the post body. share-offsite only takes a URL and
   // leaves the composer empty (LinkedIn dropped title/summary params years ago).
@@ -87,6 +108,10 @@ const ShareArticle = ({
   const storyImageUrl = useMemo(
     () => (instagramStory ? storyImageUrlFromArticle(url) : ""),
     [instagramStory, url]
+  );
+  const linkedInThumbnailUrl = useMemo(
+    () => linkedInThumbnailPathFromArticle(url),
+    [url]
   );
 
   const shareMessage = storyError || copyError;
@@ -211,14 +236,7 @@ const ShareArticle = ({
       // Desktop download fallback (works in Chrome/Firefox; not reliable on iOS Safari).
       if (!isIosDevice()) {
         try {
-          const objectUrl = URL.createObjectURL(pngBlob);
-          const anchor = document.createElement("a");
-          anchor.href = objectUrl;
-          anchor.download = fileName;
-          document.body.appendChild(anchor);
-          anchor.click();
-          anchor.remove();
-          URL.revokeObjectURL(objectUrl);
+          downloadPngBlob(pngBlob, fileName);
           setStoryStatus("saved");
           setStoryHint(
             "Story image downloaded. Upload that PNG to an Instagram Story."
@@ -263,7 +281,7 @@ const ShareArticle = ({
     <div className="flex flex-col gap-2 pt-6 border-t border-accent/10">
       <div className="flex flex-wrap items-center gap-3">
         <span className="text-sm font-medium text-accent/60">Share</span>
-        {/* Real link avoids iOS window.open / noopener null pitfalls */}
+        {/* Prefill only. Cover image is opt-in via the quiet link below. */}
         <a
           href={linkedInUrl}
           target="_blank"
@@ -295,6 +313,49 @@ const ShareArticle = ({
           {copied ? "Copied!" : "Copy link"}
         </button>
       </div>
+
+      {!showLinkedInImage ? (
+        <button
+          type="button"
+          onClick={() => setShowLinkedInImage(true)}
+          className="self-start text-sm text-accent/60 hover:text-accent transition-colors underline-offset-2 hover:underline"
+        >
+          Need a cover image?
+        </button>
+      ) : (
+        <div className="mt-1 max-w-lg">
+          <div className="flex items-baseline justify-between gap-3 mb-2">
+            <p className="text-sm font-medium text-accent/60">Cover image</p>
+            <button
+              type="button"
+              onClick={() => setShowLinkedInImage(false)}
+              className="text-sm text-accent/60 hover:text-accent transition-colors"
+            >
+              Hide
+            </button>
+          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element -- dynamic OG route, not a static asset */}
+          <img
+            src={linkedInThumbnailUrl}
+            alt={`LinkedIn share image for ${title}`}
+            width={1200}
+            height={630}
+            className="w-full rounded-xl border border-accent/15 bg-white/40"
+          />
+          <p className="text-sm text-accent/60 mt-2">
+            <a
+              href={linkedInThumbnailUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-accent"
+            >
+              Open the image
+            </a>
+            , save it, then attach it in LinkedIn with the image icon.
+          </p>
+        </div>
+      )}
+
       {shareMessage ? (
         <p
           role="alert"

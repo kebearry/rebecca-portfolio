@@ -11,11 +11,24 @@ interface ImageProps {
   params: Promise<{ slug: string }>;
 }
 
-function titleFontSize(title: string) {
+function titleFontSize(title: string, hasDescription: boolean) {
+  if (hasDescription) {
+    if (title.length > 70) return 42;
+    if (title.length > 48) return 48;
+    return 56;
+  }
   if (title.length > 90) return 48;
   if (title.length > 70) return 54;
   if (title.length > 48) return 60;
   return 68;
+}
+
+function truncateDescription(text: string, max = 160) {
+  const trimmed = text.trim();
+  if (trimmed.length <= max) return trimmed;
+  const cut = trimmed.slice(0, max - 1);
+  const lastSpace = cut.lastIndexOf(" ");
+  return `${(lastSpace > 80 ? cut.slice(0, lastSpace) : cut).trimEnd()}…`;
 }
 
 async function loadFont(weight: "600" | "700") {
@@ -41,8 +54,11 @@ export default async function OpenGraphImage({ params }: ImageProps) {
   ]);
 
   const title = post?.title ?? "Rebecca Tan | Solution Architect";
+  const description = post?.summary
+    ? truncateDescription(post.summary)
+    : "";
   const date = post ? formatBlogDate(post.publishedAt) : "";
-  const fontSize = titleFontSize(title);
+  const fontSize = titleFontSize(title, Boolean(description));
   const fonts = [
     bold
       ? {
@@ -134,7 +150,7 @@ export default async function OpenGraphImage({ params }: ImageProps) {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              gap: 28,
+              gap: description ? 20 : 28,
               maxWidth: 1040,
             }}
           >
@@ -180,6 +196,21 @@ export default async function OpenGraphImage({ params }: ImageProps) {
             >
               {title}
             </div>
+
+            {description ? (
+              <div
+                style={{
+                  display: "flex",
+                  fontSize: 28,
+                  fontWeight: 600,
+                  color: "#6B5648",
+                  lineHeight: 1.35,
+                  maxWidth: 920,
+                }}
+              >
+                {description}
+              </div>
+            ) : null}
           </div>
         </div>
 
