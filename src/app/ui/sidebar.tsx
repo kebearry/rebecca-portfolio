@@ -7,6 +7,17 @@ import { HOME_SCROLL_TARGET_KEY } from "./backtohomesection";
 const SECTION_IDS = ["banner", "projects", "blog", "timeline", "contact"] as const;
 type SectionId = (typeof SECTION_IDS)[number];
 
+/** Only rewrite the hash while the address bar is actually on `/`. */
+function replaceHomeHash(sectionId: SectionId) {
+  if (window.location.pathname !== "/") return;
+
+  window.history.replaceState(
+    null,
+    "",
+    `/${window.location.search}#${sectionId}`
+  );
+}
+
 const Sidebar = () => {
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -15,24 +26,17 @@ const Sidebar = () => {
   const activeHashRef = useRef<string>("banner");
   const isNavigatingRef = useRef(false);
 
-  const updateHash = useCallback(
-    (sectionId: SectionId) => {
-      if (!isHome) return;
-      if (activeHashRef.current === sectionId) return;
+  const updateHash = useCallback((sectionId: SectionId) => {
+    if (window.location.pathname !== "/") return;
+    if (activeHashRef.current === sectionId) return;
 
-      activeHashRef.current = sectionId;
-      window.history.replaceState(
-        null,
-        "",
-        `/${window.location.search}#${sectionId}`
-      );
-      setActiveIcon(sectionId);
-    },
-    [isHome]
-  );
+    activeHashRef.current = sectionId;
+    replaceHomeHash(sectionId);
+    setActiveIcon(sectionId);
+  }, []);
 
   const handleScroll = useCallback(() => {
-    if (!isHome || isNavigatingRef.current) return;
+    if (window.location.pathname !== "/" || isNavigatingRef.current) return;
 
     const midpoint = window.innerHeight / 2;
     let currentSection: SectionId = SECTION_IDS[0];
@@ -49,11 +53,12 @@ const Sidebar = () => {
     }
 
     updateHash(currentSection);
-  }, [isHome, updateHash]);
+  }, [updateHash]);
 
   useEffect(() => {
     if (!isHome) return;
 
+    let cancelled = false;
     const storedTarget = sessionStorage.getItem(HOME_SCROLL_TARGET_KEY);
     if (storedTarget && SECTION_IDS.includes(storedTarget as SectionId)) {
       sessionStorage.removeItem(HOME_SCROLL_TARGET_KEY);
@@ -61,14 +66,13 @@ const Sidebar = () => {
       setActiveIcon(storedTarget);
 
       requestAnimationFrame(() => {
+        if (cancelled || window.location.pathname !== "/") return;
         document.getElementById(storedTarget)?.scrollIntoView({ behavior: "auto" });
-        window.history.replaceState(
-          null,
-          "",
-          `/${window.location.search}#${storedTarget}`
-        );
+        replaceHomeHash(storedTarget as SectionId);
       });
-      return;
+      return () => {
+        cancelled = true;
+      };
     }
 
     const hash = window.location.hash.replace("#", "");
@@ -77,6 +81,7 @@ const Sidebar = () => {
       setActiveIcon(hash);
 
       requestAnimationFrame(() => {
+        if (cancelled) return;
         document.getElementById(hash)?.scrollIntoView({ behavior: "auto" });
       });
     } else {
@@ -84,7 +89,10 @@ const Sidebar = () => {
     }
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, [handleScroll, isHome]);
 
   const handleClick = (icon: string) => {

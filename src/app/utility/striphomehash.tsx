@@ -12,6 +12,10 @@ const HOME_SECTION_HASHES = new Set([
 
 export default function StripHomeHash() {
   useEffect(() => {
+    // Detail layouts only. Never rewrite the path; leave `/` alone if a
+    // stale home hash somehow landed here during client navigation.
+    if (window.location.pathname === "/") return;
+
     const hash = window.location.hash.replace("#", "");
     if (!HOME_SECTION_HASHES.has(hash)) return;
 

@@ -38,10 +38,35 @@ function isIosDevice() {
   return /iPad|iPhone|iPod/.test(navigator.userAgent);
 }
 
+/** LinkedIn hashtags: "Sitecore Search" → #SitecoreSearch */
+function linkedInHashtags(tags: string[]): string {
+  return tags
+    .map((tag) => tag.replace(/[^a-zA-Z0-9]+/g, ""))
+    .filter(Boolean)
+    .map((tag) => `#${tag}`)
+    .join(" ");
+}
+
+function linkedInShareText(
+  url: string,
+  title: string,
+  summary?: string,
+  tags: string[] = []
+): string {
+  const parts = [title.trim()];
+  const blurb = summary?.trim();
+  if (blurb) parts.push(blurb);
+  const hashtags = linkedInHashtags(tags);
+  if (hashtags) parts.push(hashtags);
+  parts.push(url);
+  return parts.join("\n\n");
+}
+
 const ShareArticle = ({
   url,
   title,
   summary,
+  tags = [],
   instagramStory = false,
 }: ShareArticleProps) => {
   const [copied, setCopied] = useState(false);
@@ -52,8 +77,12 @@ const ShareArticle = ({
   const [storyError, setStoryError] = useState<string | null>(null);
   const [storyHint, setStoryHint] = useState<string | null>(null);
 
-  // Official share-offsite works with the LinkedIn iOS app. Prefill text is unreliable there.
-  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+  // share-offsite only accepts a URL (no body text). Feed composer prefills
+  // title, summary, and hashtags; LinkedIn still builds the OG card from the URL.
+  const linkedInUrl = useMemo(() => {
+    const text = linkedInShareText(url, title, summary, tags);
+    return `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
+  }, [url, title, summary, tags]);
   const storyImageUrl = useMemo(
     () => (instagramStory ? storyImageUrlFromArticle(url) : ""),
     [instagramStory, url]
