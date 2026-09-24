@@ -67,9 +67,8 @@ function linkedInHashtags(tags: string[]): string {
     .join(" ");
 }
 
-/** Prefill body for LinkedIn's feed composer (plain text only). */
-function linkedInShareText(
-  url: string,
+/** Caption for LinkedIn (no URL). The share-offsite card carries the link. */
+function linkedInCaption(
   title: string,
   summary?: string,
   tags: string[] = []
@@ -79,7 +78,6 @@ function linkedInShareText(
   if (blurb) parts.push(blurb);
   const hashtags = linkedInHashtags(tags);
   if (hashtags) parts.push(hashtags);
-  parts.push(url);
   return parts.join("\n\n");
 }
 
@@ -99,12 +97,17 @@ const ShareArticle = ({
   const [storyHint, setStoryHint] = useState<string | null>(null);
   const [showLinkedInImage, setShowLinkedInImage] = useState(false);
 
-  // Feed composer prefills the post body. share-offsite only takes a URL and
-  // leaves the composer empty (LinkedIn dropped title/summary params years ago).
-  const linkedInUrl = useMemo(() => {
-    const text = linkedInShareText(url, title, summary, tags);
-    return `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
-  }, [url, title, summary, tags]);
+  // share-offsite builds the OG link card (what worked on older posts).
+  // Feed composer prefills text but often skips the card. Copy caption on click.
+  const linkedInUrl = useMemo(
+    () =>
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+    [url]
+  );
+  const linkedInShareCaption = useMemo(
+    () => linkedInCaption(title, summary, tags),
+    [title, summary, tags]
+  );
   const storyImageUrl = useMemo(
     () => (instagramStory ? storyImageUrlFromArticle(url) : ""),
     [instagramStory, url]
@@ -119,6 +122,24 @@ const ShareArticle = ({
 
   const clearSoon = (clear: () => void, ms = 6000) => {
     window.setTimeout(clear, ms);
+  };
+
+  const handleLinkedInClick = () => {
+    setCopyError(null);
+    setStoryError(null);
+    setStoryHint(null);
+    void (async () => {
+      try {
+        if (!navigator.clipboard?.writeText) return;
+        await navigator.clipboard.writeText(linkedInShareCaption);
+        setStoryHint(
+          "Caption copied. Paste it above the link preview on LinkedIn."
+        );
+        clearSoon(() => setStoryHint(null), 8000);
+      } catch {
+        // Link still opens with the OG card; paste is optional.
+      }
+    })();
   };
 
   const handleCopy = async () => {
@@ -281,11 +302,12 @@ const ShareArticle = ({
     <div className="flex flex-col gap-2 pt-6 border-t border-accent/10">
       <div className="flex flex-wrap items-center gap-3">
         <span className="text-sm font-medium text-accent/60">Share</span>
-        {/* Prefill only. Cover image is opt-in via the quiet link below. */}
+        {/* share-offsite = OG link card. Caption is copied for paste above it. */}
         <a
           href={linkedInUrl}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={handleLinkedInClick}
           aria-label={`Share "${title}" on LinkedIn`}
           className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold bg-[#0077b5] text-white hover:bg-[#005c8e] transition duration-200"
         >
@@ -320,7 +342,7 @@ const ShareArticle = ({
           onClick={() => setShowLinkedInImage(true)}
           className="self-start text-sm text-accent/60 hover:text-accent transition-colors underline-offset-2 hover:underline"
         >
-          Need a cover image?
+          Need a photo instead of the link card?
         </button>
       ) : (
         <div className="mt-1 max-w-lg">
@@ -343,6 +365,7 @@ const ShareArticle = ({
             className="w-full rounded-xl border border-accent/15 bg-white/40"
           />
           <p className="text-sm text-accent/60 mt-2">
+            Optional. Attaching a photo replaces the link preview.{" "}
             <a
               href={linkedInThumbnailUrl}
               target="_blank"
