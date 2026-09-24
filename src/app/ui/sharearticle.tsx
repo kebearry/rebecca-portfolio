@@ -1,7 +1,7 @@
 "use client";
 
 import { FaInstagram, FaLinkedin, FaLink } from "react-icons/fa";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type MouseEvent } from "react";
 
 interface ShareArticleProps {
   url: string;
@@ -56,6 +56,42 @@ function downloadPngBlob(blob: Blob, fileName: string) {
   anchor.click();
   anchor.remove();
   URL.revokeObjectURL(objectUrl);
+}
+
+/** Sync copy keeps the user-gesture; async clipboard often fails once a new tab opens. */
+function copyTextNow(text: string): boolean {
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.top = "0";
+    ta.style.left = "0";
+    ta.style.width = "1px";
+    ta.style.height = "1px";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    const ok = document.execCommand("copy");
+    ta.remove();
+    if (ok) return true;
+  } catch {
+    // Fall through.
+  }
+  return false;
+}
+
+async function copyTextAsync(text: string): Promise<boolean> {
+  if (copyTextNow(text)) return true;
+  try {
+    if (!navigator.clipboard?.writeText) return false;
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** LinkedIn hashtags: "Sitecore Search" → #SitecoreSearch */
@@ -124,22 +160,43 @@ const ShareArticle = ({
     window.setTimeout(clear, ms);
   };
 
-  const handleLinkedInClick = () => {
+  const handleLinkedInClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    // Copy in the same click gesture, then open LinkedIn. Doing clipboard
+    // after the tab switch (or only via async clipboard) often fails silently.
+    event.preventDefault();
     setCopyError(null);
     setStoryError(null);
     setStoryHint(null);
-    void (async () => {
-      try {
-        if (!navigator.clipboard?.writeText) return;
-        await navigator.clipboard.writeText(linkedInShareCaption);
-        setStoryHint(
-          "Caption copied. Paste it above the link preview on LinkedIn."
-        );
-        clearSoon(() => setStoryHint(null), 8000);
-      } catch {
-        // Link still opens with the OG card; paste is optional.
-      }
-    })();
+
+    const didCopySync = copyTextNow(linkedInShareCaption);
+    if (didCopySync) {
+      setStoryHint(
+        "Caption copied. In LinkedIn, click the empty box and paste (Ctrl+V or Cmd+V)."
+      );
+      clearSoon(() => setStoryHint(null), 12000);
+    }
+
+    const opened = window.open(linkedInUrl, "_blank", "noopener,noreferrer");
+    if (opened == null) {
+      window.location.assign(linkedInUrl);
+    }
+
+    if (!didCopySync) {
+      void (async () => {
+        const didCopy = await copyTextAsync(linkedInShareCaption);
+        if (didCopy) {
+          setStoryHint(
+            "Caption copied. In LinkedIn, click the empty box and paste (Ctrl+V or Cmd+V)."
+          );
+          clearSoon(() => setStoryHint(null), 12000);
+        } else {
+          setCopyError(
+            "Couldn't copy the caption. Copy the title and summary yourself, then paste into LinkedIn."
+          );
+          clearSoon(() => setCopyError(null), 10000);
+        }
+      })();
+    }
   };
 
   const handleCopy = async () => {
