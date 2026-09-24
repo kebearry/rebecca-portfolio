@@ -16,15 +16,6 @@ function storyImageUrlFromArticle(url: string): string {
   return `${url.replace(/\/$/, "")}/instagram-story-image`;
 }
 
-/** Same-origin OG path so localhost and prod both work without hardcoding host. */
-function linkedInThumbnailPathFromArticle(url: string): string {
-  try {
-    return `${new URL(url).pathname.replace(/\/$/, "")}/opengraph-image`;
-  } catch {
-    return "/opengraph-image";
-  }
-}
-
 function slugFromArticleUrl(url: string): string {
   try {
     const path = new URL(url).pathname.replace(/\/$/, "");
@@ -131,7 +122,8 @@ const ShareArticle = ({
   >("idle");
   const [storyError, setStoryError] = useState<string | null>(null);
   const [storyHint, setStoryHint] = useState<string | null>(null);
-  const [showLinkedInImage, setShowLinkedInImage] = useState(false);
+  const [showLinkedInCaption, setShowLinkedInCaption] = useState(false);
+  const [captionCopied, setCaptionCopied] = useState(false);
 
   // share-offsite builds the OG link card (what worked on older posts).
   // Feed composer prefills text but often skips the card. Copy caption on click.
@@ -148,10 +140,6 @@ const ShareArticle = ({
     () => (instagramStory ? storyImageUrlFromArticle(url) : ""),
     [instagramStory, url]
   );
-  const linkedInThumbnailUrl = useMemo(
-    () => linkedInThumbnailPathFromArticle(url),
-    [url]
-  );
 
   const shareMessage = storyError || copyError;
   const shareHint = storyHint;
@@ -160,42 +148,53 @@ const ShareArticle = ({
     window.setTimeout(clear, ms);
   };
 
+  const handleCopyCaption = async () => {
+    setCopyError(null);
+    const didCopy = await copyTextAsync(linkedInShareCaption);
+    if (didCopy) {
+      setCaptionCopied(true);
+      window.setTimeout(() => setCaptionCopied(false), 2000);
+      return;
+    }
+    setCopyError(
+      "Couldn't copy the caption. Select the text in the box and copy it yourself (Ctrl+C / Cmd+C)."
+    );
+    clearSoon(() => setCopyError(null), 10000);
+  };
+
   const handleLinkedInClick = (event: MouseEvent<HTMLAnchorElement>) => {
-    // Copy in the same click gesture, then open LinkedIn. Doing clipboard
-    // after the tab switch (or only via async clipboard) often fails silently.
+    // Show the caption on this page (clipboard alone is easy to miss / fail).
+    // Copy best-effort, then open LinkedIn with the OG link card.
     event.preventDefault();
     setCopyError(null);
     setStoryError(null);
     setStoryHint(null);
+    setShowLinkedInCaption(true);
 
     const didCopySync = copyTextNow(linkedInShareCaption);
     if (didCopySync) {
+      setCaptionCopied(true);
+      window.setTimeout(() => setCaptionCopied(false), 2500);
+    }
+
+    // Do not pass "noopener" to window.open: that makes the return value null
+    // even when a tab opens, which previously sent this page to LinkedIn too.
+    const opened = window.open(linkedInUrl, "_blank");
+    if (opened) {
+      try {
+        opened.opener = null;
+      } catch {
+        // Ignore cross-origin opener clearing.
+      }
+    } else {
       setStoryHint(
-        "Caption copied. In LinkedIn, click the empty box and paste (Ctrl+V or Cmd+V)."
+        "Popup blocked. Allow popups, or open LinkedIn yourself and paste the caption below."
       );
       clearSoon(() => setStoryHint(null), 12000);
     }
 
-    const opened = window.open(linkedInUrl, "_blank", "noopener,noreferrer");
-    if (opened == null) {
-      window.location.assign(linkedInUrl);
-    }
-
     if (!didCopySync) {
-      void (async () => {
-        const didCopy = await copyTextAsync(linkedInShareCaption);
-        if (didCopy) {
-          setStoryHint(
-            "Caption copied. In LinkedIn, click the empty box and paste (Ctrl+V or Cmd+V)."
-          );
-          clearSoon(() => setStoryHint(null), 12000);
-        } else {
-          setCopyError(
-            "Couldn't copy the caption. Copy the title and summary yourself, then paste into LinkedIn."
-          );
-          clearSoon(() => setCopyError(null), 10000);
-        }
-      })();
+      void handleCopyCaption();
     }
   };
 
@@ -393,48 +392,43 @@ const ShareArticle = ({
         </button>
       </div>
 
-      {!showLinkedInImage ? (
-        <button
-          type="button"
-          onClick={() => setShowLinkedInImage(true)}
-          className="self-start text-sm text-accent/60 hover:text-accent transition-colors underline-offset-2 hover:underline"
-        >
-          Need a photo instead of the link card?
-        </button>
-      ) : (
-        <div className="mt-1 max-w-lg">
-          <div className="flex items-baseline justify-between gap-3 mb-2">
-            <p className="text-sm font-medium text-accent/60">Cover image</p>
-            <button
-              type="button"
-              onClick={() => setShowLinkedInImage(false)}
-              className="text-sm text-accent/60 hover:text-accent transition-colors"
-            >
-              Hide
-            </button>
+      {showLinkedInCaption ? (
+        <div className="mt-2 max-w-lg rounded-xl border border-accent/15 bg-white/40 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <p className="text-sm font-medium text-accent/70">
+              LinkedIn caption
+            </p>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleCopyCaption}
+                className="text-sm font-semibold text-accent hover:text-accent/70 transition-colors"
+              >
+                {captionCopied ? "Copied!" : "Copy caption"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowLinkedInCaption(false)}
+                className="text-sm text-accent/60 hover:text-accent transition-colors"
+              >
+                Hide
+              </button>
+            </div>
           </div>
-          {/* eslint-disable-next-line @next/next/no-img-element -- dynamic OG route, not a static asset */}
-          <img
-            src={linkedInThumbnailUrl}
-            alt={`LinkedIn share image for ${title}`}
-            width={1200}
-            height={630}
-            className="w-full rounded-xl border border-accent/15 bg-white/40"
+          <textarea
+            readOnly
+            value={linkedInShareCaption}
+            rows={6}
+            onFocus={(event) => event.currentTarget.select()}
+            className="w-full resize-y rounded-lg border border-accent/15 bg-primary/40 px-3 py-2 text-sm text-accent leading-relaxed focus:outline-none focus:ring-2 focus:ring-accent/30"
+            aria-label="LinkedIn caption to paste"
           />
           <p className="text-sm text-accent/60 mt-2">
-            Optional. Attaching a photo replaces the link preview.{" "}
-            <a
-              href={linkedInThumbnailUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-2 hover:text-accent"
-            >
-              Open the image
-            </a>
-            , save it, then attach it in LinkedIn with the image icon.
+            LinkedIn leaves the post box empty. Paste this above the link
+            preview (Ctrl+V or Cmd+V), or use Copy caption.
           </p>
         </div>
-      )}
+      ) : null}
 
       {shareMessage ? (
         <p
