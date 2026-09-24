@@ -147,6 +147,183 @@ Use this post to **plan results page UI**. Use the Sitecore series to build it: 
 `,
   },
   {
+    slug: "website-performance-assessment",
+    title: "When Everyone Says the Site Is Slow",
+    summary:
+      "A short performance pass for any site: compare a few pages, name the pattern, split tags from your own code, then assign owners.",
+    publishedAt: "2026-09-22",
+    tags: ["Performance", "Architecture", "Assessment"],
+    storyShare: getBlogStoryShareBySlug("website-performance-assessment")
+      ?.storyShare,
+    fullContent: `
+Someone drops a red Lighthouse screenshot in the chat. Marketing gets blamed for tags. The host or CMS gets blamed for "slow pages." Engineering gets asked if we should rewrite the front end. Nobody has opened three pages side by side yet.
+
+The first job is not a bigger audit. It is answering one question: **is the slowness everywhere, or only on some pages?** Then name the pattern, split where the time goes, and say who moves next.
+
+Before you dig into DevTools, glance at live signals if you have them (Search Console page experience, analytics, which page types get traffic). A red lab run on your laptop is a clue, not proof that customers are hurting. If you have no live access, call the pass **lab-only** and keep claims humble.
+
+This works on any site. Stack details come later.
+
+## Start from what people feel
+
+Name the symptom before tools:
+
+- Looks painted, then feels stuck
+- Taps and clicks feel laggy
+- Same slowness on every template you try
+- Content late, or the page jumps while loading
+
+Pick **3 to 5 URLs**:
+
+| Count | What to pick | Why |
+| --- | --- | --- |
+| 2 to 3 | Same kind of page (product, article, listing, help) | Shared-slow template vs one weird URL |
+| 1 | Home or another main entry | Same global chrome outside that template |
+| Optional | A **control** page: thin content, no form / search / chat / video | Separates global cost from feature cost |
+| Stop at 5 | Unless checkout or logged-in is the complaint | More URLs rarely change the first-pass story |
+
+You do not need every CMS template. You need enough to answer: **everywhere, or only some?**
+
+## Run the same browser pass on each URL
+
+Use a **clean Chrome profile**. Extensions fake the script chart. Mobile first if that is where people are.
+
+The panels below are **simplified**. Real DevTools is denser; the callouts are the point.
+
+**1. Lighthouse**  
+Score, blocking time (TBT), layout jump (CLS). Read the parts, not only the score. Red score with CLS at 0 usually means busy JavaScript, not a jumping layout.
+
+![Lighthouse mobile report with a red Performance score of 32, high blocking time, and CLS at 0](/blog/perf-lighthouse.png)
+
+**2. Script breakdown**  
+Which files take the bytes. Same big blocks on every page usually means global cost: your site scripts next to the tag stack.
+
+![Script breakdown treemap with a large site bundle beside tag manager, analytics, chat, and ads](/blog/perf-treemap.png)
+
+**3. Performance recording**  
+Where time goes. Long tasks after paint explain laggy taps.
+
+**Takeaway:** lab LCP (throttled Lighthouse) can look awful while runtime LCP on a normal machine is already fine. Blocking time often stays high in both views. Chase that, not only the scary lab paint number.
+
+![Performance timeline with a long red main-thread task after paint and an LCP marker](/blog/perf-performance.png)
+
+**4. Network**  
+What loaded, from where, how big. How long the first HTML took, tags on every page, oversized images.
+
+![Network panel listing document, main-app.js, external scripts, and a hero image with sizes](/blog/perf-network.png)
+
+Do not prescribe a rewrite until you match a pattern row.
+
+## Name the pattern
+
+| What you see | Likely story | What to do next |
+| --- | --- | --- |
+| All pages rhyme: same tags, same big site scripts, scores in the same band, little layout jumping | Shared global cost | Stop collecting URLs. Fix what loads on every page. |
+| One URL is awful; siblings look fine | Page-specific (media, embed, redirect, bad query) | Dig into that URL only. |
+| One template type is slow; others and home are fine | Template-level | Confirm with one more bad + one good, then fix that template. |
+| Home fine / rest slow (or reverse) | Not only the global chrome | Compare what home loads vs the slow set. |
+| Control page still busy | Global scripts and tags, not that feature | Do not start by rewriting the feature. |
+| Page jumps while loading | Layout stability (fonts, ads, images without size) | Different fix list than "JS is busy." |
+| Main content late; first HTML is slow in Network | Hosting / cache / first HTML | Measure server response before blaming tags. |
+| Mobile bad; desktop fine (or reverse) | Device or audience mismatch | Optimize the surface people use. |
+| No clear rhyme after 5 pages | Mixed causes or a special flow | Second pass on the money path (checkout / logged-in). |
+
+Name the row out loud before anyone owns a fix.
+
+### What shared cost often looks like
+
+When several money pages all land in the same poor lab band:
+
+- Layout is not jumping (CLS at 0)
+- Throttled lab paint looks dramatic; on a normal machine main content already appeared
+- The page still feels busy after it paints (blocking time / long script work)
+- The same tags and the same site scripts show up everywhere
+- A thin control page (no form, search, chat) is still expensive
+
+That is not "this article is bad." It is not "buy a bigger server" on its own. It is global cost.
+
+## Split where the time goes
+
+Whatever the stack, time usually sits in four buckets. Mark which ones you actually saw:
+
+| Cost centre | Evidence you look for | Typical fix shape |
+| --- | --- | --- |
+| **Tags and embeds** | Same tag manager, pixels, chat, A/B tools, embeds on every URL | Marketing / analytics trim or defer |
+| **Your site's global code** | Same theme or app scripts on every URL | Ship less on every page; load heavy bits only where needed |
+| **Media / layout** | Huge images, fonts, page jumping (CLS above 0) | Set image sizes, compress, fix fonts |
+| **First HTML / host** | Slow first HTML, redirects, weak cache | Measure how long the server takes; platform owns if proven |
+
+**Both** tags and your own global scripts often matter on the same site. Cleaning tags alone will not clear your own JS. Cleaning your shell alone leaves the tag stack.
+
+Once the pattern is shared global cost, ask:
+
+- What is injected on **every** page (layout, theme, base template, tag manager)?
+- What ships because of a **wide import** (plugin pack, component map, "load everything" header)?
+- What loads on **first paint** that could wait for a click (form, search UI, chat)?
+- Is an experiment tool **hiding the page** or running when no test is live?
+
+The answers differ by stack. The questions do not.
+
+## Three words you will hear in the room
+
+| Shorthand | Plain meaning | How to use it |
+| --- | --- | --- |
+| **LCP** | When the main content appears | Lab can look awful under throttling. Check a normal-machine recording too. |
+| **TBT** | How long JavaScript blocks taps and clicks | High TBT with a painted page is the "feels stuck" story. |
+| **CLS** | How much the page jumps while loading | **0** is ideal. Red score with CLS at 0 usually means busy JS. |
+
+## Who owns the next move
+
+| If you keep seeing… | Likely owner |
+| --- | --- |
+| Same big site scripts on every page | Engineering: ship less globally |
+| Same trackers / long tag time | Marketing / analytics: tag and consent review |
+| Experiment or hide-the-page scripts with no live test | Experimentation owner: scope or remove |
+| Heavy widget on first paint | Engineering: load after the user asks (button, open, next step) |
+| Huge media, missing dimensions | Engineering / content |
+| Slow first HTML / bad redirects (measured) | Platform / hosting |
+
+"Name the row first, then assign owners. If both tags and your own scripts show up, that is two workstreams, not one villain. Re-measure the same URLs before anyone quotes an exact time saving."
+
+## What good enough looks like
+
+1. **Symptom** in one sentence
+2. **Pattern row** from the table
+3. **Cost centres** in play (tags / your code / media / first HTML)
+4. **Now vs later** backlog with owners
+5. **Success:** same URLs, same settings; blocking time / scripting improved. Score is a side effect.
+
+## Easy ways to get lost
+
+- Testing one page and calling it the site
+- Blaming hosting because Lighthouse is red
+- Trusting a browser full of extensions
+- Treating lab LCP as truth when runtime paint looks fine
+- Cleaning only tags or only your own code when both show up
+- Rewriting the framework before cutting unused global code
+- Only testing desktop while visitors are on phones
+- Ignoring live signals and treating one lab run as truth
+
+## Cheat sheet
+
+| Step | Do this | Stop when |
+| --- | --- | --- |
+| Live signals | Search Console, analytics, traffic (if you have access) | Lab claim matches live reality, or you labelled lab-only |
+| Pick URLs | 3 to 5 pages | You can answer "everywhere or only some?" |
+| Same browser pass | Lighthouse + scripts + Performance + Network | Every URL has the same four panels |
+| Name the pattern | Match a row in the pattern table | One row is the working theory |
+| Split cost centres | Tags vs your code vs media vs first HTML / host | You know which doors matter |
+| Owners and backlog | Who moves next; now vs later | Short backlog with owners |
+| Success check | Re-run the **same URLs** with the **same settings** | The named metric moved; score is secondary |
+
+Symptoms first. Causes second. Fix list only after both.
+
+## Where this fits
+
+PMs, tech leads, and consultants stuck in a "the site is slow" blame meeting. Use it to get a shared next step before anyone rewrites anything.
+`,
+  },
+  {
     slug: "sitecore-search-widgets-variations",
     title:
       "Sitecore Search Widgets and Variations: Where the Experience Actually Lives",
@@ -1105,8 +1282,8 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 export async function getBlogPostBySlug(
   slug: string
 ): Promise<BlogPost | undefined> {
-  const posts = await getBlogPosts();
-  return posts.find((post) => post.slug === slug);
+  // Include drafts so direct /blog/[slug] preview works while writing.
+  return BLOG_POSTS.find((post) => post.slug === slug);
 }
 
 export async function getAdjacentBlogPosts(slug: string): Promise<{

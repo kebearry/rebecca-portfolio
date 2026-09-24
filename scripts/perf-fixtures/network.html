@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Network view</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Segoe UI, system-ui, sans-serif; background: #f1f3f4; color: #202124; }
+    .chrome { background: #fff; border: 1px solid #dadce0; margin: 16px; border-radius: 8px; overflow: hidden; }
+    .bar { background: #f8f9fa; padding: 10px 14px; border-bottom: 1px solid #dadce0; font-size: 13px; color: #5f6368; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; background: #f8f9fa; padding: 8px 12px; border-bottom: 1px solid #dadce0; color: #5f6368; font-weight: 600; }
+    td { padding: 8px 12px; border-bottom: 1px solid #eee; }
+    .third { color: #c5221f; }
+    .barbit { height: 10px; background: #1a73e8; border-radius: 2px; }
+    .callout {
+      margin: 0 16px 16px; background: #fff8f3; border: 1px solid #e8d5d1; border-radius: 8px;
+      padding: 12px 14px; font-size: 14px; color: #5c4636;
+    }
+    .callout strong { color: #8b6f47; }
+  </style>
+</head>
+<body>
+  <div class="chrome">
+    <div class="bar">Chrome DevTools · Network</div>
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Type</th><th>Size</th><th>Time</th><th>Waterfall</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>document</td><td>doc</td><td>48 KB</td><td>320 ms</td><td><div class="barbit" style="width:18%"></div></td></tr>
+        <tr><td>main-app.js</td><td>script</td><td>820 KB</td><td>1.1 s</td><td><div class="barbit" style="width:70%"></div></td></tr>
+        <tr><td class="third">gtm.js</td><td>script</td><td>310 KB</td><td>890 ms</td><td><div class="barbit" style="width:55%;background:#ea4335"></div></td></tr>
+        <tr><td class="third">analytics.js</td><td>script</td><td>180 KB</td><td>640 ms</td><td><div class="barbit" style="width:40%;background:#ea4335"></div></td></tr>
+        <tr><td class="third">chat-widget.js</td><td>script</td><td>140 KB</td><td>520 ms</td><td><div class="barbit" style="width:34%;background:#ea4335"></div></td></tr>
+        <tr><td>hero.webp</td><td>img</td><td>220 KB</td><td>410 ms</td><td><div class="barbit" style="width:28%;background:#34a853"></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>Look here:</strong> which scripts load on every page, how big they are, and whether third parties dominate the list.</div>
+</body>
+</html>

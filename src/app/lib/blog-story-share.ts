@@ -3,6 +3,12 @@ export type BlogPostStoryShare = {
   title: string;
   blurb: string;
   cta: string;
+  /** Top pills on the story card (1–2 short labels). */
+  badges?: string[];
+  /** Small chips under the blurb. */
+  chips?: string[];
+  /** Line above the CTA, e.g. "Rebecca · performance notes". */
+  footer?: string;
 };
 
 export type BlogStoryShareMeta = {
@@ -29,6 +35,25 @@ export const BLOG_STORY_SHARES: BlogStoryShareMeta[] = [
       blurb:
         "sample industry: outdoor retail. Google shows the building blocks. outdoor peers show which layout fits which job. four layouts inside.",
       cta: "full patterns on the link sticker",
+      badges: ["giants", "+ outdoor peers"],
+      chips: ["how-to", "brand", "shop", "help"],
+      footer: "Rebecca · search notes",
+    },
+  },
+  {
+    slug: "website-performance-assessment",
+    postTitle: "When Everyone Says the Site Is Slow",
+    summary:
+      "A short performance pass for any site: compare a few pages, name the pattern, split tags from your own code, then assign owners.",
+    storyShare: {
+      hook: "hold up. which pages though?",
+      title: "when everyone says the site is slow",
+      blurb:
+        "someone drops a red score. tags get blamed. hosting gets blamed. rewrite gets floated. still nobody opened three pages side by side.",
+      cta: "playbook on the link sticker",
+      badges: ["blame meeting", "+ short pass"],
+      chips: ["urls", "pattern", "owners"],
+      footer: "Rebecca · performance notes",
     },
   },
 ];

@@ -71,7 +71,10 @@ export async function GET(_request: Request, { params }: RouteProps) {
       "notes on search, CMS, and building digital experiences.",
     180
   );
-  const cta = story?.cta ?? "full patterns on the link sticker";
+  const cta = story?.cta ?? "full note on the link sticker";
+  const badges = (story?.badges ?? []).slice(0, 2);
+  const chips = (story?.chips ?? []).slice(0, 4);
+  const footer = story?.footer ?? "Rebecca · notes";
   const fontSize = titleFontSize(title);
 
   const fonts = [
@@ -227,35 +230,32 @@ export async function GET(_request: Request, { params }: RouteProps) {
             border: "3px solid rgba(201, 137, 122, 0.22)",
           }}
         >
-          <div style={{ display: "flex", gap: 10 }}>
-            <div
-              style={{
-                display: "flex",
-                padding: "8px 16px",
-                borderRadius: 999,
-                backgroundColor: "#F2D4CC",
-                fontSize: 22,
-                fontWeight: 700,
-                color: "#8B6F47",
-              }}
-            >
-              giants
+          {badges.length > 0 ? (
+            <div style={{ display: "flex", gap: 10, flexDirection: "row" }}>
+              {badges.map((badge, index) => (
+                <div
+                  key={`badge-${index}`}
+                  style={{
+                    display: "flex",
+                    padding: "8px 16px",
+                    borderRadius: 999,
+                    backgroundColor: index === 0 ? "#F2D4CC" : "#FFF8F3",
+                    border:
+                      index === 0
+                        ? "2px solid transparent"
+                        : "2px solid rgba(139, 111, 71, 0.2)",
+                    fontSize: 22,
+                    fontWeight: 700,
+                    color: index === 0 ? "#8B6F47" : "#C9897A",
+                  }}
+                >
+                  {String(badge)}
+                </div>
+              ))}
             </div>
-            <div
-              style={{
-                display: "flex",
-                padding: "8px 16px",
-                borderRadius: 999,
-                backgroundColor: "#FFF8F3",
-                border: "2px solid rgba(139, 111, 71, 0.2)",
-                fontSize: 22,
-                fontWeight: 700,
-                color: "#C9897A",
-              }}
-            >
-              + outdoor peers
-            </div>
-          </div>
+          ) : (
+            <div style={{ display: "flex", height: 1 }} />
+          )}
 
           <div
             style={{
@@ -282,60 +282,28 @@ export async function GET(_request: Request, { params }: RouteProps) {
             {blurb}
           </div>
 
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <div
-              style={{
-                display: "flex",
-                padding: "8px 14px",
-                borderRadius: 999,
-                backgroundColor: "rgba(232, 213, 209, 0.7)",
-                fontSize: 20,
-                fontWeight: 700,
-                color: "#8B6F47",
-              }}
-            >
-              how-to
+          {chips.length > 0 ? (
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", flexDirection: "row" }}>
+              {chips.map((chip, index) => (
+                <div
+                  key={`chip-${index}`}
+                  style={{
+                    display: "flex",
+                    padding: "8px 14px",
+                    borderRadius: 999,
+                    backgroundColor: "rgba(232, 213, 209, 0.7)",
+                    fontSize: 20,
+                    fontWeight: 700,
+                    color: "#8B6F47",
+                  }}
+                >
+                  {String(chip)}
+                </div>
+              ))}
             </div>
-            <div
-              style={{
-                display: "flex",
-                padding: "8px 14px",
-                borderRadius: 999,
-                backgroundColor: "rgba(232, 213, 209, 0.7)",
-                fontSize: 20,
-                fontWeight: 700,
-                color: "#8B6F47",
-              }}
-            >
-              brand
-            </div>
-            <div
-              style={{
-                display: "flex",
-                padding: "8px 14px",
-                borderRadius: 999,
-                backgroundColor: "rgba(232, 213, 209, 0.7)",
-                fontSize: 20,
-                fontWeight: 700,
-                color: "#8B6F47",
-              }}
-            >
-              shop
-            </div>
-            <div
-              style={{
-                display: "flex",
-                padding: "8px 14px",
-                borderRadius: 999,
-                backgroundColor: "rgba(232, 213, 209, 0.7)",
-                fontSize: 20,
-                fontWeight: 700,
-                color: "#8B6F47",
-              }}
-            >
-              help
-            </div>
-          </div>
+          ) : (
+            <div style={{ display: "flex", height: 1 }} />
+          )}
         </div>
 
         <div
@@ -355,7 +323,7 @@ export async function GET(_request: Request, { params }: RouteProps) {
               color: "#5C4636",
             }}
           >
-            Rebecca · search notes
+            {footer}
           </div>
           <div
             style={{
