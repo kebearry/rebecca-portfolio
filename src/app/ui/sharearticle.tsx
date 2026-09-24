@@ -47,8 +47,8 @@ function linkedInHashtags(tags: string[]): string {
     .join(" ");
 }
 
-function linkedInShareText(
-  url: string,
+/** Plain-text caption only. LinkedIn share intents do not support rich formatting. */
+function linkedInCaption(
   title: string,
   summary?: string,
   tags: string[] = []
@@ -58,7 +58,6 @@ function linkedInShareText(
   if (blurb) parts.push(blurb);
   const hashtags = linkedInHashtags(tags);
   if (hashtags) parts.push(hashtags);
-  parts.push(url);
   return parts.join("\n\n");
 }
 
@@ -77,12 +76,17 @@ const ShareArticle = ({
   const [storyError, setStoryError] = useState<string | null>(null);
   const [storyHint, setStoryHint] = useState<string | null>(null);
 
-  // share-offsite only accepts a URL (no body text). Feed composer prefills
-  // title, summary, and hashtags; LinkedIn still builds the OG card from the URL.
-  const linkedInUrl = useMemo(() => {
-    const text = linkedInShareText(url, title, summary, tags);
-    return `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
-  }, [url, title, summary, tags]);
+  // share-offsite is what reliably shows the OG image card. Feed composer can
+  // prefill text but often skips the card. Copy the caption on click so both work.
+  const linkedInUrl = useMemo(
+    () =>
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+    [url]
+  );
+  const linkedInShareCaption = useMemo(
+    () => linkedInCaption(title, summary, tags),
+    [title, summary, tags]
+  );
   const storyImageUrl = useMemo(
     () => (instagramStory ? storyImageUrlFromArticle(url) : ""),
     [instagramStory, url]
@@ -93,6 +97,22 @@ const ShareArticle = ({
 
   const clearSoon = (clear: () => void, ms = 6000) => {
     window.setTimeout(clear, ms);
+  };
+
+  const handleLinkedInClick = async () => {
+    setCopyError(null);
+    setStoryError(null);
+    setStoryHint(null);
+    try {
+      if (!navigator.clipboard?.writeText) return;
+      await navigator.clipboard.writeText(linkedInShareCaption);
+      setStoryHint(
+        "Caption copied. Paste it above the link preview on LinkedIn."
+      );
+      clearSoon(() => setStoryHint(null), 8000);
+    } catch {
+      // Link still opens with the OG card; caption paste is best-effort.
+    }
   };
 
   const handleCopy = async () => {
@@ -267,6 +287,7 @@ const ShareArticle = ({
           href={linkedInUrl}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={handleLinkedInClick}
           aria-label={`Share "${title}" on LinkedIn`}
           className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold bg-[#0077b5] text-white hover:bg-[#005c8e] transition duration-200"
         >
