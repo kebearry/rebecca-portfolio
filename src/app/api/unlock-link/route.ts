@@ -27,9 +27,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const expectedPassword = process.env.LINK_PASSWORD || process.env.EMAIL_PASS;
+    const expectedPassword = process.env.LINK_PASSWORD;
     if (!expectedPassword) {
-      console.error("Missing LINK_PASSWORD or EMAIL_PASS");
+      console.error("Missing LINK_PASSWORD");
       return NextResponse.json(
         { success: false, message: "Unlock is not configured" },
         { status: 500 }
