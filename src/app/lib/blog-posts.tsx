@@ -17,6 +17,222 @@ export type BlogPost = {
 
 const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "should-we-upgrade-now",
+    title: "Should We Upgrade Now? First, Check What Is Really Broken.",
+    summary:
+      "Check what's really broken on your own site, then decide on gain, cost, support dates, and timing. A version-free guide to upgrade decisions.",
+    publishedAt: "2026-10-01",
+    tags: ["Upgrades", "Architecture", "Next.js", "Sitecore"],
+    storyShare: getBlogStoryShareBySlug("should-we-upgrade-now")?.storyShare,
+    fullContent: `
+Trailworks is a headless Sitecore site. Sitecore holds the content, and a separate Next.js app shows it, connected through the Content SDK. The team is halfway through testing. A new major version of the Content SDK came out about seven months ago, but everyone has been heads-down and nobody looked closely. Then someone drops the release notes in the chat with "we should upgrade."
+
+A day later, another team sends over an upgrade review from their own project. It makes four claims. The build fails on the new version. An old helper has to be replaced everywhere first. Search should go through Trailworks' own server. And editor preview breaks on some pages.
+
+Now everyone is asking the same thing: **should we upgrade now?**
+
+Most teams answer straight away and treat the review as fact. I'd rather split it into two steps:
+
+1. **Check what's really broken.** Test each claim on your own site.
+2. **Then decide.** Weigh the gain, the cost, how long your version is supported, and the timing.
+
+If you're not the developer, you can still help with step 1 by asking one question: "Did we try this on our site, or is it from the review?"
+
+I've left version numbers out on purpose. They'd be out of date in a few months, and the steps work without them.
+
+## Step 1: Check what's really broken
+
+Upgrade reviews tend to sound very sure of themselves. Once you check, most claims land in one of four groups:
+
+- **Really broken.** It fails on your site too, with no easy way around it. It blocks the upgrade.
+- **A changed default.** The new version behaves differently unless you tell it otherwise. It looks broken until you find the setting.
+- **Recommended, not required.** The review says you have to, but the docs only say you should. Look for the word "deprecated," which means it still works but will be removed later.
+- **Not about the upgrade.** It might be a good idea, but it would be just as true if you never upgraded.
+
+To sort them, I run four checks:
+
+\`\`\`flow
+Split the review into separate claims
+Reproduce each one on your own site
+Check the release notes, docs, and known bugs
+Try the alternative
+\`\`\`
+
+Reproduce with the same versions the review used, on a clean copy of the code. When you try the alternative, look for a setting, a fallback, or another way to do it. That's usually how you tell a changed default from something that's really broken.
+
+Here's how the Trailworks team worked through each claim.
+
+### Claim 1: "The build fails on the new version"
+
+**A changed default.** The new Content SDK needs a newer Next.js, and newer Next.js builds sites with a tool called Turbopack instead of webpack. Both are bundlers, the tools that package up the site's code. Trailworks has a custom webpack step that prepares component files during the build, and Turbopack doesn't read webpack settings.
+
+On a clean test copy, the build did fail, and Next.js even said why: there's a webpack setup but no Turbopack setup. But the Next.js docs say webpack is still supported. The team switched the build back to webpack, and the site worked.
+
+So the upgrade isn't broken. The default changed, and Trailworks isn't ready for it yet. Moving that step to Turbopack becomes planned work. This is the group people miss most, because the upgrade really does look broken at first.
+
+### Claim 2: "You must replace \`withSitecore\` everywhere first"
+
+**Recommended, not required.** \`withSitecore\` is an older helper Trailworks components use to read page data from Sitecore. The upgrade guide marks it deprecated and recommends \`useSitecore\` instead. On the test copy, the components still render.
+
+There's one small catch. A value it passes to components was renamed, so anything using the old name needs a one-line change. "Still works" doesn't mean "nothing changed," which is why you read the notes even for deprecated things. Replacing it goes into planned work, before the next major, which is when it might actually be removed.
+
+### Claim 3: "Search should go through your own server"
+
+**Not about the upgrade.** The review worries that a secret key is visible in the browser. The team checked. The browser never sees the permanent search key. It uses a short-lived access token from Trailworks' server, which is the setup the search vendor recommends. Search also works the same before and after the upgrade.
+
+A server might still help with things like caching or adding your own search rules, but that's an architecture change with its own reasons and estimate. If a claim like this does point at a real security risk, like a permanent key sitting in the browser code, take it seriously. The risk is there whether you upgrade or not, so give it its own priority.
+
+### Claim 4: "Editor preview breaks on personalized pages"
+
+**Really broken.** Trailworks' content authors preview pages in the Sitecore editor every day, and many key pages use personalized components, which are parts of the page that change depending on the visitor. On the test copy, those components showed up blank in preview. There's no setting to change and nothing to switch back to. The vendor's public list of known bugs already has it, with a fix planned but no date.
+
+The review got this one right. It blocks the upgrade until the fix ships, which puts part of the upgrade date in the vendor's hands. It's also why you check every claim, rather than writing off the whole review once the first one turns out to be overblown.
+
+### Write it down
+
+| Claim | Evidence | Result | Recommendation |
+| --- | --- | --- | --- |
+| Build fails | Fails on a clean copy. Building with webpack works. | A changed default | Not a blocker. Build with webpack first, move to Turbopack later |
+| Replace \`withSitecore\` first | Deprecated, not removed. One renamed value needs a small fix. | Recommended, not required | Replace it in planned work, before the next major |
+| Search through your own server | Browser uses a short-lived token. Search is unchanged by the upgrade. | Not about the upgrade | Discuss separately |
+| Editor preview breaks | Reproduced. Known bug, fix planned with no date. | Really broken | Blocks the upgrade until the fix ships |
+
+The claims also show that upgrades come in a chain. The Content SDK upgrade brings a newer Next.js and Node.js with it, and the newer Next.js brings a new default bundler. Claim 1 was really about the bundler, not the Content SDK. Write down which layer forces which, because "we have to take B because A needs it" is a different conversation from "B came out at the same time."
+
+After step 1, the team knows one thing is really broken and the other three aren't blockers. That's not the picture the review painted, where all four sounded equally serious.
+
+Real reviews are rarely this neat. Some claims sit between two groups, and some you can't reproduce either way. When that happens, treat it as the more serious group until you know more.
+
+## Step 2: Decide whether now is the time
+
+I ask four questions.
+
+- **What do we gain?** A fix we need or a feature we'll use, not just "it's newer."
+  - *Trailworks:* nothing the team needs right now.
+- **What will it cost?** Code changes, retesting, and other layers it drags along.
+  - *Trailworks:* three layers move at once, every page template needs retesting, and the webpack step has to move eventually.
+- **How long is our version supported?**
+  - *Trailworks:* this is the surprise (more below).
+- **Is this a good time?**
+  - *Trailworks:* no, the team is in the middle of testing.
+
+If you can't name a real gain, don't upgrade yet, but put it in the plan. The support dates might give you a deadline anyway.
+
+### Check the support lifecycle
+
+Every major version has a support period, and vendors publish it. For the Content SDK on SitecoreAI, it's [KB1004260](https://support.sitecore.com/kb?id=kb_article_view&sysparm_article=KB1004260). Frameworks and runtimes have their own pages.
+
+| Stage | What you still get | What it means for you |
+| --- | --- | --- |
+| Active | New features, bug fixes, package updates, and security fixes | Upgrade whenever there's a real gain. |
+| Maintenance | Only critical fixes, package updates, and security patches | Plan the upgrade before support ends. |
+| End of life | Nothing | You have to upgrade. |
+
+The part people miss is that when the next major comes out, the version you're on moves into maintenance, and its end date is set from there. So look at the end date, not the release date. And link to the vendor page instead of copying the dates into your notes, because they change.
+
+That's what caught Trailworks out. The new major quietly moved their version into maintenance while the team was heads-down. By the time anyone opened the vendor page, end of life was about three months after go-live. Nobody had looked, because nothing was broken.
+
+### Pick the moment
+
+Most of the upgrade pain I've seen came from bad timing more than from the upgrade itself.
+
+| Project phase | What I do |
+| --- | --- |
+| Building | Best time. Upgrade early so testing covers it. |
+| Testing | Freeze versions. Only take a security or blocker fix, then retest what it touches. |
+| Just before go-live | Freeze. Nothing new unless it would stop the launch. |
+| After go-live | Plan it as proper work with its own testing. |
+
+Freezing doesn't mean never. It means the change waits until there's time to test it properly.
+
+### Trailworks' answer
+
+**Not during testing. But it starts now, and it has a hard date.**
+
+On gain alone, this upgrade would have sat in the backlog for a year. Support changed that. Three layers have to move within about three months of go-live, and the upgrade can't ship until the preview bug is fixed. So "not now" doesn't mean "do nothing now":
+
+- One developer prepares the upgrade on a separate copy of the code during testing. The freeze protects what's being tested. It doesn't stop you preparing what comes next.
+- The team checks the vendor's bug report for the preview fix every week, and raises it with Sitecore support if it isn't out by go-live.
+- The upgraded copy goes into proper testing the week after go-live, with the end-of-life date at the top of the plan.
+- The webpack step and the \`withSitecore\` replacement go into the same plan. The search idea gets discussed separately.
+
+The gain question said wait. The support dates said not for long. If the team had only looked at the gain, they'd have planned a relaxed upgrade "sometime after go-live" and found out about end of life too late.
+
+## Who this is for
+
+Tech leads, developers, and PMs on headless Sitecore sites, where the Content SDK, Next.js, and Node.js all release on their own schedules. The same steps work on other stacks too.
+
+For the everyday side, like handling patches and minors, what to write down for each upgrade, and how to keep it reversible, see [Set Your Upgrade Rules Once](/blog/set-your-upgrade-rules-once).
+
+So next time someone drops release notes in the chat with "we should upgrade," check what's really broken first. Then decide.
+`,
+  },
+  {
+    slug: "set-your-upgrade-rules-once",
+    title: "Set Your Upgrade Rules Once",
+    summary:
+      "Patches, minors, and majors don't need the same process. A short set of default rules, a one-page upgrade note, and three habits that keep upgrades reversible.",
+    publishedAt: "2026-10-01",
+    tags: ["Upgrades", "Architecture", "Next.js", "Sitecore"],
+    fullContent: `
+If nobody agrees on upgrade rules, every new release starts the same debate. Someone posts the release notes, someone says "we should upgrade," and the team spends an hour deciding something it has decided before.
+
+This is the companion to [Should We Upgrade Now?](/blog/should-we-upgrade-now). That post walks through one big decision. This one is the set of defaults I agree with the team once, so most releases don't need a decision at all. We review them once or twice a year.
+
+## Patch, minor, major
+
+In case the names are new: a **patch** is a small fix, a **minor** version adds features and shouldn't break anything (but check anyway), and a **major** version can break things.
+
+Not every release needs the full process. For a patch, read the release notes and test the key flows. For a minor, do the same and look for anything newly deprecated. Save the full "check the claims, then decide" process for majors.
+
+## The default rules
+
+| Release type | What we do by default |
+| --- | --- |
+| Patch with a security fix | Take it soon and check the key flows. |
+| Patch with bug fixes only | Take it at the next planned update. |
+| Patch that fixes something blocking you | Take it as soon as it ships, and retest what it touches. |
+| Minor, with features you need | Schedule it. |
+| Minor, with nothing you need | Add it to the next planned update. |
+| Major | Plan it like a small project, with scope, testing, and an undo plan. |
+| Brand-new major | Wait for the first round of fixes, unless you need something in it. |
+| A layer you depend on isn't ready | Wait, and write down what you're waiting for. |
+| Your version moves into maintenance | Put the upgrade in the plan, with a date before end of life. |
+| Your version reaches end of life | Upgrade. You don't have a choice anymore. |
+| You're two majors behind | Make it the next upgrade in the plan. Expect two sets of changes, and take them one major at a time so problems are easier to trace. |
+
+When the table says "the next planned update," it means a regular slot, like once a month or once a quarter, where you take whatever patches and minors are waiting. Without one, small updates quietly pile up into a big one.
+
+Here's how that plays out on Trailworks. In [Should We Upgrade Now?](/blog/should-we-upgrade-now), an editor preview bug blocks their upgrade. When the vendor ships the fix, it's only a patch, but it unblocks the upgrade, so the team takes it the same week instead of waiting for the next planned update.
+
+The maintenance and end-of-life rows depend on the vendor's support page. For the Content SDK on SitecoreAI, that's [KB1004260](https://support.sitecore.com/kb?id=kb_article_view&sysparm_article=KB1004260). Link to it rather than copying the dates, because they change.
+
+## Keep it reversible
+
+- Change one layer at a time, so if something breaks you know which change caused it.
+- Measure things before you start, like build time, a few key pages, and the main user flows, so you can compare afterwards.
+- Know how to undo it, including what you'd put back and how long that would take.
+
+## The upgrade note
+
+I write a one-page note for every major upgrade, with the same sections each time:
+
+1. **What:** which layers, and from which version to which
+2. **Why:** the real gain
+3. **Support:** which lifecycle stage you're in, with a link to the vendor page
+4. **Claims checked:** what you tested on your own site, and what you found
+5. **Risk:** what could break, and how you'd notice
+6. **Timing:** why now, or why later
+7. **Undo plan:** how to undo it and how long it takes
+
+Next time the same question comes up, the note answers it.
+
+## Who this is for
+
+Anyone who owns a site built on frameworks and SDKs that release on their own schedules. The examples come from headless Sitecore with the Content SDK and Next.js, but the rules work on any stack.
+`,
+  },
+  {
     slug: "serp-ui-patterns",
     title: "Planning Search UI: Patterns from Giants and Peer Industries",
     summary:
@@ -1260,8 +1476,10 @@ Question 4 in the [five questions](/blog/sitecore-search-five-questions) post is
 ];
 
 export function estimateReadingTime(content: string): number {
-  const words = content.trim().split(/\s+/).length;
-  return Math.max(1, Math.ceil(words / 200));
+  const words = content
+    .split(/\s+/)
+    .filter((token) => /[\p{L}\p{N}]/u.test(token)).length;
+  return Math.max(1, Math.ceil(words / 238));
 }
 
 export function formatBlogDate(date: string): string {

@@ -3,7 +3,7 @@ export type BlogPostStoryShare = {
   title: string;
   blurb: string;
   cta: string;
-  /** Top pills on the story card (1–2 short labels). */
+  /** Top pills on the story card (1 to 2 short labels). */
   badges?: string[];
   /** Small chips under the blurb. */
   chips?: string[];
@@ -54,6 +54,22 @@ export const BLOG_STORY_SHARES: BlogStoryShareMeta[] = [
       badges: ["blame meeting", "+ short pass"],
       chips: ["urls", "pattern", "owners"],
       footer: "Rebecca · performance notes",
+    },
+  },
+  {
+    slug: "should-we-upgrade-now",
+    postTitle: "Should We Upgrade Now? First, Check What Is Really Broken.",
+    summary:
+      "Check what's really broken on your own site, then decide on gain, cost, support dates, and timing. A version-free guide to upgrade decisions.",
+    storyShare: {
+      hook: "wait. is it actually broken?",
+      title: "should we upgrade now? first, check what's really broken.",
+      blurb:
+        "new version came out months ago. someone says upgrade. another team says it's broken. you're mid-testing. and the support clock is already running.",
+      cta: "decision guide on the link sticker",
+      badges: ["upgrade day", "+ no version numbers"],
+      chips: ["4 claims", "defaults", "support dates", "timing"],
+      footer: "Rebecca · build notes",
     },
   },
 ];
