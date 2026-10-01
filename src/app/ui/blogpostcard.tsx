@@ -1,24 +1,18 @@
 import Link from "next/link";
-import {
-  estimateReadingTime,
-  formatBlogDate,
-  type BlogPost,
-} from "../lib/blog-posts";
+import { formatBlogDate, type BlogPostCardData } from "../lib/blog-posts";
 import BlogTagLink from "./blogtaglink";
 
 type BlogPostCardProps = {
-  post: BlogPost;
+  post: BlogPostCardData;
 };
 
 const BlogPostCard = ({ post }: BlogPostCardProps) => {
-  const readingTime = estimateReadingTime(post.fullContent);
-
   return (
     <li className="glass-card rounded-2xl p-6 sm:p-8 flex flex-col h-full transition duration-300 hover:shadow-lg">
       <div className="flex flex-wrap items-center gap-3 text-sm text-accent/60 mb-4">
         <time dateTime={post.publishedAt}>{formatBlogDate(post.publishedAt)}</time>
         <span aria-hidden="true">·</span>
-        <span>{readingTime} min read</span>
+        <span>{post.readingTime} min read</span>
       </div>
 
       <h2 className="text-xl sm:text-2xl font-bold text-accent mb-3 leading-snug">

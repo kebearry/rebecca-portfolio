@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   blogTagFilterHref,
-  type BlogPost,
+  type BlogPostCardData,
 } from "../lib/blog-posts";
 import BlogPostCard from "./blogpostcard";
 
@@ -12,7 +12,7 @@ const DEFAULT_PAGE_SIZE = 4;
 const PAGE_SIZE_OPTIONS = [2, 4, 6, 8] as const;
 
 type BlogPostsProps = {
-  posts: BlogPost[];
+  posts: BlogPostCardData[];
   tags: string[];
   initialTag?: string;
   pageSize?: number;

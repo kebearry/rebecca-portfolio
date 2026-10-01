@@ -1,4 +1,4 @@
-import { getBlogPosts, getBlogTags } from "../lib/blog-posts";
+import { getBlogPostCards, getBlogTags } from "../lib/blog-posts";
 import BlogPosts from "../ui/blogposts";
 
 /** How many posts to show initially, and how many each "Show more" adds. */
@@ -13,7 +13,7 @@ export default async function BlogSection({
   initialTag,
   pageSize = BLOG_PAGE_SIZE,
 }: BlogSectionProps) {
-  const [posts, tags] = await Promise.all([getBlogPosts(), getBlogTags()]);
+  const [posts, tags] = await Promise.all([getBlogPostCards(), getBlogTags()]);
 
   return (
     <section

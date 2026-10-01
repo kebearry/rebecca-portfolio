@@ -15,6 +15,14 @@ export type BlogPost = {
   storyShare?: BlogPostStoryShare;
 };
 
+/** What a blog list card needs. Keeps full post bodies out of the client payload. */
+export type BlogPostCardData = Pick<
+  BlogPost,
+  "slug" | "title" | "summary" | "publishedAt" | "tags"
+> & {
+  readingTime: number;
+};
+
 const BLOG_POSTS: BlogPost[] = [
   {
     slug: "search-no-results",
@@ -1631,6 +1639,18 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     (a, b) =>
       new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
+}
+
+export async function getBlogPostCards(): Promise<BlogPostCardData[]> {
+  const posts = await getBlogPosts();
+  return posts.map((post) => ({
+    slug: post.slug,
+    title: post.title,
+    summary: post.summary,
+    publishedAt: post.publishedAt,
+    tags: post.tags,
+    readingTime: estimateReadingTime(post.fullContent),
+  }));
 }
 
 export async function getBlogPostBySlug(
