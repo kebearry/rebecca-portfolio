@@ -17,6 +17,119 @@ export type BlogPost = {
 
 const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "search-no-results",
+    title: "What to Show When Search Finds Nothing",
+    summary:
+      "Zero results is usually one of four problems. How to tell which, what the empty page should show, and when an AI answer helps or hides the failure.",
+    publishedAt: "2026-10-05",
+    tags: ["Search", "UX", "Sitecore"],
+    storyShare: getBlogStoryShareBySlug("search-no-results")?.storyShare,
+    fullContent: `
+A visitor on the Trailworks site types "stormbreaker jacket" into search. The jacket is called Stormbreak. The page says "No results found," and that's all it says. The visitor leaves, and nobody on the team ever hears about it.
+
+Most teams design the results page carefully and leave the empty page as an afterthought. But it's where search quietly loses people.
+
+**Zero results is usually one of four different problems**, and each one needs a different answer from the page.
+
+## Why the page is empty
+
+When I look at a list of searches that returned nothing, they almost always fall into one of these:
+
+- **The words don't match.** A typo ("stormbreaker"), a different word for the same thing ("raincoat" when you call it a "waterproof jacket"), or a plural or spelling difference. The content exists. The search just didn't connect the two.
+- **The filters are too strict.** There are results, but the visitor has narrowed things down until nothing is left. Waterproof jackets exist, just not in size XS and orange at the same time.
+- **You really don't have it.** A discontinued tent, a brand you've never stocked, or a service you don't offer. Search is working correctly. The answer is "nothing."
+- **It exists, but search can't see it.** The page or document is there, but it never made it into the search index (the list search looks through). Maybe it was left out by mistake, or its text was never pulled out of the file. That's a search bug, not a design problem, and it needs fixing at the source. My [CEC](/blog/sitecore-search-cec-explained) post shows how to check whether an item made it into the index, and the [document extractors](/blog/sitecore-search-document-extractors) post covers one common reason it didn't.
+
+The first three are what the empty page has to handle. The fourth is one to log and fix, because no amount of good design helps when search can't see your content. In the meantime, the fallback layers still catch those visitors.
+
+## What the page should show
+
+I build the empty page in layers. Layer 1 always shows, even when layer 2 corrects the search. It just changes from "No results for" to "Showing results for." After that, the specific layers come first, because they fix the visitor's actual problem, and the general ones are the fallback. Not every site needs every layer.
+
+None of these layers is a new idea. Usability researchers like [Baymard](https://baymard.com/blog/no-results-page) have recommended them for years, and still find that about half of the large online shops they test don't give people a good way to recover. What most teams miss is matching each layer to its cause, which is the section after them.
+
+**1. Say what happened, and repeat their search.** "No results for 'stormbreaker jacket'." Showing their exact words lets people spot their own typo. Avoid wording like "Invalid search term," which sounds like the visitor did something wrong.
+
+**2. Fix the words for them, or suggest a fix.** If you're confident it's a typo, show the corrected results straight away and say so: "Showing results for 'stormbreak jacket'. Search instead for 'stormbreaker jacket'." If you're less sure, offer it as a suggestion they can click.
+
+![Trailworks search for "stormbreaker jacket," corrected to "stormbreak jacket," with a link to search the original words](/blog/no-results-typo.png)
+
+**3. Show which filters are causing it.** If filters emptied the page, say which ones, and how many results each would bring back: "No results with Size XS and Color Orange. Remove Color to see 12 jackets." This turns a dead end into one click. My [filters and facets](/blog/sitecore-search-filters-facets) post covers how filters narrow results in the first place.
+
+**4. Be honest, then offer a way forward.** If you don't have it, say so. Someone searching for a discontinued tent should see that it's no longer sold, plus the closest current option. A clear "we don't sell that anymore" beats a page that pretends nothing happened. For everything else, offer popular searches, top categories, or content related to what they typed. Keep it clearly separate from real results, with a heading like "Popular right now," so nobody thinks these are matches.
+
+**5. Give people a human way out, where it matters.** On a help center or a support site, a link to contact someone is worth more than another list of articles. On a shop, it's usually less important than the layers above.
+
+![A Trailworks empty page. The numbers match the layers: the search repeated (1), filters to remove with counts (3), a separate "Popular right now" block (4), and a way to reach a person (5)](/blog/no-results-filters.png)
+
+## How the page knows which problem it is
+
+Each specific layer needs something behind it:
+
+- **The words don't match:** typos need spelling suggestions from your search tool. Many tools offer them, but check how good yours are before you show corrected results automatically. Different words, like "raincoat," need synonyms that someone adds, usually after spotting them in the zero-result report.
+- **The filters are too strict:** the page can spot this on its own. When a filtered search comes back empty, run it again in the background without each filter and count what comes back. That's where "12 jackets" comes from.
+- **You really don't have it:** one way is to keep old products in the index but hide them from normal results with a filter, like the availability filter in my filters post. Then the page can check the same way. Run the search again without that filter. If the old product turns up, say it's no longer sold and link its replacement. The other way is a list of discontinued products and what replaced them, kept up to date by someone.
+
+When the page can't tell which problem it is, it falls back to layers 1, 4, and 5.
+
+## Where AI answers fit
+
+Many search pages now show an AI-generated answer above the results. On an empty page, that's tempting, because the page is never empty again. But an empty page you never see is a problem you never fix.
+
+Some AI answer features match on meaning rather than exact words. Someone types "how do I stop my jacket leaking," keyword search finds nothing, and the AI still finds your re-waterproofing guide. That's great for the visitor. Underneath, it's still the first cause. The words didn't match.
+
+It helps when:
+
+- The search is a question and you have real content that answers it.
+- The answer shows which of your pages it came from, so people can check it.
+
+It hurts when:
+
+- Nothing on your site covers it, so the AI fills the gap with general information, or worse, describes a product you don't sell.
+- It hides a broken search. If the page always shows something, the zero-result searches you should be fixing disappear from view.
+
+So I only show an AI answer when it can point to your own pages, label it clearly as AI-generated, and keep logging the search as a zero-result search even when the AI answers it. The answer is for the visitor. The log is for you. It shows how people describe the problem in their own words, so you can add "leaking" as a related word for "waterproofing," or use their wording in the guide.
+
+If you're on Sitecore, my [search options](/blog/sitecore-search-options-explained) post shows which products offer short AI answers today, and which can match on meaning.
+
+## What not to do
+
+- Clear the search box, so they have to type it all again to fix one letter.
+- Drop the search box from the empty page, so the only way to try again is to scroll up or go back.
+- Send people to a category page without telling them their search found nothing. They'll think that's what they asked for, or that search is broken.
+
+## Measure it, then shrink the list
+
+The empty page catches people, but the real goal is fewer searches landing there, and that takes a regular look at the numbers. I check three things:
+
+- **The zero-result rate:** what share of searches return nothing. Watch how it changes over time.
+- **The top zero-result searches**, once a week or once a month. This is your to-do list.
+- **What people do next:** search again, click a suggestion, or leave. If most people leave, the empty page isn't helping yet.
+
+Each search on the list gets one of a few fixes: a synonym, a spelling correction, a new page, a redirect, or an honest "we don't sell that" message. My [five questions](/blog/sitecore-search-five-questions) post covers how search reports feed content decisions.
+
+For a rough sense of scale, [Luigi's Box](https://www.luigisbox.com/blog/searches-without-results-data/) looked at 4,000 online stores and found that 6.3% of searches returned nothing, and about a third of people left the site straight after. Sports and outdoor stores averaged 4.4%. [Prefixbox's 2024 benchmark](https://www.prefixbox.com/blog/wp-content/uploads/2024/09/2024-Search-Benchmark-Report-and-Best-Practices-Holiday-Edition.pdf) landed in the same place, at about 6%. Both figures come from search companies' own customer data, so they describe shops that already take search seriously. A site with untuned search is likely higher, and help centers and content sites will look different again. If you're well above those numbers, start with the words that don't match.
+
+## Trailworks: five empty searches
+
+| What they searched | Why it was empty | What changed |
+| --- | --- | --- |
+| stormbreaker jacket | Typo | Shows results for "stormbreak jacket," with an option to search the original words |
+| raincoat | Different word | A synonym maps it to waterproof jackets, so results appear |
+| waterproof jacket, filtered to XS and orange | Filters too strict | Says which filters caused it and offers to remove Color for 12 results |
+| ridgeline 2 tent | Discontinued product | Says it's no longer sold and links to current two-person tents |
+| jacket care guide | The PDF exists but was never indexed | Logged as a search bug. The PDF gets indexed and now shows up |
+
+None of those five needed new content. It's easy to read a zero-result report as a list of content gaps, and some of it will be. But in this list, every one was a matching problem, a page problem, or a setup problem, and those are much cheaper to fix than writing new pages.
+
+## Who this is for
+
+Anyone who builds or owns site search: designers, developers, content teams, and product owners. The Trailworks examples come from an online shop, but the four causes and the layers work for help centers, content sites, and intranets too. For how search results pages are put together in the first place, see [Planning Search UI](/blog/serp-ui-patterns).
+
+Next time you test your search, type your best-selling product with one letter wrong. When [Baymard tried this](https://www.smashingmagazine.com/2014/08/the-current-state-of-e-commerce-search/) on the 50 top-grossing US online shops back in 2014, 18% gave no useful results. If your page just says "No results found," that's your first fix.
+`,
+  },
+  {
     slug: "should-we-upgrade-now",
     title: "Should We Upgrade Now? First, Check What Is Really Broken.",
     summary:
@@ -359,7 +472,7 @@ Promos, related questions, and conversation cut across those surfaces: label pin
 
 ## Where this fits
 
-Use this post to **plan results page UI**. Use the Sitecore series to build it: [5 questions](/blog/sitecore-search-five-questions) through [widgets](/blog/sitecore-search-widgets-variations) cover what is searchable, how it gets in, and which experience owns the change.
+Use this post to **plan results page UI**. Use the Sitecore series to build it: [5 questions](/blog/sitecore-search-five-questions) through [widgets](/blog/sitecore-search-widgets-variations) cover what is searchable, how it gets in, and which experience owns the change. For the page visitors see when nothing matches, see [What to Show When Search Finds Nothing](/blog/search-no-results).
 `,
   },
   {
@@ -1201,7 +1314,7 @@ These point to content priorities. Trailworks might create seasonal landing page
 - discontinued tent model
 - old seasonal campaign
 
-These reveal content gaps. Fix them with new pages, redirects, or search synonyms before users hit a dead end.
+These reveal content gaps, or words search doesn't match yet. Fix them with new pages, redirects, or search synonyms before users hit a dead end. For what visitors should see in the meantime, see [What to Show When Search Finds Nothing](/blog/search-no-results).
 
 **Most clicked results**
 
@@ -1469,7 +1582,7 @@ Turned on for this widget or page hard filter?
 
 ## Where this fits
 
-Question 4 in the [five questions](/blog/sitecore-search-five-questions) post is how relevance is controlled. This post is the narrowing half. Entity shape is [entity modeling](/blog/sitecore-search-entity-modeling). Campaign pin, boost, bury, and blacklist are [widgets](/blog/sitecore-search-widgets-variations).
+Question 4 in the [five questions](/blog/sitecore-search-five-questions) post is how relevance is controlled. This post is the narrowing half. Entity shape is [entity modeling](/blog/sitecore-search-entity-modeling). Campaign pin, boost, bury, and blacklist are [widgets](/blog/sitecore-search-widgets-variations). When filters empty the page, [What to Show When Search Finds Nothing](/blog/search-no-results) covers telling visitors which filter to remove.
 
 `,
   },
@@ -1490,8 +1603,31 @@ export function formatBlogDate(date: string): string {
   }).format(new Date(date));
 }
 
+function todayInSingapore(): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Singapore",
+  }).format(new Date());
+}
+
+/** Future-dated posts stay hidden in production until their date (Singapore time). */
+export function isScheduled(post: BlogPost): boolean {
+  if (process.env.NODE_ENV === "development") return false;
+  return post.publishedAt > todayInSingapore();
+}
+
+/** Turns markdown links to scheduled posts into plain text so they don't 404. */
+export function unlinkScheduledPosts(content: string): string {
+  const scheduled = BLOG_POSTS.filter(isScheduled).map((post) => post.slug);
+  if (scheduled.length === 0) return content;
+  return content.replace(
+    /\[([^\]]+)\]\(\/blog\/([a-z0-9-]+)\)/g,
+    (match, text: string, slug: string) =>
+      scheduled.includes(slug) ? text : match
+  );
+}
+
 export async function getBlogPosts(): Promise<BlogPost[]> {
-  return BLOG_POSTS.filter((post) => !post.draft).sort(
+  return BLOG_POSTS.filter((post) => !post.draft && !isScheduled(post)).sort(
     (a, b) =>
       new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );

@@ -72,6 +72,22 @@ export const BLOG_STORY_SHARES: BlogStoryShareMeta[] = [
       footer: "Rebecca · build notes",
     },
   },
+  {
+    slug: "search-no-results",
+    postTitle: "What to Show When Search Finds Nothing",
+    summary:
+      "Zero results is usually one of four problems. How to tell which, what the empty page should show, and when an AI answer helps or hides the failure.",
+    storyShare: {
+      hook: "try this. right now.",
+      title: "type your best-seller with one letter wrong",
+      blurb:
+        "if your site search just says \"no results found,\" visitors leave and nobody hears about it. an empty search is usually one of four problems, and each needs a different fix.",
+      cta: "fix list on the link sticker",
+      badges: ["empty page", "+ AI answers"],
+      chips: ["typos", "filters", "discontinued", "not indexed"],
+      footer: "Rebecca · search notes",
+    },
+  },
 ];
 
 export function getBlogStoryShareBySlug(

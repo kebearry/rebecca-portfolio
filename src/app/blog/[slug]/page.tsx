@@ -8,6 +8,8 @@ import {
   getAdjacentBlogPosts,
   getBlogPostBySlug,
   getBlogSlugs,
+  isScheduled,
+  unlinkScheduledPosts,
 } from "../../lib/blog-posts";
 import {
   markdownComponents,
@@ -18,6 +20,8 @@ import BackToHomeSection from "../../ui/backtohomesection";
 import BlogTagLink from "../../ui/blogtaglink";
 import BlogPostNav from "../../ui/blogpostnav";
 const SITE_URL = "https://rebecca-portfolio.vercel.app";
+
+export const revalidate = 3600;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -34,7 +38,7 @@ export async function generateMetadata({
   const resolvedParams = await params;
   const post = await getBlogPostBySlug(resolvedParams.slug);
 
-  if (!post) {
+  if (!post || isScheduled(post)) {
     return { title: "Post Not Found" };
   }
 
@@ -79,7 +83,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const resolvedParams = await params;
   const post = await getBlogPostBySlug(resolvedParams.slug);
 
-  if (!post) {
+  if (!post || isScheduled(post)) {
     notFound();
   }
 
@@ -142,7 +146,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             remarkPlugins={markdownRemarkPlugins}
             components={markdownComponents}
           >
-            {post.fullContent}
+            {unlinkScheduledPosts(post.fullContent)}
           </ReactMarkdown>
         </div>
       </section>
