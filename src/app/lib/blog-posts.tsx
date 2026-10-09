@@ -28,45 +28,45 @@ const BLOG_POSTS: BlogPost[] = [
     slug: "search-no-results",
     title: "What to Show When Search Finds Nothing",
     summary:
-      "Zero results is usually one of four problems. How to tell which, what the empty page should show, and when an AI answer helps or hides the failure.",
+      "Zero results is usually one of four problems. How to tell which, what the empty page should show, and how wrong results and AI answers can hide the failure.",
     publishedAt: "2026-10-05",
     tags: ["Search", "UX", "Sitecore"],
     storyShare: getBlogStoryShareBySlug("search-no-results")?.storyShare,
     fullContent: `
-A visitor on the Trailworks site types "stormbreaker jacket" into search. The jacket is called Stormbreak. The page says "No results found," and that's all it says. The visitor leaves, and nobody on the team ever hears about it.
+A visitor on the Trailworks site types "stormbreaker jacket" into search. The jacket is called Stormbreak. The page says "No results found," and nothing else. The visitor leaves, and unless someone on the team checks the search report, nobody finds out.
 
-Most teams design the results page carefully and leave the empty page as an afterthought. But it's where search quietly loses people.
+Most teams put a lot of care into the results page and very little into the empty one, even though that's where search loses people.
 
-**Zero results is usually one of four different problems**, and each one needs a different answer from the page.
+Zero results usually comes from one of four problems, and each one needs a different response from the page.
 
 ## Why the page is empty
 
-When I look at a list of searches that returned nothing, they almost always fall into one of these:
+When I go through a list of searches that returned nothing, almost all of them fit one of these:
 
-- **The words don't match.** A typo ("stormbreaker"), a different word for the same thing ("raincoat" when you call it a "waterproof jacket"), or a plural or spelling difference. The content exists. The search just didn't connect the two.
+- **The words don't match.** A typo ("stormbreaker"), a different word for the same thing ("raincoat" when you call it a "waterproof jacket"), or a plural or spelling difference. The content exists, but search didn't connect it to what the visitor typed.
 - **The filters are too strict.** There are results, but the visitor has narrowed things down until nothing is left. Waterproof jackets exist, just not in size XS and orange at the same time.
-- **You really don't have it.** A discontinued tent, a brand you've never stocked, or a service you don't offer. Search is working correctly. The answer is "nothing."
+- **You really don't have it.** A discontinued tent, a brand you've never stocked, or a service you don't offer. Search is working correctly, and the answer is "nothing."
 - **It exists, but search can't see it.** The page or document is there, but it never made it into the search index (the list search looks through). Maybe it was left out by mistake, or its text was never pulled out of the file. That's a search bug, not a design problem, and it needs fixing at the source. My [CEC](/blog/sitecore-search-cec-explained) post shows how to check whether an item made it into the index, and the [document extractors](/blog/sitecore-search-document-extractors) post covers one common reason it didn't.
 
-The first three are what the empty page has to handle. The fourth is one to log and fix, because no amount of good design helps when search can't see your content. In the meantime, the fallback layers still catch those visitors.
+The empty page has to handle the first three. The fourth needs logging and fixing, because good design can't help when search can't see your content. Until it's fixed, the fallback layers below still give those visitors somewhere to go.
 
 ## What the page should show
 
-I build the empty page in layers. Layer 1 always shows, even when layer 2 corrects the search. It just changes from "No results for" to "Showing results for." After that, the specific layers come first, because they fix the visitor's actual problem, and the general ones are the fallback. Not every site needs every layer.
+I build the empty page in layers. The specific layers come first, because they deal with the visitor's actual problem, and the general ones come after as a fallback. Not every site needs all of them.
 
-None of these layers is a new idea. Usability researchers like [Baymard](https://baymard.com/blog/no-results-page) have recommended them for years, and still find that about half of the large online shops they test don't give people a good way to recover. What most teams miss is matching each layer to its cause, which is the section after them.
+These layers aren't new. Usability researchers like [Baymard](https://baymard.com/blog/no-results-page) have recommended them for years, and still find that about half of the large online shops they test don't give people a good way to recover. Where teams usually fall short is matching each layer to its cause, which I cover in the next section.
 
-**1. Say what happened, and repeat their search.** "No results for 'stormbreaker jacket'." Showing their exact words lets people spot their own typo. Avoid wording like "Invalid search term," which sounds like the visitor did something wrong.
+**1. Say what happened, and repeat their search.** "No results for 'stormbreaker jacket'." Seeing their exact words helps people spot their own typo. Avoid wording like "Invalid search term," which makes it sound like the visitor did something wrong. Put the message in a status region (\`role="status"\`) as well, so screen readers announce it when the results change.
 
-**2. Fix the words for them, or suggest a fix.** If you're confident it's a typo, show the corrected results straight away and say so: "Showing results for 'stormbreak jacket'. Search instead for 'stormbreaker jacket'." If you're less sure, offer it as a suggestion they can click.
+**2. Fix the words for them, or suggest a fix.** If you're confident it's a typo, show the corrected results straight away and say so: "Showing results for 'stormbreak jacket'. Search instead for 'stormbreaker jacket'." If you're less sure, offer it as a suggestion they can click. Layer 1 still shows when the search is corrected, but the wording changes from "No results for" to "Showing results for."
 
 ![Trailworks search for "stormbreaker jacket," corrected to "stormbreak jacket," with a link to search the original words](/blog/no-results-typo.png)
 
-**3. Show which filters are causing it.** If filters emptied the page, say which ones, and how many results each would bring back: "No results with Size XS and Color Orange. Remove Color to see 12 jackets." This turns a dead end into one click. My [filters and facets](/blog/sitecore-search-filters-facets) post covers how filters narrow results in the first place.
+**3. Show which filters are causing it.** If filters emptied the page, say which ones, and how many results each would bring back: "No results with Size XS and Color Orange. Remove Color to see 12 jackets." The visitor can then recover with one click. My [filters and facets](/blog/sitecore-search-filters-facets) post covers how filters narrow results in the first place.
 
-**4. Be honest, then offer a way forward.** If you don't have it, say so. Someone searching for a discontinued tent should see that it's no longer sold, plus the closest current option. A clear "we don't sell that anymore" beats a page that pretends nothing happened. For everything else, offer popular searches, top categories, or content related to what they typed. Keep it clearly separate from real results, with a heading like "Popular right now," so nobody thinks these are matches.
+**4. Be honest, then offer a way forward.** If you don't have it, say so. Someone searching for a discontinued tent should see that it's no longer sold, plus the closest current option. That's more useful than a page that acts as if nothing happened. For everything else, offer popular searches, top categories, or content related to what they typed. Keep it clearly separate from real results, with a heading like "Popular right now," so nobody mistakes these for matches.
 
-**5. Give people a human way out, where it matters.** On a help center or a support site, a link to contact someone is worth more than another list of articles. On a shop, it's usually less important than the layers above.
+**5. Give people a human way out, where it matters.** On a help center or support site, a link to contact someone is worth more than another list of articles. On a shop, it usually matters less than the layers above.
 
 ![A Trailworks empty page. The numbers match the layers: the search repeated (1), filters to remove with counts (3), a separate "Popular right now" block (4), and a way to reach a person (5)](/blog/no-results-filters.png)
 
@@ -75,30 +75,10 @@ None of these layers is a new idea. Usability researchers like [Baymard](https:/
 Each specific layer needs something behind it:
 
 - **The words don't match:** typos need spelling suggestions from your search tool. Many tools offer them, but check how good yours are before you show corrected results automatically. Different words, like "raincoat," need synonyms that someone adds, usually after spotting them in the zero-result report.
-- **The filters are too strict:** the page can spot this on its own. When a filtered search comes back empty, run it again in the background without each filter and count what comes back. That's where "12 jackets" comes from.
-- **You really don't have it:** one way is to keep old products in the index but hide them from normal results with a filter, like the availability filter in my filters post. Then the page can check the same way. Run the search again without that filter. If the old product turns up, say it's no longer sold and link its replacement. The other way is a list of discontinued products and what replaced them, kept up to date by someone.
+- **The filters are too strict:** the page can work this out on its own. When a filtered search comes back empty, run it again in the background without each filter and count the results. That's where "12 jackets" comes from.
+- **You really don't have it:** one option is to keep old products in the index but hide them from normal results with a filter, like the availability filter in my filters post. The page can then run the search again without that filter. If the old product turns up, say it's no longer sold and link to its replacement. The other option is a list of discontinued products and their replacements, which someone has to keep up to date.
 
 When the page can't tell which problem it is, it falls back to layers 1, 4, and 5.
-
-## Where AI answers fit
-
-Many search pages now show an AI-generated answer above the results. On an empty page, that's tempting, because the page is never empty again. But an empty page you never see is a problem you never fix.
-
-Some AI answer features match on meaning rather than exact words. Someone types "how do I stop my jacket leaking," keyword search finds nothing, and the AI still finds your re-waterproofing guide. That's great for the visitor. Underneath, it's still the first cause. The words didn't match.
-
-It helps when:
-
-- The search is a question and you have real content that answers it.
-- The answer shows which of your pages it came from, so people can check it.
-
-It hurts when:
-
-- Nothing on your site covers it, so the AI fills the gap with general information, or worse, describes a product you don't sell.
-- It hides a broken search. If the page always shows something, the zero-result searches you should be fixing disappear from view.
-
-So I only show an AI answer when it can point to your own pages, label it clearly as AI-generated, and keep logging the search as a zero-result search even when the AI answers it. The answer is for the visitor. The log is for you. It shows how people describe the problem in their own words, so you can add "leaking" as a related word for "waterproofing," or use their wording in the guide.
-
-If you're on Sitecore, my [search options](/blog/sitecore-search-options-explained) post shows which products offer short AI answers today, and which can match on meaning.
 
 ## What not to do
 
@@ -106,13 +86,46 @@ If you're on Sitecore, my [search options](/blog/sitecore-search-options-explain
 - Drop the search box from the empty page, so the only way to try again is to scroll up or go back.
 - Send people to a category page without telling them their search found nothing. They'll think that's what they asked for, or that search is broken.
 
+## Where AI answers fit
+
+Many search pages now show an AI-generated answer above the results. It's tempting on an empty page, because the page is never empty again. The catch is that you also stop seeing which searches failed.
+
+Some AI answer features match on meaning rather than exact words. Someone types "how do I stop my jacket leaking," keyword search finds nothing, and the AI still finds your re-waterproofing guide. The visitor gets what they needed, but the cause is still the first one: the words didn't match.
+
+An AI answer helps when:
+
+- The search is a question and you have real content that answers it.
+- The answer shows which of your pages it came from, so people can check it.
+
+It causes problems when:
+
+- Nothing on your site covers it, so the AI fills the gap with general information, or describes a product you don't sell.
+- It hides a broken search. If the page always shows something, the zero-result searches you should be fixing disappear from your reports.
+
+So I only show an AI answer when it can point to your own pages, I label it clearly as AI-generated, and I keep logging the search as a zero-result search even when the AI answers it. The log shows how people describe the problem in their own words, so you can add "leaking" as a related word for "waterproofing," or use their wording in the guide.
+
+If you're on Sitecore, my [search options](/blog/sitecore-search-options-explained) post shows which products offer short AI answers today, and which can match on meaning.
+
+## When search finds the wrong thing
+
+Zero-result searches at least show up in the report. Searches that return the wrong results don't.
+
+Someone searches Trailworks for "dog jacket." Trailworks doesn't sell pet gear, but search matches the word "jacket" and shows the Stormbreak. The visitor leaves, and the search is recorded as a success. It's the third cause, "you really don't have it," with results on the page instead of an empty one.
+
+Typos can hide the same way. "Hikng boots" brings back 3 results, while "hiking boots" brings back 48. Many search tools only correct spelling when nothing matches, so a typo that happens to match a few products never gets corrected, and never appears in the zero-result report either.
+
+To find these, look at searches that return results but get no clicks, and searches people retype straight away.
+
+The fix depends on the cause. For "dog jacket," a rule that answers pet searches with "We don't sell pet gear" stops the Stormbreak from showing up as if it were a match. For "hikng boots," check whether your search tool can suggest a correction when results are low, not only when there are none.
+
 ## Measure it, then shrink the list
 
-The empty page catches people, but the real goal is fewer searches landing there, and that takes a regular look at the numbers. I check three things:
+The empty page catches people, but the real goal is fewer searches ending up there, which means checking the numbers regularly. I look at four things:
 
-- **The zero-result rate:** what share of searches return nothing. Watch how it changes over time.
-- **The top zero-result searches**, once a week or once a month. This is your to-do list.
+- **The zero-result rate:** what share of searches return nothing, and how that changes over time.
+- **The top zero-result searches**, once a week or once a month. This becomes your to-do list.
 - **What people do next:** search again, click a suggestion, or leave. If most people leave, the empty page isn't helping yet.
+- **Searches with results but no clicks:** the wrong-results searches from the section above.
 
 Each search on the list gets one of a few fixes: a synonym, a spelling correction, a new page, a redirect, or an honest "we don't sell that" message. My [five questions](/blog/sitecore-search-five-questions) post covers how search reports feed content decisions.
 
@@ -128,7 +141,7 @@ For a rough sense of scale, [Luigi's Box](https://www.luigisbox.com/blog/searche
 | ridgeline 2 tent | Discontinued product | Says it's no longer sold and links to current two-person tents |
 | jacket care guide | The PDF exists but was never indexed | Logged as a search bug. The PDF gets indexed and now shows up |
 
-None of those five needed new content. It's easy to read a zero-result report as a list of content gaps, and some of it will be. But in this list, every one was a matching problem, a page problem, or a setup problem, and those are much cheaper to fix than writing new pages.
+None of those five needed new content. A zero-result report can look like a list of content gaps, and some entries will be. But every search in this list was a matching, page, or setup problem, and those cost much less to fix than new pages.
 
 ## Who this is for
 
