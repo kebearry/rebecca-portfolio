@@ -88,6 +88,22 @@ export const BLOG_STORY_SHARES: BlogStoryShareMeta[] = [
       footer: "Rebecca · search notes",
     },
   },
+  {
+    slug: "library-headless-or-build",
+    postTitle: "UI Library, Headless Helper, or Build It Yourself?",
+    summary:
+      "When a component is worth a full UI library, when a headless helper is enough, and when to build it yourself. Start with the hardest part of the design, then estimate the alternatives.",
+    storyShare: {
+      hook: "before you say \"something light\"",
+      title: "where's the hardest part of the design?",
+      blurb:
+        "the calendar has trips spanning days and \"+2 more\" links. someone asks for something light. the library came to 17 hours. building it came to 32.",
+      cta: "decision table on the link sticker",
+      badges: ["events calendar", "+ real estimates"],
+      chips: ["ui library", "headless", "build it", "checks"],
+      footer: "Rebecca · build notes",
+    },
+  },
 ];
 
 export function getBlogStoryShareBySlug(

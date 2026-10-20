@@ -8,6 +8,7 @@ import {
   getAdjacentBlogPosts,
   getBlogPostBySlug,
   getBlogSlugs,
+  isHiddenDraft,
   isScheduled,
   unlinkScheduledPosts,
 } from "../../lib/blog-posts";
@@ -21,7 +22,7 @@ import BlogTagLink from "../../ui/blogtaglink";
 import BlogPostNav from "../../ui/blogpostnav";
 const SITE_URL = "https://rebecca-portfolio.vercel.app";
 
-export const revalidate = 3600;
+export const revalidate = 300;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -38,7 +39,7 @@ export async function generateMetadata({
   const resolvedParams = await params;
   const post = await getBlogPostBySlug(resolvedParams.slug);
 
-  if (!post || isScheduled(post)) {
+  if (!post || isScheduled(post) || isHiddenDraft(post)) {
     return { title: "Post Not Found" };
   }
 
@@ -83,7 +84,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const resolvedParams = await params;
   const post = await getBlogPostBySlug(resolvedParams.slug);
 
-  if (!post || isScheduled(post)) {
+  if (!post || isScheduled(post) || isHiddenDraft(post)) {
     notFound();
   }
 

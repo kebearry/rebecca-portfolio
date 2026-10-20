@@ -94,13 +94,41 @@ function linkedInHashtags(tags: string[]): string {
     .join(" ");
 }
 
+/** Product names and proper nouns that keep their capitals in sentence case. Longest first. */
+const KEEP_CASE = [
+  "SitecoreAI Search",
+  "Sitecore Search",
+  "Embedded Search",
+  "Sitecore",
+  "Trailworks",
+];
+
+/** "Planning Search UI: Patterns from Giants" → "Planning search UI: patterns from giants" */
+function sentenceCaseTitle(title: string): string {
+  let text = title.trim();
+  KEEP_CASE.forEach((phrase, i) => {
+    text = text.split(phrase).join(`\u0000${i}\u0000`);
+  });
+  let sentenceStart = true;
+  text = text.replace(/\S+/g, (word) => {
+    const isStart = sentenceStart;
+    sentenceStart = /[.?!]$/.test(word);
+    if (isStart) return word;
+    const isTitleCased = word
+      .split("-")
+      .every((part) => !/[A-Z]/.test(part.slice(1)));
+    return isTitleCased ? word.toLowerCase() : word;
+  });
+  return text.replace(/\u0000(\d+)\u0000/g, (_, i) => KEEP_CASE[Number(i)]);
+}
+
 /** Caption for LinkedIn (no URL). The share-offsite card carries the link. */
 function linkedInCaption(
   title: string,
   summary?: string,
   tags: string[] = []
 ): string {
-  const parts = [title.trim()];
+  const parts = [sentenceCaseTitle(title)];
   const blurb = summary?.trim();
   if (blurb) parts.push(blurb);
   const hashtags = linkedInHashtags(tags);

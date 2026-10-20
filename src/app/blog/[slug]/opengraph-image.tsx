@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { formatBlogDate, getBlogPostBySlug } from "../../lib/blog-posts";
+import { formatBlogDate, getBlogPostBySlug, isHiddenDraft } from "../../lib/blog-posts";
 
 export const size = {
   width: 1200,
@@ -47,7 +47,8 @@ async function loadFont(weight: "600" | "700") {
 
 export default async function OpenGraphImage({ params }: ImageProps) {
   const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
+  const found = await getBlogPostBySlug(slug);
+  const post = found && !isHiddenDraft(found) ? found : undefined;
   const [bold, semibold] = await Promise.all([
     loadFont("700"),
     loadFont("600"),

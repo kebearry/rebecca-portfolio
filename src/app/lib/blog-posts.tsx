@@ -8,6 +8,8 @@ export type BlogPost = {
   title: string;
   summary: string;
   publishedAt: string;
+  /** Exact go-live time with offset, e.g. "2026-10-12T08:00:00+08:00". Without it, the post goes live at midnight SGT on publishedAt. */
+  publishAt?: string;
   tags: string[];
   fullContent: string;
   draft?: boolean;
@@ -24,6 +26,177 @@ export type BlogPostCardData = Pick<
 };
 
 const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: "split-deployment-failures",
+    title: "Split Deployment: A Separate Editing Host, and Failures the Live Site Hides",
+    summary:
+      "A component change used to wait on the whole content-management deploy. Split Deployment gives the editing host its own deploy, and the live site can stay up while editing fails.",
+    publishedAt: "2026-10-19",
+    tags: ["Sitecore", "Architecture", "SitecoreAI"],
+    draft: true,
+    fullContent: `
+Trailworks authors edit in Page Builder. On the coupled architecture, a component change shipped in the same deploy as content management. The editing app was in that package. A React fix waited until that whole environment finished building, and a Page Builder error showed up in the same log.
+
+Split Deployment pulls that package apart. Sitecore's docs call it the decoupled deployments architecture. The editing host, which is what Page Builder and Design Studio render, builds and deploys on its own. Change a component and that host rebuilds while content management stays up. A Page Builder error lands in the editing host log.
+
+## Three hosts
+
+| Piece | Who uses it | Where it runs |
+| --- | --- | --- |
+| Authoring environment | Authors and marketers | Content management, inside Sitecore |
+| Editing host | Authors, in Page Builder or Design Studio | Its own deployment, internal, not sized for visitors |
+| Rendering host | Visitors | The public site, typically Vercel, Netlify, or Azure |
+
+The editing host and the rendering host typically run the same codebase. They don't share configuration. The editing host is not the site visitors are on.
+
+## Its own repo, and its own variables
+
+The editing host can point at its own repository and branch. Trailworks has a second front end, owned by another team. That repo gets linked from the Deploy app, instead of living inside content management.
+
+Variables have a target, so Page Builder can keep what it needs on the editing host. Before the split, the editing app sat next to content management and could see what that environment could see. After the split, it only sees what you put on its own target.
+
+When that breaks, authors are the ones who notice. The public site can stay up through it.
+
+## A host the build file never named
+
+Trailworks has two sites. One opens in Page Builder. The other spins, or has nowhere to edit. Redeploying the host you can already see doesn't create the missing one.
+
+A host comes from a \`renderingHosts\` name, a linked authoring environment, and a repository. Conversion deploys the hosts that file already names. If an app isn't listed, a host doesn't appear for it. Each name in the project has to be unique.
+
+## The name in the room isn't the name in the file
+
+The host is there. The variable looks saved. Page Builder still doesn't load the components.
+
+The host name, the variable target, and the rendering host item all use the \`renderingHosts\` key in \`xmcloud.build.json\`. The site's display name won't match that key. \`default\` is reserved. A custom host with that name can break site resolution.
+
+A new editing host records its URL when it deploys. The authoring deploy after that reads \`xmcloud.build.json\` and writes the URL onto the rendering host item. Deploy authoring first and the item can be missing, or still point at the old host. The rendering host item and the site definition are where that shows up.
+
+## The variable is on the wrong target
+
+Visitors see the site. In the editor, preview fails: an authentication error, or a component that never resolves. Someone opens the authoring environment, sees the variable, and calls it fine.
+
+The editing host has its own list. Sitecore doesn't say that conversion copies the authoring variables onto it. On Trailworks the public site uses the context id, and the editor still sends a secret. Which call is which is in the code, not in the conversion. An external editing host is where the docs show \`SITECORE_EDGE_CONTEXT_ID\`, \`NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID\`, and \`SITECORE_EDITING_SECRET\`.
+
+The public site is a third target. Deploy app variables reach the authoring environment and the Sitecore-managed editing host. A rendering host on Vercel, Netlify, or Azure App Service never sees them. The live site being up doesn't tell you the editor got the value.
+
+## Saved, and never rebuilt
+
+The value in the Deploy app is right. Page Builder hasn't changed. Saving the dialog again does nothing.
+
+The value applies on the next rebuild and redeploy of that environment. Redeploying content management doesn't rebuild the editing host. Each environment has its own variables.
+
+## It worked on localhost
+
+A developer connects Page Builder to their machine and the component renders. The other authors, on the shared editing host, still can't use it. Localhost isn't that host, and it doesn't use the variables saved there.
+
+## Before you confirm
+
+Projects built before January 2026 used the coupled architecture. New SitecoreAI projects use decoupled deployments by default. On an older project, **Options**, then **Convert project**, then **Confirm** starts a new deployment of the authoring environments and the editing hosts. The convert action isn't offered in every environment. Undo means contacting Support.
+
+While the current setup still works, write down:
+
+- Every app authors edit, with the \`renderingHosts\` name, repository, and branch.
+- The env names the code reads, including the ones that currently live on content management, and whether that code runs on the authoring environment, the editing host, or the public site.
+- The rendering host item and site definition Page Builder uses today.
+
+After the deploy, the host should exist, the name should match the build file, the variables should be on that host, and the host should have been rebuilt. Open preview on the shared editing host, then Page Builder on the new URL. A green public site answers none of those.
+
+`,
+  },
+  {
+    slug: "library-headless-or-build",
+    title: "UI Library, Headless Helper, or Build It Yourself?",
+    summary:
+      "When a component is worth a full UI library, when a headless helper is enough, and when to build it yourself. Start with the hardest part of the design, then estimate the alternatives.",
+    publishedAt: "2026-10-12",
+    publishAt: "2026-10-12T08:00:00+08:00",
+    tags: ["Front End", "Architecture", "Accessibility"],
+    storyShare: getBlogStoryShareBySlug("library-headless-or-build")
+      ?.storyShare,
+    fullContent: `
+Trailworks wants an events calendar for its guided hikes and workshops. The design shows a month grid, multi-day trips drawn as one bar across several days, and a "+2 more" link when a day has too many events to fit. Someone on the team says, "Let's use something light."
+
+![October at Trailworks. Coastal Path starts on Saturday and continues on the next row. The 22nd shows one hike, plus a +2 more link.](/blog/events-calendar-mockup.svg)
+
+Page weight matters, so that's a reasonable thing to ask. But it skips a step. Before comparing libraries, the team needs to decide whether this should be a library at all, a headless helper, or something they build.
+
+## The three options
+
+- **A UI library** gives you a finished component, with the logic, markup, and styles included. You configure it and restyle it. It's usually the biggest download of the three, and you work within its structure.
+- **A headless helper** (often called a headless library) gives you the behavior and leaves the look to you. Some leave the markup to you too. Others hand you the elements unstyled, and the CSS is yours.
+- **Building it yourself** means no new dependency. You write all of it, and you look after every edge case from then on.
+
+## Start with the hardest part of the design
+
+I find the decision gets easier once the team agrees on the hardest part of the component, and whether it's something visitors see or something behind the scenes.
+
+| The hardest part is | Use | Why |
+| --- | --- | --- |
+| Visible behavior, like events spanning days, drag and drop, or long tables that scroll smoothly | A UI library | It's the slowest part to build well, and a good library has already done it |
+| Behavior behind a custom look, like keyboard and screen reader support in a date picker or a combobox | A headless helper | You get the behavior, and the look stays in your design system |
+| Nothing hard, because the component is small and well understood | Build it yourself | The code is small enough for your team to look after |
+
+It doesn't settle everything, but it gives the team something concrete to discuss instead of "light" versus "heavy."
+
+## When a UI library makes sense
+
+A library is the right call when the hard features in the design are ones it already does well, and the design is close enough to its look that restyling is quicker than building. Most of the hours then go into styling.
+
+It goes wrong when the design or behavior is very different from what the library expects. The hours you saved go into working around it, and every upgrade can break your overrides.
+
+## When a headless helper makes sense
+
+A headless helper fits when the look is custom, or your design system is strict about markup and styles, but the behavior is easy to get wrong. It doesn't bring its own CSS.
+
+Check what a helper actually covers before you count on it. Some handle the keyboard, focus, and screen reader announcements. A helper that only does the dates leaves that work to you. A day-grid helper can cover the arrow keys and the labels on each day, and it still won't draw a trip that spans five days.
+
+## When to build it yourself
+
+Building makes sense when the component is small and well understood, like an accordion or a show and hide toggle, or when the site already has a component that does most of the work.
+
+Sometimes the choice is made for you. No library or helper supports your framework version, the license rules it out, the client limits new dependencies, or the design is too far from anything available. Then you build, whatever the hardest part is.
+
+Either way, it's rarely as small as it looks in the design. Keyboard behavior, screen reader support, and edge cases are yours through every future change. Even tabs need arrow key support. Estimate for that, not just for what the design shows.
+
+Building also puts security in your hands. You decide when a fix ships, and nobody outside the team is looking for the bugs. A widely used library has a lot of people reporting them. A headless helper has less code than a full library, so there's less to watch, and still no crowd looking at it.
+
+## The Trailworks calendar
+
+For the events calendar, the team listed each feature in the design and who would build it under each option. The headless helper they looked at only handles dates, so the accessibility would be on them.
+
+| Feature | UI library | Headless helper | Build it yourself |
+| --- | --- | --- | --- |
+| Month grid with the right days in each week | Built in | Built in | You build |
+| Weeks that start on Monday | A setting | A setting | You build |
+| Multi-day trips as one bar across days and weeks | Built in | You build | You build |
+| "+2 more" when a day is full | Built in | You build | You build |
+| Keyboard navigation and screen reader labels | Built in, but test it | You build | You build |
+| Time zones and daylight saving | Built in | Partly | You build |
+| Styling to match the design | Override its styles | You build | You build |
+
+The month grid is the easy part. The multi-day bars and the "+2 more" overflow are where the work is. A trip that starts on a Saturday has to break onto the next row, and the overflow has to work out how many events fit in each day before hiding the rest. Both are visible behavior, so the decision table pointed to a library.
+
+The estimates backed that up. For this design, the library came to 17 hours, mostly restyling it to match. The headless helper came to 27, and building it from scratch came to 32. Those five hours are the grid and the date math. The bars, the overflow, and the keyboard and screen reader work were still in the 27. The estimate showed the options side by side so the client could choose, and it made clear that "something lighter" would add hours rather than save them.
+
+The 17 hours doesn't cover looking after the library, like upgrades, breaking changes, and security fixes. The team said so in the estimate and recommended the library anyway, and the client agreed.
+
+As for page weight, the library only loads on the events page, so the rest of the site doesn't pay for it.
+
+Next time someone suggests "something light," ask where the hardest part of the design is. It usually points to one of the three options, and estimating the other two gives you the numbers to show the client why.
+
+## Checks before you add a dependency
+
+If the hardest part points to a library or a headless helper, check these before you commit:
+
+- **Where it loads.** Load it only on the pages that use it, and check how much it adds to your build once compressed.
+- **Framework support.** Make sure it supports your framework version and the next one, so it won't hold up your next upgrade.
+- **What comes with it.** Some libraries bring a date library, a polyfill, or a lot of CSS.
+- **Accessibility.** Test it with a keyboard and a screen reader, using your own content. "Accessible" in the docs doesn't mean every feature is.
+- **Security.** Check its history of security advisories, and how quickly fixes have come out.
+- **License.** Some libraries keep certain features behind a paid license. Check that the part you need is in the free version.
+- **Upkeep.** Look at when it was last released, and how open issues are handled.
+`,
+  },
   {
     slug: "search-no-results",
     title: "What to Show When Search Finds Nothing",
@@ -1630,10 +1803,16 @@ function todayInSingapore(): string {
   }).format(new Date());
 }
 
-/** Future-dated posts stay hidden in production until their date (Singapore time). */
+/** Future-dated posts stay hidden in production until publishAt, or their date (Singapore time). */
 export function isScheduled(post: BlogPost): boolean {
   if (process.env.NODE_ENV === "development") return false;
+  if (post.publishAt) return Date.now() < Date.parse(post.publishAt);
   return post.publishedAt > todayInSingapore();
+}
+
+/** Drafts stay off the live site. Local dev can still open them by URL. */
+export function isHiddenDraft(post: BlogPost): boolean {
+  return Boolean(post.draft && process.env.NODE_ENV !== "development");
 }
 
 /** Turns markdown links to scheduled posts into plain text so they don't 404. */
@@ -1648,7 +1827,11 @@ export function unlinkScheduledPosts(content: string): string {
 }
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
-  return BLOG_POSTS.filter((post) => !post.draft && !isScheduled(post)).sort(
+  return BLOG_POSTS.filter(
+    (post) =>
+      !(post.draft && process.env.NODE_ENV !== "development") &&
+      !isScheduled(post)
+  ).sort(
     (a, b) =>
       new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
