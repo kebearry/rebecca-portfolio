@@ -27,80 +27,139 @@ export type BlogPostCardData = Pick<
 
 const BLOG_POSTS: BlogPost[] = [
   {
-    slug: "split-deployment-failures",
-    title: "Split Deployment: A Separate Editing Host, and Failures the Live Site Hides",
+    slug: "sitecoreai-decoupled-deployments",
+    title: "Decoupled Deployments in SitecoreAI: What You Gain, and What to Check",
     summary:
-      "A component change used to wait on the whole content-management deploy. Split Deployment gives the editing host its own deploy, and the live site can stay up while editing fails.",
-    publishedAt: "2026-10-19",
+      "Decoupled deployments let the editing host build, deploy, and log on its own, from its own repository. Here's what that gains your team, and which settings to check so Page Builder keeps working.",
+    publishedAt: "2026-10-23",
     tags: ["Sitecore", "Architecture", "SitecoreAI"],
-    draft: true,
+    storyShare: getBlogStoryShareBySlug("sitecoreai-decoupled-deployments")
+      ?.storyShare,
     fullContent: `
-Trailworks authors edit in Page Builder. On the coupled architecture, a component change shipped in the same deploy as content management. The editing app was in that package. A React fix waited until that whole environment finished building, and a Page Builder error showed up in the same log.
+Trailworks, the sample outdoor brand I use across this blog, has authors who edit pages in Page Builder. On the older coupled architecture, the editing host (the copy of the front end that Page Builder and Design Studio render) went out in the same deploy as content management. Even a one-line fix to a Next.js component had to wait for the whole content management environment to build, and Page Builder errors ended up in the same log as everything else.
 
-Split Deployment pulls that package apart. Sitecore's docs call it the decoupled deployments architecture. The editing host, which is what Page Builder and Design Studio render, builds and deploys on its own. Change a component and that host rebuilds while content management stays up. A Page Builder error lands in the editing host log.
+Decoupled deployments (sometimes called split deployment) separate the two. New SitecoreAI projects use them by default, and older projects like Trailworks can convert. Converting also spreads some settings that used to live in one place across several, and a few of those only affect the editor.
 
-## Three hosts
+## What you gain
+
+[Sitecore's getting-started guide lists what decoupled deployments let you do](https://doc.sitecore.com/sai/en/developers/sitecoreai/getting-started-with-sitecoreai/deploy-a-project-and-environment.html#deploy-a-project-with-the-decoupled-deployments-architecture-default), including building and deploying the editing host separately, "resulting in faster deployments and independent logging." For Trailworks, three changes made the biggest difference.
+
+- Deploys are faster, because the editing host builds and deploys separately from content management.
+- Page Builder errors are easier to find, because they show up in the editing host's log instead of mixed in with content management's.
+- Each editing host can use its own repository and branch. Before, the front-end code Page Builder used had to live in the repository content management deployed from. Trailworks' events site already had its own editing host, owned by another team, and after the split that team can deploy it from its own repository without touching the main one.
+
+Variables get more specific too. In the Deploy app, each variable now targets either the authoring environment or a specific editing host. Sitecore describes this as "more granular control over deployments and environment configurations" in [its list of conversion benefits](https://doc.sitecore.com/sai/en/developers/sitecoreai/deploying-sitecoreai/deploy-app/manage-a-project.html#convert-a-project-to-decoupled-deployments-architecture). It also means there's one more place where a value can be missing.
+
+## Where each piece runs
 
 | Piece | Who uses it | Where it runs |
 | --- | --- | --- |
-| Authoring environment | Authors and marketers | Content management, inside Sitecore |
-| Editing host | Authors, in Page Builder or Design Studio | Its own deployment, internal, not sized for visitors |
-| Rendering host | Visitors | The public site, typically Vercel, Netlify, or Azure |
+| Authoring environment | Authors and marketers | The content management instance, in Sitecore's cloud |
+| Editing host | Authors, in Page Builder or Design Studio | Its own deployment, hosted by Sitecore unless you run it yourself. Internal only, not sized for visitors |
+| Rendering host | Visitors | The public site, on your own hosting, for example Vercel, Netlify, or Azure App Service |
 
-The editing host and the rendering host typically run the same codebase. They don't share configuration. The editing host is not the site visitors are on.
+The editing host and the rendering host can run the same code, but they don't share configuration, so when an author reports a broken site, find out whether they mean the editor or the public site.
 
-## Its own repo, and its own variables
+Their variables come from different places as well. [Deploy app variables](https://doc.sitecore.com/sai/en/developers/sitecoreai/deploying-sitecoreai/deploy-app/manage-an-environment/environment-variables/environment-variables.html) only reach the authoring environment and Sitecore-managed editing hosts. A public site on Vercel, Netlify, or Azure App Service never sees them and gets its variables from its own hosting platform. An [editing host you run yourself](https://doc.sitecore.com/sai/en/developers/sitecoreai/environment-editing-hosts-and-rendering-hosts/configure-an-external-editing-host.html), outside Sitecore, works the same way. You copy values like \`SITECORE_EDGE_CONTEXT_ID\`, \`NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID\`, and \`SITECORE_EDITING_SECRET\` from the Deploy app's Developer settings, with Context set to Preview, and set them on your hosting platform.
 
-The editing host can point at its own repository and branch. Trailworks has a second front end, owned by another team. That repo gets linked from the Deploy app, instead of living inside content management.
+## How the conversion went at Trailworks
 
-Variables have a target, so Page Builder can keep what it needs on the editing host. Before the split, the editing app sat next to content management and could see what that environment could see. After the split, it only sees what you put on its own target.
+Trailworks has two sites, each with its own editing host: \`trailworks-main\` and \`trailworks-events\`. The problems below never touched the public site, so visitors saw nothing wrong. Authors in Page Builder were the ones who noticed.
 
-When that breaks, authors are the ones who notice. The public site can stay up through it.
+### 1. They prepared, then converted
 
-## A host the build file never named
+While the coupled setup still worked, the team went through the "Before you convert" checklist at the end of this post. The conversion option isn't available in every environment, and undoing it means contacting Sitecore Support. In the Deploy app, the team chose **Options**, **Convert project**, then **Confirm** ([Sitecore's steps](https://doc.sitecore.com/sai/en/developers/sitecoreai/deploying-sitecoreai/deploy-app/manage-a-project.html)). That starts a new deployment of every authoring environment and editing host, so they picked a quiet editing afternoon and told authors beforehand.
 
-Trailworks has two sites. One opens in Page Builder. The other spins, or has nowhere to edit. Redeploying the host you can already see doesn't create the missing one.
+### 2. A new events variable went to the wrong place
 
-A host comes from a \`renderingHosts\` name, a linked authoring environment, and a repository. Conversion deploys the hosts that file already names. If an app isn't listed, a host doesn't appear for it. Each name in the project has to be unique.
+A week after converting, the events team shipped a feature that reads a new variable, \`EVENTS_API_URL\`. Out of habit, they added it in the Deploy app with the authoring environment as its target. In Page Builder, the events list rendered empty. The public site on Vercel showed events as normal.
 
-## The name in the room isn't the name in the file
+In the Deploy app, each variable targets either the authoring environment or a specific editing host ([Sitecore's environment variables page](https://doc.sitecore.com/sai/en/developers/sitecoreai/deploying-sitecoreai/deploy-app/manage-an-environment/environment-variables/environment-variables.html)). The events code runs on the events editing host, so that's the target it needed. The public site gets its own copy from Vercel, so the live site gave no warning.
 
-The host is there. The variable looks saved. Page Builder still doesn't load the components.
+I've seen a bigger version of this on a real project. After the conversion, an API key the app needed for GraphQL wasn't reaching the editing host, and Page Builder stopped working. It came back once the variable targeted the editing host and the host was redeployed. Decoupled deployments weren't broken. The editing host just didn't have the configuration the app needed.
 
-The host name, the variable target, and the rendering host item all use the \`renderingHosts\` key in \`xmcloud.build.json\`. The site's display name won't match that key. \`default\` is reserved. A custom host with that name can break site resolution.
+They changed the target to the events editing host, then redeployed that editing host, because a variable only takes effect after a rebuild and redeploy. Redeploying content management wouldn't have helped, since a deployment only applies to the environment you deploy ([Sitecore's CLI deploy docs](https://doc.sitecore.com/sai/en/developers/sitecoreai/sitecore-command-line-interface/deploy-your-changes-to-an-environment.html)). If you set variables with the Sitecore CLI, use \`--target EH\` for the editing host rather than leaving the target out. [Sitecore's CLI reference](https://doc.sitecore.com/sai/en/developers/sitecoreai/sitecore-command-line-interface/sitecore-cli-command-reference/the-cli-cloud-command/the-cloud-environment-command.html) says this makes sure the variable is scoped correctly during deployment.
 
-A new editing host records its URL when it deploys. The authoring deploy after that reads \`xmcloud.build.json\` and writes the URL onto the rendering host item. Deploy authoring first and the item can be missing, or still point at the old host. The rendering host item and the site definition are where that shows up.
+### 3. The main editor showed only published content
 
-## The variable is on the wrong target
+An author edited a trail page, and Page Builder kept showing the published version. The main app reads its context ID from a variable the team named \`TRAILWORKS_CONTEXT_ID\`. While setting up the main editing host's variables, someone had copied that value from the public site's list on Vercel.
 
-Visitors see the site. In the editor, preview fails: an authentication error, or a component that never resolves. Someone opens the authoring environment, sees the variable, and calls it fine.
+Trailworks' Vercel project uses the Live context ID, which only returns published content and is meant for production sites ([Sitecore's context ID page](https://doc.sitecore.com/sai/en/developers/sitecoreai/deploying-sitecoreai/deploy-app/manage-an-environment/context-id-environment-variables.html)). Visual editing needs the Preview context ID, because authors work on drafts ([Sitecore's visual editing setup](https://doc.sitecore.com/sai/en/developers/sitecoreai/introduction-to-framework-agnostic-sitecore-development/visual-editing/enable-visual-editing.html)). They set the editing host's value to the Preview context ID and redeployed the editing host.
 
-The editing host has its own list. Sitecore doesn't say that conversion copies the authoring variables onto it. On Trailworks the public site uses the context id, and the editor still sends a secret. Which call is which is in the code, not in the conversion. An external editing host is where the docs show \`SITECORE_EDGE_CONTEXT_ID\`, \`NEXT_PUBLIC_SITECORE_EDGE_CONTEXT_ID\`, and \`SITECORE_EDITING_SECRET\`.
+When you set up an editing host's variables, start from the list of variables your code reads, not from another environment's settings.
 
-The public site is a third target. Deploy app variables reach the authoring environment and the Sitecore-managed editing host. A rendering host on Vercel, Netlify, or Azure App Service never sees them. The live site being up doesn't tell you the editor got the value.
+## Also worth knowing
 
-## Saved, and never rebuilt
+The first three apply to every decoupled project. The last two only apply to projects created with decoupled deployments turned on, according to Sitecore's docs.
 
-The value in the Deploy app is right. Page Builder hasn't changed. Saving the dialog again does nothing.
+### Editing host names come from the build file
 
-The value applies on the next rebuild and redeploy of that environment. Redeploying content management doesn't rebuild the editing host. Each environment has its own variables.
+Each Sitecore-managed editing host comes from an entry under \`renderingHosts\` in the \`xmcloud.build.json\` of the repository it's linked to, and the entry's key is the host's name. Trailworks' events repository has its own build file:
 
-## It worked on localhost
+\`\`\`json
+{
+  "renderingHosts": {
+    "trailworks-events": {
+      "path": "./headapps/events",
+      "enabled": true
+    }
+  }
+}
+\`\`\`
 
-A developer connects Page Builder to their machine and the component renders. The other authors, on the shared editing host, still can't use it. Localhost isn't that host, and it doesn't use the variables saved there.
+The main repository's file defines \`trailworks-main\` the same way. Names have to be unique within the project, and the editing host's name in the Deploy app has to match its key exactly, so copy it from the build file rather than typing it from memory. Avoid naming a custom host \`default\`, because it's reserved and [Sitecore warns](https://doc.sitecore.com/sai/en/developers/sitecoreai/deploying-sitecoreai/the-sitecoreai-build-configuration/the-sitecoreai-build-configuration.html) it can break site resolution.
 
-## Before you confirm
+### The editing secret has to match exactly
 
-Projects built before January 2026 used the coupled architecture. New SitecoreAI projects use decoupled deployments by default. On an older project, **Options**, then **Convert project**, then **Confirm** starts a new deployment of the authoring environments and the editing hosts. The convert action isn't offered in every environment. Undo means contacting Support.
+Page Builder sends \`SITECORE_EDITING_SECRET\` with requests to the editing host's editing endpoints, and the app rejects requests where it doesn't match ([Sitecore's editing architecture](https://doc.sitecore.com/sai/en/developers/sitecoreai/introduction-to-framework-agnostic-sitecore-development/visual-editing/editing-architecture.html)). In Page Builder, that shows up as "Couldn't connect to a host" ([Sitecore's troubleshooting page](https://doc.sitecore.com/sai/en/developers/sitecoreai/introduction-to-framework-agnostic-sitecore-development/visual-editing/troubleshoot-visual-editing.html)). Sitecore's built-in editing hosts [work out of the box](https://doc.sitecore.com/sai/en/developers/sitecoreai/environment-editing-hosts-and-rendering-hosts/the-different-types-of-editing-hosts-in-sitecoreai.html), but one you run yourself needs the secret, which you copy from the Deploy app's Developer settings.
 
-While the current setup still works, write down:
+### Test on the shared host, not only on localhost
 
-- Every app authors edit, with the \`renderingHosts\` name, repository, and branch.
-- The env names the code reads, including the ones that currently live on content management, and whether that code runs on the authoring environment, the editing host, or the public site.
-- The rendering host item and site definition Page Builder uses today.
+A developer can connect Page Builder to their own machine and see a component render while other authors, on the shared editing host, still can't use it. A [locally connected host](https://doc.sitecore.com/sai/en/developers/sitecoreai/environment-editing-hosts-and-rendering-hosts/connect-your-local-host-to-pages.html) runs the developer's code with the developer's settings, not the code and variables on the shared host, so check changes there too.
 
-After the deploy, the host should exist, the name should match the build file, the variables should be on that host, and the host should have been rebuilt. Open preview on the shared editing host, then Page Builder on the new URL. A green public site answers none of those.
+### If you add a host, deploy it before authoring
 
+Adding a brand new host means adding its \`renderingHosts\` entry, then adding the editing host in the Deploy app, which deploys it automatically. [Sitecore's page on adding editing hosts](https://doc.sitecore.com/sai/en/developers/sitecoreai/environment-editing-hosts-and-rendering-hosts/add-an-editing-host.html) has the steps.
+
+The new host gets its URL when it deploys. The next authoring deploy reads \`xmcloud.build.json\` and writes that URL onto the rendering host item ([Sitecore describes the sequence](https://doc.sitecore.com/sai/en/developers/sitecoreai/environment-editing-hosts-and-rendering-hosts/the-different-types-of-editing-hosts-in-sitecoreai.html)), so if authoring deploys first, the item won't have the URL. Check the rendering host item and the site definition that uses it, and redeploy authoring if the URL is wrong.
+
+### If authoring and editing host code share a repository
+
+The \`authoringPath\` setting in \`xmcloud.build.json\` tells Sitecore where the authoring code lives (\`./authoring\` by default). When the authoring code and an editing host's code share a repository, this keeps a change to one from automatically redeploying the other ([Sitecore's build configuration](https://doc.sitecore.com/sai/en/developers/sitecoreai/deploying-sitecoreai/the-sitecoreai-build-configuration/the-sitecoreai-build-configuration.html)).
+## Quick diagnosis
+
+| What you notice | Likely cause | Fix |
+| --- | --- | --- |
+| After adding an editing host, its rendering host item has no URL | Authoring deployed before the new editing host | Redeploy authoring after the editing host has deployed |
+| Page Builder says "Couldn't connect to a host" | The editing secret doesn't match, or the host address is wrong | Check the host address. On an editing host you run yourself, also make \`SITECORE_EDITING_SECRET\` match the Deploy app value exactly. [Sitecore's troubleshooting page](https://doc.sitecore.com/sai/en/developers/sitecoreai/introduction-to-framework-agnostic-sitecore-development/visual-editing/troubleshoot-visual-editing.html) lists more checks |
+| The editor shows only published content | A variable on the editing host holds the Live context ID | Set it to the Preview context ID, then redeploy the editing host |
+| A component works on the public site but not in Page Builder | The editing host is running older code, or a variable the code reads doesn't reach the editing host | Deploy the latest code to the editing host. On a Sitecore-managed host, check that the variable targets the editing host, then redeploy it |
+| The variable is right in the Deploy app, but nothing changed | That editing host hasn't been redeployed since | Redeploy the editing host |
+| It works on localhost only | The change isn't on the shared editing host | Deploy it to the shared host, and check its variables |
+
+## Before you convert
+
+Projects built before January 2026 use the coupled architecture unless someone has already converted them. While the current setup still works, write down:
+
+- Each app authors edit, with its \`renderingHosts\` name, repository, and branch.
+- Every environment variable the code reads, including ones that only exist on content management today, and where that code runs (authoring environment, editing host, or public site).
+- The rendering host item and site definition Page Builder currently uses.
+
+Then schedule the conversion outside busy editing hours, and tell authors first.
+
+## After the deploy
+
+Check each editing host directly, since the public site won't show these problems:
+
+- The host exists in the Deploy app, and its name matches its \`renderingHosts\` key.
+- Its variables target the editing host, not just the authoring environment.
+- It has been redeployed since its variables last changed.
+- The rendering host item points at the editing host's current URL.
+- Preview works on the shared editing host, and Page Builder opens every site.
+
+## Who this is for
+
+Developers and tech leads on any decoupled SitecoreAI project, whether it started decoupled or was converted, and anyone supporting authors in Page Builder. The variable and context ID problems apply to all of them. If you're on an older project deciding when to convert, start with the two checklists, which PMs can also use to plan the work. The diagnosis table helps make sense of reports that the editor is broken. If you're still deciding whether a platform change is worth it at all, see [Should We Upgrade Now?](/blog/should-we-upgrade-now).
 `,
   },
   {
@@ -469,7 +528,7 @@ The gain question said wait. The support dates said not for long. If the team ha
 
 Tech leads, developers, and PMs on headless Sitecore sites, where the Content SDK, Next.js, and Node.js all release on their own schedules. The same steps work on other stacks too.
 
-For the everyday side, like handling patches and minors, what to write down for each upgrade, and how to keep it reversible, see [Set Your Upgrade Rules Once](/blog/set-your-upgrade-rules-once).
+For the everyday side, like handling patches and minors, what to write down for each upgrade, and how to keep it reversible, see [Set Your Upgrade Rules Once](/blog/set-your-upgrade-rules-once). If the change on the table is converting an older SitecoreAI project to decoupled deployments, see [Decoupled Deployments in SitecoreAI](/blog/sitecoreai-decoupled-deployments).
 
 So next time someone drops release notes in the chat with "we should upgrade," check what's really broken first. Then decide.
 `,

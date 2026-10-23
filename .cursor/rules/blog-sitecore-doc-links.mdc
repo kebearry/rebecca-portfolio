@@ -1,0 +1,29 @@
+---
+description: Link Sitecore references in blog posts to the official docs page they come from
+globs: src/app/lib/blog-posts.tsx
+alwaysApply: false
+---
+
+# Link Sitecore references to the docs
+
+When a blog post states how Sitecore behaves, or says "Sitecore's docs say", "Sitecore warns", or "Sitecore doesn't say", link it to the specific Sitecore page that backs it up, whenever one exists.
+
+- Link to the most specific page, on `doc.sitecore.com` or `developers.sitecore.com`, not a docs home page.
+- Use a full `https://` URL in normal markdown. `LinkRenderer` opens external links in a new tab and adds the external-link icon on its own, so don't add HTML or `target` attributes.
+- Internal blog links stay relative (`/blog/slug`). They open in the same tab with no icon, so readers can tell the two apart.
+- Make the link text say what it is ("Sitecore's page on adding editing hosts", "Sitecore's CLI docs"), never "here" or a bare URL.
+- Link a page once per paragraph, not on every mention.
+
+## Before adding a link
+
+- Find the page with the Sitecore docs MCP (`search_sitecore_knowledge_sources`), and confirm the page says what the post claims.
+- Check the URL loads. `doc.sitecore.com` returns 403 to scripts, so check it in the browser.
+- For "Sitecore doesn't say X", search more than one page first. If another page hints at the answer, say so instead of claiming silence.
+- If no page backs the claim, don't invent a URL. Present it as the author's own experience ("On Trailworks...").
+
+```text
+❌ Sitecore's docs say you can only add editing hosts to new projects.
+✅ [Sitecore's page on adding editing hosts](https://doc.sitecore.com/sai/en/developers/sitecoreai/environment-editing-hosts-and-rendering-hosts/add-an-editing-host.html) says you can only add more to projects created while the feature was turned on.
+❌ See the docs [here](https://doc.sitecore.com/...).
+✅ See [Should We Upgrade Now?](/blog/should-we-upgrade-now) (internal, relative link)
+```

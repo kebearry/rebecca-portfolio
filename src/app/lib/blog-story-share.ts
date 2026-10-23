@@ -104,6 +104,23 @@ export const BLOG_STORY_SHARES: BlogStoryShareMeta[] = [
       footer: "Rebecca · build notes",
     },
   },
+  {
+    slug: "sitecoreai-decoupled-deployments",
+    postTitle:
+      "Decoupled Deployments in SitecoreAI: What You Gain, and What to Check",
+    summary:
+      "Decoupled deployments let the editing host build, deploy, and log on its own, from its own repository. Here's what that gains your team, and which settings to check so Page Builder keeps working.",
+    storyShare: {
+      hook: "faster deploys. a few new checks.",
+      title: "decoupled deployments: what you gain, what to check",
+      blurb:
+        "the editing host now builds, deploys, and logs on its own, so deploys are faster. it also gets its own name and variables, and the live site won't warn you.",
+      cta: "checklist on the link sticker",
+      badges: ["sitecoreai", "+ what to check"],
+      chips: ["faster deploys", "own repo", "names", "variables"],
+      footer: "Rebecca · build notes",
+    },
+  },
 ];
 
 export function getBlogStoryShareBySlug(

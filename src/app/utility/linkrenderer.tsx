@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ReactNode, useEffect, useRef, useState } from "react";
-import { FaLock } from "react-icons/fa";
+import { FaExternalLinkAlt, FaLock } from "react-icons/fa";
 import Modal from "../ui/modal";
 
 interface LinkRendererProps {
@@ -135,8 +135,13 @@ function ProtectedLinkUnlock({
   );
 }
 
+function isExternalHref(href?: string): boolean {
+  return Boolean(href && /^https?:\/\//i.test(href));
+}
+
 function LinkRenderer({ href, children }: LinkRendererProps) {
   const protectedId = getProtectedId(href);
+  const isExternal = !protectedId && isExternalHref(href);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -151,12 +156,22 @@ function LinkRenderer({ href, children }: LinkRendererProps) {
       <a
         href={protectedId ? "#" : href}
         onClick={handleClick}
-        target={protectedId ? undefined : "_blank"}
-        rel={protectedId ? undefined : "noreferrer"}
+        target={isExternal ? "_blank" : undefined}
+        rel={isExternal ? "noreferrer" : undefined}
         className="text-accent font-medium underline underline-offset-2 hover:text-accent/70 transition-colors"
         aria-haspopup={protectedId ? "dialog" : undefined}
       >
         {children}
+        {isExternal && (
+          <span className="whitespace-nowrap">
+            {"\u00A0"}
+            <FaExternalLinkAlt
+              className="inline-block align-baseline text-[0.7em] opacity-70"
+              aria-hidden="true"
+            />
+            <span className="sr-only"> (opens in a new tab)</span>
+          </span>
+        )}
       </a>
 
       {protectedId && (
