@@ -27,6 +27,124 @@ export type BlogPostCardData = Pick<
 
 const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "wildcard-page-or-code-owned-route",
+    title: "Wildcard Page or Code-Owned Route for External Content in SitecoreAI",
+    summary:
+      "Two ways to give content from outside SitecoreAI its own pages: a wildcard page authors can edit, or a route you own in code. What each one changes for authors, publishing, and upkeep, and how to choose.",
+    publishedAt: "2026-10-27",
+    tags: ["Sitecore", "Architecture", "SitecoreAI"],
+    storyShare: getBlogStoryShareBySlug("wildcard-page-or-code-owned-route")
+      ?.storyShare,
+    fullContent: `
+Trailworks, the sample outdoor brand I use across this blog, keeps its trail guides in a separate trails system with its own API. Each trail needs its own page on the website, at a URL like \`/trails/1042/coastal-path\`. The trails aren't SitecoreAI items, so there's no page in the content tree for each one.
+
+There are two common ways to build those pages in a SitecoreAI head app:
+
+- **A wildcard page.** One \`*\` item under the trails page in SitecoreAI holds the layout for every trail page. The head app reads the trail ID from the URL and fetches the trail.
+- **A code-owned route.** A Next.js route like \`pages/trails/[id]/[slug].tsx\` builds the whole page in code, fetches the trail, and renders a fixed layout. Shared blocks such as promos can still come from SitecoreAI.
+
+Neither option copies trails into SitecoreAI as items, and that's deliberate. A copy means two sets of content to keep in sync, two workflows to align, and authors unsure where to make a change.
+
+## How each option works
+
+The code examples follow [Sitecore's wildcard pages recipe](https://developers.sitecore.com/learn/accelerate/sitecoreai/implementation/information-architecture/wildcard-pages), which uses the Next.js Pages Router (\`pages/\`, \`getStaticProps\`). The Content SDK supports the App Router as generally available from version 1.2 ([Sitecore's App Router preparation recipe](https://developers.sitecore.com/learn/accelerate/sitecoreai/pre-development/developer-considerations/nextjs-app-router-preparation)). If your head app uses the App Router, the route code looks different, but the questions in this post stay the same.
+
+### Wildcard page
+
+In SitecoreAI, you add a page item named \`*\` under the trails page. Authors set up its presentation in Page Builder like any other page: header, hero, a trail details component, promos, footer. Every trail URL uses that one layout.
+
+The head app still needs its own route for it. Experience Edge's delivery endpoint doesn't support wildcard items, only the Preview endpoint does ([Sitecore's Experience Edge limitations](https://doc.sitecore.com/sai/en/developers/sitecoreai/experience-edge/limitations-and-restrictions-of-experience-edge.html)). In practice, that means Edge won't match \`/trails/1042/coastal-path\` to the wildcard item for you. The wildcard item is still published, though, so the route can ask for it by its own path. [Sitecore's wildcard pages recipe](https://developers.sitecore.com/learn/accelerate/sitecoreai/implementation/information-architecture/wildcard-pages) copies the main \`[[...path]].tsx\` route into \`pages/trails/[...path].tsx\`, requests the published wildcard item (its path on Edge is \`,-w-,\`), and keeps the original URL so the components can fetch the right trail.
+
+### Code-owned route
+
+The route file owns the page. \`getStaticProps\` fetches the trail from the trails API, and the layout is built in the route's own code. A short URL like \`/trails/1042\` can redirect to the full one, and a \`sitemap.xml\` route can list trails from the same source.
+
+If authors need to change part of the page, such as a promo banner or a call to action, that content can live in a shared folder in SitecoreAI that the route reads.
+
+## What's the same either way
+
+These apply whichever option you pick. On a recent project, my first assumption was that a wildcard page would need no route file of its own and would render on every request. Both turned out to be wrong once I read Sitecore's docs, and several of the points below came out of that check.
+
+- **You write a custom route.** The wildcard needs one because of the Edge limitation above.
+- **Both can be static.** The recipe's wildcard route uses \`getStaticProps\`, and its \`getStaticPaths\` can return an empty list so each page is generated on its first request and then cached. A code-owned route can use incremental static regeneration (ISR) the same way. Neither option forces server-side rendering.
+- **SEO data comes from the trail.** The page title, description, and social sharing tags have to come from the trail data, in code. A wildcard item's own SEO fields are shared by every trail, so they can't describe one.
+- **The sitemap needs its own source.** Trails aren't items in the content tree, so a sitemap built from the tree won't list them. You build that list from the trails API either way.
+- **Missing trails need a 404 you write.** The route has to check that the trail exists and return a 404 when it doesn't, whichever option you pick.
+- **The slug needs checking.** If someone visits \`/trails/1042/old-name\`, the route should redirect to the trail's current slug, so one trail doesn't end up at several URLs. The wildcard route reads the ID and slug from a catch-all path, and a code-owned route gets them as named parameters, but the check is the same.
+- **Previewing unpublished trails needs its own path.** If trail editors want to see a draft trail on the site before it goes live, the route needs a way to fetch draft content from the trails system, whichever option you pick.
+- **Both keep Experience Edge load low.** A wildcard page requests the same layout for every trail, so Edge can serve it from cache, and [Sitecore's rate limits recipe](https://developers.sitecore.com/learn/accelerate/sitecoreai/pre-development/project-architecture/rate-limits-and-caching) notes that cached responses don't count against the delivery API's limit of 80 uncached requests per second. A code-owned route doesn't request a layout for each trail at all. Creating an item for every trail is the approach that loses this, since each trail page would request a different layout.
+
+## Where they differ
+
+### Who changes the page around the trail
+
+This is usually the deciding question. With a wildcard, the page around the trail is a SitecoreAI page, so authors can add, remove, or reorder components in Page Builder without a developer. With a code-owned route, changing the layout is a code change and a deploy.
+
+The wildcard has a limit, though. Every trail shares its layout, so a promo added for one trail appears on all of them. If one trail needs to look different from the rest, neither option handles that without extra work.
+
+### What authors see in Page Builder
+
+On a wildcard page, authors open the wildcard item itself, and its URL has no real trail ID in it. Since the route reads the trail ID from the URL, the trail components have nothing to look up there, so plan for sample content or a placeholder so they show something, and authors are editing the layout for every trail rather than a particular one. A code-owned route has nothing to open in Page Builder, apart from the shared blocks.
+
+### Where content is published from
+
+A wildcard page depends on two publishing flows. Layout changes go out when the wildcard item is published to Experience Edge, which stores a snapshot of the layout at publish time ([the publishing section of Sitecore's Experience Edge limitations](https://doc.sitecore.com/sai/en/developers/sitecoreai/experience-edge/limitations-and-restrictions-of-experience-edge.html)). Trail changes come from the trails system and show on the site once the page regenerates.
+
+A code-owned route has one content flow, from the trails system, plus SitecoreAI publishing for any shared blocks it reads. Layout changes ship with code deploys.
+
+### Data that several components need
+
+On a trail page, the trail usually feeds several components: the hero, the route details, and the map. Sitecore's wildcard recipe notes that with component-level fetching, "only that component gets the content", and suggests fetching at page level or sharing the data through a React context. A code-owned route works that way from the start: the page fetches once and passes the data down.
+
+### Languages
+
+If the site is in more than one language, the wildcard is an item, so like any item it can have [a version in each language](https://doc.sitecore.com/sai/en/developers/sitecoreai/content-modeling-and-presentation/working-with-languages/working-with-languages.html). Authors translate the components around the trail in SitecoreAI, the same way as the rest of the site. A code-owned route's shared blocks from SitecoreAI can be translated the same way, but any text written into the route's code needs its own translation. Either way, the route has to ask the trails system for the trail in the right language.
+
+### Middleware
+
+If the site uses the multisite middleware, the wildcard recipe says the trails path has to be kept out of it, so the middleware doesn't override the route. There are two ways to do that:
+
+- **Add the path to the middleware matcher.** This stops all middleware running on trail pages, including content-managed redirects and personalization. A redirect an author sets up for an old trail URL won't run.
+- **Exclude the path in the multisite plugin only.** The other middleware keeps running on trail pages.
+
+A code-owned route sits behind the same middleware, so make the same choice for its path.
+
+### Upkeep
+
+The wildcard route starts as a copy of the main \`[[...path]].tsx\`. When an SDK upgrade changes the main route, the copy needs the same changes. A code-owned route is your own code from the start, so SDK upgrades touch it less, but every layout change goes through a developer.
+
+What's already in the codebase matters too. If the site already has a working route for other external content, like Trailworks' gear pages from its product system, copying its structure means less for the team to learn and review. The same applies if the site already uses wildcard pages.
+
+## Choosing
+
+| If this is true | Lean towards |
+| --- | --- |
+| Authors need to add, remove, or reorder components on these pages without a developer | Wildcard page |
+| The layout is fixed by design and rarely changes | Code-owned route |
+| Only a few blocks need to change, like a promo or a call to action | Code-owned route, with those blocks read from SitecoreAI |
+| The codebase already has a working pattern for one of them | The existing pattern, unless the authoring needs above rule it out |
+| Individual trails need their own layouts | Neither, out of the box. Find out what really varies before choosing |
+
+The listing page is a separate decision. \`/trails\` itself can be a normal SitecoreAI page with a listing component, whichever option the detail pages use.
+
+## Questions to settle first
+
+- Who needs to change the trail page layout, and how often?
+- Does any single trail ever need to look different from the rest?
+- Which parts of the page are authored, and which come from the trail data?
+- Does the codebase already have a pattern for external content?
+- Is the site in more than one language, and who translates the text around the trail?
+- Does the site use the multisite middleware, and do authors need redirects on trail URLs?
+- Where will the sitemap and each page's SEO metadata come from?
+- How soon after a change in the trails system does the page need to update?
+- Do trail editors need to preview a trail on the site before it goes live?
+
+## Who this is for
+
+Tech leads and developers planning pages for content that lives outside SitecoreAI, like guides, products, or articles from a product system, a database, or another CMS. PMs can use the questions above to settle the authoring requirement before the build starts, since that's the answer the choice depends on most.
+`,
+  },
+  {
     slug: "sitecoreai-decoupled-deployments",
     title: "Decoupled Deployments in SitecoreAI: What You Gain, and What to Check",
     summary:

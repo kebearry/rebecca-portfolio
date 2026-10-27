@@ -25,6 +25,23 @@ export type BlogStoryShareMeta = {
  */
 export const BLOG_STORY_SHARES: BlogStoryShareMeta[] = [
   {
+    slug: "wildcard-page-or-code-owned-route",
+    postTitle:
+      "Wildcard Page or Code-Owned Route for External Content in SitecoreAI",
+    summary:
+      "Two ways to give content from outside SitecoreAI its own pages: a wildcard page authors can edit, or a route you own in code. What each one changes for authors, publishing, and upkeep, and how to choose.",
+    storyShare: {
+      hook: "the content lives somewhere else",
+      title: "wildcard page or code-owned route?",
+      blurb:
+        "every trail needs a page, but trails aren't sitecoreai items. one option lets authors edit the layout. the other keeps it in code. who edits it usually decides.",
+      cta: "decision table on the link sticker",
+      badges: ["sitecoreai", "+ external content"],
+      chips: ["authors", "publishing", "languages", "upkeep"],
+      footer: "Rebecca · build notes",
+    },
+  },
+  {
     slug: "serp-ui-patterns",
     postTitle: "Planning Search UI: Patterns from Giants and Peer Industries",
     summary:
