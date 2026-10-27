@@ -32,7 +32,7 @@ const BLOG_POSTS: BlogPost[] = [
     summary:
       "Two ways to give content from outside SitecoreAI its own pages: a wildcard page authors can edit, or a route you own in code. What each one changes for authors, publishing, and upkeep, and how to choose.",
     publishedAt: "2026-10-27",
-    tags: ["Sitecore", "Architecture", "SitecoreAI"],
+    tags: ["Sitecore", "Architecture", "SitecoreAI", "Next.js"],
     storyShare: getBlogStoryShareBySlug("wildcard-page-or-code-owned-route")
       ?.storyShare,
     fullContent: `
